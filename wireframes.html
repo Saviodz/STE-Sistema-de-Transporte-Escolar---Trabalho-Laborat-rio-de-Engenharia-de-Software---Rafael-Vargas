@@ -70,9 +70,63 @@
             gap: 16px;
         }
 
+        .photo-upload-box {
+            width: 100%;
+            min-height: 150px;
+            border: 1px dashed var(--input-border);
+            border-radius: 6px;
+            background-color: var(--input-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .photo-preview {
+            width: 90px;
+            height: 90px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: #f4f4f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .photo-upload-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .photo-upload-help {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .photo-upload-input {
+            width: 100%;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
         .form-group {
             display: flex;
             align-items: center;
+        }
+
+        textarea.form-input {
+            height: auto;
+            min-height: 76px;
+            resize: none;
+            padding-top: 10px;
         }
 
         .form-label {
@@ -178,6 +232,112 @@
             color: var(--text-muted);
             margin-bottom: 20px;
         }
+
+        .access-section {
+            margin-top: 16px;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 16px;
+        }
+
+        .access-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .access-label {
+            width: auto;
+        }
+
+        .access-caption {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .access-list {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--input-bg);
+            overflow: hidden;
+        }
+
+        .access-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+        }
+
+        .access-row+.access-row {
+            border-top: 1px solid var(--border-color);
+        }
+
+        .access-student {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .access-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .access-check-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .access-help {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .access-search {
+            margin-bottom: 12px;
+        }
+
+        .access-search-input {
+            width: 100%;
+        }
+
+        .access-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: #f8f8f8;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .access-student-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .access-student-code {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .access-empty {
+            padding: 12px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+        }
     </style>
 </head>
 
@@ -205,6 +365,17 @@
                 <label class="form-label">Nome*</label>
                 <div class="form-input-wrapper">
                     <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Foto do Aluno</label>
+                <div class="form-input-wrapper">
+                    <div class="photo-upload-box">
+                        <div class="photo-preview">Sem foto</div>
+                        <div class="photo-upload-label">Selecionar foto</div>
+                        <input type="file" class="photo-upload-input" accept=".png, .jpg, .jpeg">
+                        <div class="photo-upload-help">Formatos aceitos: JPG, JPEG ou PNG</div>
+                    </div>
                 </div>
             </div>
             <div class="form-group">
@@ -246,7 +417,7 @@
             <div class="form-group">
                 <label class="form-label">Telefone(s)*</label>
                 <div class="form-input-wrapper">
-                    <input type="text" class="form-input" placeholder="">
+                    <textarea class="form-input" rows="2" placeholder=""></textarea>
                 </div>
             </div>
             <div class="form-group">
@@ -311,9 +482,9 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label">Telefone</label>
+                <label class="form-label">Telefone(s)*</label>
                 <div class="form-input-wrapper">
-                    <input type="text" class="form-input" placeholder="">
+                    <textarea class="form-input" rows="2" placeholder=""></textarea>
                 </div>
             </div>
             <div class="form-group">
@@ -380,34 +551,66 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label">Nome*</label>
+                <label class="form-label">Razão Social*</label>
                 <div class="form-input-wrapper">
                     <input type="text" class="form-input" placeholder="">
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label">Cidade*</label>
+                <label class="form-label">UF*</label>
                 <div class="form-input-wrapper">
                     <select class="form-input form-select">
-                        <option></option>
+                        <option value="AC">Acre (AC)</option>
+                        <option value="AL">Alagoas (AL)</option>
+                        <option value="AP">Amapá (AP)</option>
+                        <option value="AM">Amazonas (AM)</option>
+                        <option value="BA">Bahia (BA)</option>
+                        <option value="CE">Ceará (CE)</option>
+                        <option value="DF">Distrito Federal (DF)</option>
+                        <option value="ES">Espírito Santo (ES)</option>
+                        <option value="GO">Goiás (GO)</option>
+                        <option value="MA">Maranhão (MA)</option>
+                        <option value="MT">Mato Grosso (MT)</option>
+                        <option value="MS">Mato Grosso do Sul (MS)</option>
+                        <option value="MG">Minas Gerais (MG)</option>
+                        <option value="PA">Pará (PA)</option>
+                        <option value="PB">Paraíba (PB)</option>
+                        <option value="PR">Paraná (PR)</option>
+                        <option value="PE">Pernambuco (PE)</option>
+                        <option value="PI">Piauí (PI)</option>
+                        <option value="RJ">Rio de Janeiro (RJ)</option>
+                        <option value="RN">Rio Grande do Norte (RN)</option>
+                        <option value="RS">Rio Grande do Sul (RS)</option>
+                        <option value="RO">Rondônia (RO)</option>
+                        <option value="RR">Roraima (RR)</option>
+                        <option value="SC">Santa Catarina (SC)</option>
+                        <option value="SP">São Paulo (SP)</option>
+                        <option value="SE">Sergipe (SE)</option>
+                        <option value="TO">Tocantins (TO)</option>
                     </select>
                     <div class="select-arrow"></div>
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label">Responsável</label>
+                <label class="form-label">CNPJ*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="00.000.000/0000-00" maxlength="18">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Endereço*</label>
                 <div class="form-input-wrapper">
                     <input type="text" class="form-input" placeholder="">
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label">Telefone</label>
+                <label class="form-label">Telefone(s)*</label>
                 <div class="form-input-wrapper">
-                    <input type="text" class="form-input" placeholder="">
+                    <textarea class="form-input" rows="2" placeholder=""></textarea>
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label">Email</label>
+                <label class="form-label">Email*</label>
                 <div class="form-input-wrapper">
                     <input type="text" class="form-input" placeholder="">
                 </div>
@@ -467,9 +670,9 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label">Telefone</label>
+                <label class="form-label">Telefone(s)*</label>
                 <div class="form-input-wrapper">
-                    <input type="text" class="form-input" placeholder="">
+                    <textarea class="form-input" rows="2" placeholder=""></textarea>
                 </div>
             </div>
             <div class="form-group">
@@ -691,58 +894,90 @@
         </div>
         <div class="screen-body">
             <div class="form-group">
+                <label class="form-label">Código*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input disabled" value="(Gerado automaticamente)" disabled>
+                </div>
+            </div>
+
+            <div class="form-group">
                 <label class="form-label">Viagem (Data e Rota)*</label>
                 <div class="form-input-wrapper">
                     <select class="form-input form-select">
                         <option>[Selecione a Viagem]</option>
+                        <option>[201] 10/03/2026 - Cachoeiro x Alegre - Manhã</option>
+                        <option>[202] 10/03/2026 - Cachoeiro x Vitória - Noite</option>
                     </select>
                     <div class="select-arrow"></div>
                 </div>
             </div>
 
-            <div style="margin-top: 16px; border-top: 1px dashed var(--border-color); padding-top: 16px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <label class="form-label" style="width: auto;">Lista de Presença (Alunos da Rota)</label>
-                    <span style="font-size: 0.8rem; color: var(--text-muted);">Embarque / Desembarque</span>
+            <div class="access-section">
+                <div class="access-header">
+                    <label class="form-label access-label">Lista de Presença</label>
+                    <span class="access-caption">Pesquisa por código ou nome</span>
                 </div>
 
-                <div
-                    style="border: 1px solid var(--border-color); border-radius: 4px; background: var(--input-bg); overflow: hidden;">
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid var(--border-color);">
-                        <span style="font-size: 0.9rem; color: var(--text-main); font-weight: 500;">João Silva</span>
-                        <div style="display: flex; gap: 16px;">
-                            <label
-                                style="font-size: 0.85rem; color: var(--text-muted); display:flex; gap:4px; align-items:center; cursor: pointer;"><input
-                                    type="checkbox"> Entrou</label>
-                            <label
-                                style="font-size: 0.85rem; color: var(--text-muted); display:flex; gap:4px; align-items:center; cursor: pointer;"><input
-                                    type="checkbox"> Saiu</label>
+                <div class="access-search">
+                    <input type="text" class="form-input access-search-input"
+                        placeholder="Pesquisar aluno por código ou nome">
+                </div>
+
+                <div class="access-list">
+                    <div class="access-list-header">
+                        <span>Aluno</span>
+                        <span>Ações</span>
+                    </div>
+
+                    <div class="access-row">
+                        <div class="access-student-group">
+                            <span class="access-student">José Carlos Ceccon</span>
+                            <span class="access-student-code">Código: 101</span>
+                        </div>
+                        <div class="access-actions">
+                            <label class="access-check-label">
+                                <input type="checkbox"> Entrou
+                            </label>
+                            <label class="access-check-label">
+                                <input type="checkbox"> Saiu
+                            </label>
                         </div>
                     </div>
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid var(--border-color);">
-                        <span style="font-size: 0.9rem; color: var(--text-main); font-weight: 500;">Maria Souza</span>
-                        <div style="display: flex; gap: 16px;">
-                            <label
-                                style="font-size: 0.85rem; color: var(--text-muted); display:flex; gap:4px; align-items:center; cursor: pointer;"><input
-                                    type="checkbox"> Entrou</label>
-                            <label
-                                style="font-size: 0.85rem; color: var(--text-muted); display:flex; gap:4px; align-items:center; cursor: pointer;"><input
-                                    type="checkbox"> Saiu</label>
+
+                    <div class="access-row">
+                        <div class="access-student-group">
+                            <span class="access-student">Marco Antonio</span>
+                            <span class="access-student-code">Código: 102</span>
+                        </div>
+                        <div class="access-actions">
+                            <label class="access-check-label">
+                                <input type="checkbox"> Entrou
+                            </label>
+                            <label class="access-check-label">
+                                <input type="checkbox"> Saiu
+                            </label>
                         </div>
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px;">
-                        <span style="font-size: 0.9rem; color: var(--text-main); font-weight: 500;">Pedro Santos</span>
-                        <div style="display: flex; gap: 16px;">
-                            <label
-                                style="font-size: 0.85rem; color: var(--text-muted); display:flex; gap:4px; align-items:center; cursor: pointer;"><input
-                                    type="checkbox"> Entrou</label>
-                            <label
-                                style="font-size: 0.85rem; color: var(--text-muted); display:flex; gap:4px; align-items:center; cursor: pointer;"><input
-                                    type="checkbox"> Saiu</label>
+
+                    <div class="access-row">
+                        <div class="access-student-group">
+                            <span class="access-student">Sávio</span>
+                            <span class="access-student-code">Código: 103</span>
+                        </div>
+                        <div class="access-actions">
+                            <label class="access-check-label">
+                                <input type="checkbox"> Entrou
+                            </label>
+                            <label class="access-check-label">
+                                <input type="checkbox"> Saiu
+                            </label>
                         </div>
                     </div>
+                </div>
+
+                <div class="access-help">
+                    Os alunos são carregados automaticamente conforme a viagem selecionada e podem ser localizados pela
+                    pesquisa.
                 </div>
             </div>
         </div>
