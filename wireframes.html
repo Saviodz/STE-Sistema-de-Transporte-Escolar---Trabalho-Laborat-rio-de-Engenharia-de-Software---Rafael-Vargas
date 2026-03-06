@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframes - Sistema de Gestão de Transporte Escolar</title>
+    <style>
+        :root {
+            --bg-color: #f4f4f5;
+            --card-bg: #ffffff;
+            --border-color: #e4e4e7;
+            --text-main: #18181b;
+            --text-muted: #71717a;
+            --primary: #18181b;
+            --primary-hover: #27272a;
+            --secondary: #ffffff;
+            --secondary-border: #d4d4d8;
+            --secondary-hover: #f4f4f5;
+            --input-bg: #fafafa;
+            --input-border: #d4d4d8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .screen-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+        }
+
+        .screen-header {
+            background-color: #fafafa;
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px 24px;
+        }
+
+        .screen-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-main);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .screen-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-label {
+            width: 35%;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-main);
+            padding-right: 16px;
+            text-align: left;
+        }
+
+        .form-input-wrapper {
+            width: 65%;
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 38px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            color: var(--text-muted);
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #a1a1aa;
+        }
+
+        .form-input.disabled {
+            background-color: #f4f4f5;
+            color: #a1a1aa;
+        }
+
+        .form-select {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+            border-left: 2px solid var(--text-muted);
+            border-bottom: 2px solid var(--text-muted);
+            transform: translateY(-70%) rotate(-45deg);
+        }
+
+        .screen-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--border-color);
+            background-color: #fafafa;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 8px 24px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 120px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: 1px solid var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: var(--text-main);
+            border: 1px solid var(--secondary-border);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--secondary-hover);
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        .page-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div>
+        <h1 class="page-title">Sistema de Gestão de Transporte Escolar</h1>
+        <p class="page-subtitle">Marco Antonio, José Carlos e Sávio
+        </p>
+    </div>
+
+    <!-- TELA 1 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Cadastro de Aluno</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Código*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input disabled" value="(Gerado automaticamente)" disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nome*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">CPF*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Data de Nascimento*</label>
+                <div class="form-input-wrapper">
+                    <input type="date" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Cidade*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Instituição de Ensino*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Endereço</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Telefone</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Responsável</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Prefeitura Autorizadora</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Situação do Transporte</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option>Ativo</option>
+                        <option>Inativo</option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Salvar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA 2 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Cadastro de Instituição de Ensino</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Código*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input disabled" value="(Gerado automaticamente)" disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nome*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Cidade*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Endereço</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Telefone</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Tipo de Instituição</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option>Pública / Privada</option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Salvar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA 3 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Cadastro de Cidade</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Código*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input disabled" value="(Gerado automaticamente)" disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nome*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">UF*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Salvar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA 4 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Cadastro de Prefeitura</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Código*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input disabled" value="(Gerado automaticamente)" disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nome*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Cidade*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Responsável</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Telefone</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Salvar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA 5 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Cadastro de Motorista</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Código*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input disabled" value="(Gerado automaticamente)" disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nome*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">CPF*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">CNH*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Validade CNH*</label>
+                <div class="form-input-wrapper">
+                    <input type="date" class="form-input">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Categoria CNH*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                        <option>D</option>
+                        <option>E</option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Telefone</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Situação</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option>Ativo</option>
+                        <option>Afastado</option>
+                        <option>Inativo</option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Salvar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA 6 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Cadastro de Ônibus</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Código*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input disabled" value="(Gerado automaticamente)" disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Placa*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Modelo</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Capacidade*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Ano</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Situação</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option>Ativo</option>
+                        <option>Manutenção</option>
+                        <option>Inativo</option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Salvar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA 7 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Cadastro de Rota</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Código*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input disabled" value="(Gerado automaticamente)" disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Cidade Origem*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Cidade Destino*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Turno*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option>Manhã</option>
+                        <option>Tarde</option>
+                        <option>Noite</option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Descrição</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Observação</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div style="margin-top: 16px; border-top: 1px dashed var(--border-color); padding-top: 16px;">
+                <label class="form-label" style="width: 100%; display: block; margin-bottom: 8px;">Alunos Vinculados à
+                    Rota</label>
+                <div
+                    style="border: 1px solid var(--border-color); border-radius: 4px; padding: 12px; background: var(--input-bg); max-height: 120px; overflow-y: auto;">
+                    <label
+                        style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); cursor: pointer;"><input
+                            type="checkbox" checked> [101] João Silva</label>
+                    <label
+                        style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); cursor: pointer;"><input
+                            type="checkbox" checked> [102] Maria Souza</label>
+                    <label
+                        style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--text-muted); cursor: pointer;"><input
+                            type="checkbox"> [103] Pedro Santos</label>
+                </div>
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Salvar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA 8 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Registro de Viagem</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Código*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input disabled" value="(Gerado automaticamente)" disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Rota*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Motorista*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Ônibus*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Data*</label>
+                <div class="form-input-wrapper">
+                    <input type="date" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Horário de Saída*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Horário de Chegada</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Salvar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA 9 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Registro de Acesso</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Viagem (Data e Rota)*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option>[Selecione a Viagem]</option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+
+            <div style="margin-top: 16px; border-top: 1px dashed var(--border-color); padding-top: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <label class="form-label" style="width: auto;">Lista de Presença (Alunos da Rota)</label>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Embarque / Desembarque</span>
+                </div>
+
+                <div
+                    style="border: 1px solid var(--border-color); border-radius: 4px; background: var(--input-bg); overflow: hidden;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid var(--border-color);">
+                        <span style="font-size: 0.9rem; color: var(--text-main); font-weight: 500;">João Silva</span>
+                        <div style="display: flex; gap: 16px;">
+                            <label
+                                style="font-size: 0.85rem; color: var(--text-muted); display:flex; gap:4px; align-items:center; cursor: pointer;"><input
+                                    type="checkbox"> Entrou</label>
+                            <label
+                                style="font-size: 0.85rem; color: var(--text-muted); display:flex; gap:4px; align-items:center; cursor: pointer;"><input
+                                    type="checkbox"> Saiu</label>
+                        </div>
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid var(--border-color);">
+                        <span style="font-size: 0.9rem; color: var(--text-main); font-weight: 500;">Maria Souza</span>
+                        <div style="display: flex; gap: 16px;">
+                            <label
+                                style="font-size: 0.85rem; color: var(--text-muted); display:flex; gap:4px; align-items:center; cursor: pointer;"><input
+                                    type="checkbox"> Entrou</label>
+                            <label
+                                style="font-size: 0.85rem; color: var(--text-muted); display:flex; gap:4px; align-items:center; cursor: pointer;"><input
+                                    type="checkbox"> Saiu</label>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px;">
+                        <span style="font-size: 0.9rem; color: var(--text-main); font-weight: 500;">Pedro Santos</span>
+                        <div style="display: flex; gap: 16px;">
+                            <label
+                                style="font-size: 0.85rem; color: var(--text-muted); display:flex; gap:4px; align-items:center; cursor: pointer;"><input
+                                    type="checkbox"> Entrou</label>
+                            <label
+                                style="font-size: 0.85rem; color: var(--text-muted); display:flex; gap:4px; align-items:center; cursor: pointer;"><input
+                                    type="checkbox"> Saiu</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Salvar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+</body>
+
+</html>
