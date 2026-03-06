@@ -169,6 +169,12 @@
             cursor: pointer;
         }
 
+        .form-help-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
         .select-arrow {
             position: absolute;
             right: 12px;
@@ -342,6 +348,39 @@
 </head>
 
 <body>
+
+    <!-- TELA LOGIN -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Login</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Usuário*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="Digite seu usuário">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Senha*</label>
+                <div class="form-input-wrapper">
+                    <input type="password" class="form-input" placeholder="Digite sua senha">
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label class="form-label"></label>
+                <div class="form-input-wrapper">
+                </div>
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Entrar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
 
     <div>
         <h1 class="page-title">Sistema de Gestão de Transporte Escolar</h1>
