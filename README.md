@@ -1,7 +1,64 @@
-# STE-Sistema-de-Transporte-Escolar---Trabalho-Laborat-rio-de-Engenharia-de-Software---Rafael-Vargas
+<h1 align="center">
+    <img alt="RVM" src="https://github.com/ravarmes/fundamentos-sequelize/blob/main/src/assets/logo.jpg" />
+</h1>
 
-É proposto o desenvolvimento de um Sistema de Transporte Escolar, com o objetivo de informatizar e organizar o controle administrativo e operacional de um serviço de transporte de estudantes. O sistema busca otimizar a gestão das rotas, alunos, motoristas e veículos, garantindo maior eficiência, segurança e confiabilidade das informações para a administração.
-O sistema permitirá o registro e gerenciamento de cadastros básicos, como alunos, responsáveis, motoristas, veículos e rotas, além do acompanhamento das atividades operacionais do transporte escolar. Também possibilitará a geração de relatórios relacionados aos cadastros e às operações diárias, como controle de presença, utilização dos veículos, itinerários e situação dos alunos.
-O sistema deverá permitir o controle dos pagamentos referentes ao serviço de transporte escolar, incluindo mensalidades, possíveis taxas adicionais e pendências financeiras. O registro de pagamentos será realizado manualmente pelo operador do sistema, garantindo a validação das informações antes da regularização da situação do aluno ou da continuidade do serviço.
-O aluno poderá ser vinculado a uma rota específica e a um veículo determinado, sendo possível acompanhar sua utilização do serviço. Em casos de inadimplência ou irregularidades cadastrais, o sistema poderá sinalizar restrições, auxiliando a gestão administrativa na tomada de decisões.
-Esse sistema não permitirá utilização para mais de 1 estado Brasileiro simultaneamente.
+<h3 align="center">
+  Sequelize: Fundamentos
+</h3>
+
+<p align="center">Fundamentos sobre o ORM Sequelize em Node.js</p>
+
+<p align="center">
+  <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/ravarmes/fundamentos-sequelize?color=%2304D361">
+
+  <a href="http://www.linkedin.com/in/rafael-vargas-mesquita">
+    <img alt="Made by Rafael Vargas Mesquita" src="https://img.shields.io/badge/made%20by-Rafael%20Vargas%20Mesquita-%2304D361">
+  </a>
+
+  <img alt="License" src="https://img.shields.io/badge/license-MIT-%2304D361">
+
+  <a href="https://github.com/ravarmes/fundamentos-sequelize/stargazers">
+    <img alt="Stargazers" src="https://img.shields.io/github/stars/ravarmes/fundamentos-sequelize?style=social">
+  </a>
+</p>
+
+<p align="center">
+  <a href="#-instalacao">Instalação e execução</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#-docs">Pasta docs</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#-telas">Telas</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#-links">Links</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#-licenca">Licença</a>
+</p>
+
+## :computer: Instalação e execução <a name="-instalacao"/></a>
+
+npm install sequelize sqlite3
+
+## :open_file_folder: Pasta docs <a name="-docs"/></a>
+
+A pasta `docs` reúne materiais de apoio para estudo e apresentação dos exemplos deste projeto.
+
+- Contém os arquivos HTML de slides (`teste1`, `teste2`, `teste3` e `teste4`) com explicações conceituais e visuais;
+- Os conteúdos da pasta funcionam como guia dos scripts de código, ajudando a entender o passo a passo de modelos, validações, associações e regras de integridade referencial.
+
+## :clapper: Tela(s) <a name="-telas"/></a>
+
+![Tela](https://github.com/ravarmes/fundamentos-sequelize/blob/main/src/assets/fundamentos-sequelize-1.png)
+![Tela](https://github.com/ravarmes/fundamentos-sequelize/blob/main/src/assets/fundamentos-sequelize-2.png)
+
+## :link: Links <a name="-links"/></a>
+
+- [YouTube](https://youtu.be/0tF2ty48Wmc) - Vídeo com explicação do código;
+- [Slides](https://drive.google.com/file/d/1nVQtz5G_Kb5_LkRpyVP087CU-9udAqh5/view?usp=share_link) - Slides da apresentação do vídeo;
+
+## :memo: Licença <a name="-licenca"/></a>
+
+Esse projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE.md) para mais detalhes.
+
+## :email: Contato
+
+Rafael Vargas Mesquita - [GitHub](https://github.com/ravarmes) - [LinkedIn](https://www.linkedin.com/in/rafael-vargas-mesquita) - [Lattes](http://lattes.cnpq.br/6616283627544820) - **ravarmes@hotmail.com**
+
+---
+
+Feito com ♥ by Rafael Vargas Mesquita :wink:

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundamentos do Sequelize — Modelo e CRUD</title>
+    <link rel="stylesheet" href="slide-engine.css">
+</head>
+<body>
+<div class="slides-container">
+
+<!-- SLIDE 1: Title -->
+<div class="slide title-slide">
+    <div class="slide-content">
+        <span class="lesson-number">Aula 1</span>
+        <h1>Fundamentos do Sequelize</h1>
+        <p class="subtitle">Modelos, instâncias e operações CRUD com SQLite</p>
+        <p class="start-hint">Pressione <strong>→</strong> ou <strong>Space</strong> para começar</p>
+    </div>
+</div>
+
+<!-- SLIDE 2: Introdução -->
+<div class="slide">
+    <div class="slide-content">
+        <h2><span class="emoji">📖</span> O que é o Sequelize?</h2>
+        <p>O <strong>Sequelize</strong> é um ORM (Object-Relational Mapping) para Node.js que suporta diversos bancos de dados SQL, como PostgreSQL, MySQL, SQLite e SQL Server.</p>
+        <div class="explain-box">
+            <strong>Com o Sequelize, podemos:</strong>
+            <ul style="margin-top:8px">
+                <li>Representar <strong>tabelas</strong> do banco como <strong>classes JavaScript</strong></li>
+                <li>Representar <strong>registros</strong> como <strong>instâncias</strong> dessas classes</li>
+                <li>Abstrair consultas SQL através de <strong>métodos JavaScript</strong></li>
+                <li>Gerenciar <strong>relacionamentos</strong> entre tabelas</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 3: Conexão com o Banco -->
+<div class="slide">
+    <div class="slide-content">
+        <h2><span class="emoji">🔌</span> Conexão com o Banco de Dados</h2>
+        <div class="code-block">
+            <span class="code-label">JavaScript</span>
+<pre><span class="keyword">const</span> { <span class="type">Sequelize</span>, <span class="type">Model</span>, <span class="type">DataTypes</span> } = <span class="function">require</span>(<span class="string">"sequelize"</span>);
+
+<span class="comment">// Abrindo conexão</span>
+<span class="keyword">const</span> sequelize = <span class="keyword">new</span> <span class="type">Sequelize</span>({
+    <span class="property">dialect</span>: <span class="string">'sqlite'</span>,
+    <span class="property">storage</span>: <span class="string">'database.sqlite'</span>
+});</pre>
+        </div>
+        <div class="explain-box">
+            <ol>
+                <li>Importamos as classes necessárias do Sequelize</li>
+                <li>Criamos uma instância de conexão com <strong>SQLite</strong></li>
+                <li>O arquivo <code>database.sqlite</code> armazenará nossos dados</li>
+            </ol>
+        </div>
+        <div class="diagram-container">
+            <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+                <rect x="20" y="20" width="150" height="70" rx="8" fill="#68a063" stroke="#4a7a48" stroke-width="2"/>
+                <text x="95" y="52" font-family="Inter,Arial" font-size="15" text-anchor="middle" fill="white" font-weight="600">Node.js App</text>
+                <text x="95" y="72" font-family="Inter,Arial" font-size="11" text-anchor="middle" fill="rgba(255,255,255,0.7)">com Sequelize</text>
+                <rect x="230" y="20" width="150" height="70" rx="8" fill="#0f80cc" stroke="#0a5e96" stroke-width="2"/>
+                <text x="305" y="52" font-family="Inter,Arial" font-size="15" text-anchor="middle" fill="white" font-weight="600">SQLite</text>
+                <text x="305" y="72" font-family="Inter,Arial" font-size="11" text-anchor="middle" fill="rgba(255,255,255,0.7)">database.sqlite</text>
+                <line x1="170" y1="55" x2="225" y2="55" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6,3"/>
+                <polygon points="222,50 232,55 222,60" fill="#94a3b8"/>
+                <text x="200" y="45" font-family="Inter,Arial" font-size="10" text-anchor="middle" fill="#94a3b8">Conexão</text>
+                <rect x="20" y="100" width="360" height="20" rx="4" fill="rgba(251,191,36,0.15)" stroke="rgba(251,191,36,0.3)"/>
+                <text x="200" y="114" font-family="Inter,Arial" font-size="11" text-anchor="middle" fill="#fbbf24">ORM: Traduz objetos JavaScript → operações SQL</text>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 4: Definindo o Modelo -->
+<div class="slide">
+    <div class="slide-content">
+        <h2><span class="emoji">🏗️</span> Definindo Classes de Modelo</h2>
+        <div class="code-block">
+            <span class="code-label">JavaScript</span>
+<pre><span class="comment">// Definindo as classes de modelo</span>
+<span class="keyword">class</span> <span class="type">Cliente</span> <span class="keyword">extends</span> <span class="type">Model</span> {
+    <span class="keyword">static</span> <span class="function">init</span>(sequelize) {
+        <span class="keyword">super</span>.<span class="function">init</span>({
+            <span class="property">nome</span>: <span class="type">DataTypes</span>.<span class="property">STRING</span>
+        }, { sequelize, <span class="property">modelName</span>: <span class="string">'cliente'</span>, <span class="property">tableName</span>: <span class="string">'clientes'</span> })
+    }
+}
+
+<span class="comment">// Inicializando o modelo (CREATE TABLE)</span>
+<span class="type">Cliente</span>.<span class="function">init</span>(sequelize);</pre>
+        </div>
+        <div class="two-cols">
+            <div class="col">
+                <div class="explain-box">
+                    <strong>O que acontece:</strong>
+                    <ol style="margin-top:6px">
+                        <li>Classe <code>Cliente</code> herda de <code>Model</code></li>
+                        <li>Coluna <code>nome</code> do tipo <code>STRING</code></li>
+                        <li><code>init()</code> cria a tabela no banco</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="col">
+                <div class="explain-box yellow">
+                    <strong>Colunas automáticas:</strong>
+                    <ul style="margin-top:6px">
+                        <li><code>id</code> — chave primária</li>
+                        <li><code>createdAt</code> — data de criação</li>
+                        <li><code>updatedAt</code> — data de atualização</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 5: Instanciação -->
+<div class="slide">
+    <div class="slide-content">
+        <h2><span class="emoji">🧩</span> Instanciando Objetos</h2>
+        <div class="code-block">
+            <span class="code-label">JavaScript</span>
+<pre><span class="comment">// Instanciando um objeto</span>
+<span class="keyword">const</span> cliente1 = <span class="type">Cliente</span>.<span class="function">build</span>({ <span class="property">nome</span>: <span class="string">"Alberto"</span> });
+<span class="function">console.log</span>(cliente1 <span class="keyword">instanceof</span> <span class="type">Cliente</span>); <span class="comment">// true</span>
+<span class="function">console.log</span>(cliente1.<span class="property">nome</span>);                 <span class="comment">// "Alberto"</span></pre>
+        </div>
+        <div class="explain-box red">
+            <strong>⚠️ Importante:</strong> O método <code>build()</code> cria o objeto <strong>apenas na memória</strong>. Ainda <strong>não foi salvo</strong> no banco de dados!
+        </div>
+        <div class="diagram-container">
+            <svg viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg">
+                <rect x="20" y="10" width="360" height="90" rx="8" fill="rgba(148,163,184,0.1)" stroke="#334155" stroke-width="1"/>
+                <text x="200" y="30" font-family="Inter,Arial" font-size="12" text-anchor="middle" fill="#64748b">Memória da Aplicação</text>
+                <rect x="120" y="40" width="160" height="50" rx="6" fill="rgba(167,139,250,0.2)" stroke="#a78bfa" stroke-width="1.5"/>
+                <text x="200" y="60" font-family="JetBrains Mono,monospace" font-size="12" text-anchor="middle" fill="#a78bfa" font-weight="600">cliente1</text>
+                <text x="200" y="80" font-family="JetBrains Mono,monospace" font-size="11" text-anchor="middle" fill="#94a3b8">nome: "Alberto"</text>
+                <rect x="80" y="110" width="240" height="22" rx="4" fill="rgba(251,191,36,0.15)" stroke="rgba(251,191,36,0.3)"/>
+                <text x="200" y="125" font-family="Inter,Arial" font-size="11" text-anchor="middle" fill="#fbbf24">⚠️ Ainda não existe no banco de dados!</text>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 6: Inserção 1 — save() -->
+<div class="slide">
+    <div class="slide-content">
+        <h2><span class="emoji">💾</span> Inserção — Método <code>save()</code></h2>
+        <div class="code-block">
+            <span class="code-label">JavaScript</span>
+<pre><span class="comment">// Inserindo um objeto no banco de dados (primeira maneira)</span>
+<span class="keyword">await</span> cliente1.<span class="function">save</span>();
+<span class="function">console.log</span>(<span class="string">'Alberto foi salvo no banco de dados!'</span>);</pre>
+        </div>
+        <div class="explain-box green">
+            <strong>✅ Agora sim!</strong> O <code>save()</code> gera um SQL <code>INSERT</code> e persiste o objeto no banco. O <code>id</code>, <code>createdAt</code> e <code>updatedAt</code> são preenchidos automaticamente.
+        </div>
+        <h3>Estado do Banco</h3>
+        <table>
+            <thead><tr><th>id</th><th>nome</th><th>createdAt</th><th>updatedAt</th></tr></thead>
+            <tbody>
+                <tr><td><code>1</code></td><td>Alberto</td><td>2023-07-15 10:30:25</td><td>2023-07-15 10:30:25</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- SLIDE 7: Inserção 2 — create() -->
+<div class="slide">
+    <div class="slide-content">
+        <h2><span class="emoji">⚡</span> Inserção — Método <code>create()</code></h2>
+        <div class="code-block">
+            <span class="code-label">JavaScript</span>
+<pre><span class="comment">// Inserindo um objeto no banco de dados (segunda maneira)</span>
+<span class="keyword">const</span> cliente2 = <span class="keyword">await</span> <span class="type">Cliente</span>.<span class="function">create</span>({ <span class="property">nome</span>: <span class="string">"Bernardo"</span> });
+<span class="keyword">const</span> cliente3 = <span class="keyword">await</span> <span class="type">Cliente</span>.<span class="function">create</span>({ <span class="property">nome</span>: <span class="string">"Carlos"</span> });
+<span class="keyword">const</span> cliente4 = <span class="keyword">await</span> <span class="type">Cliente</span>.<span class="function">create</span>({ <span class="property">nome</span>: <span class="string">"Daniel"</span> });</pre>
+        </div>
+        <div class="explain-box purple">
+            <strong>Diferença-chave:</strong> <code>create()</code> = <code>build()</code> + <code>save()</code> em uma única operação. Mais conciso!
+        </div>
+        <h3>Estado do Banco</h3>
+        <table>
+            <thead><tr><th>id</th><th>nome</th><th>createdAt</th><th>updatedAt</th></tr></thead>
+            <tbody>
+                <tr><td><code>1</code></td><td>Alberto</td><td>2023-07-15 10:30:25</td><td>2023-07-15 10:30:25</td></tr>
+                <tr><td><code>2</code></td><td>Bernardo</td><td>2023-07-15 10:30:28</td><td>2023-07-15 10:30:28</td></tr>
+                <tr><td><code>3</code></td><td>Carlos</td><td>2023-07-15 10:30:30</td><td>2023-07-15 10:30:30</td></tr>
+                <tr><td><code>4</code></td><td>Daniel</td><td>2023-07-15 10:30:32</td><td>2023-07-15 10:30:32</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- SLIDE 8: Atualização -->
+<div class="slide">
+    <div class="slide-content">
+        <h2><span class="emoji">✏️</span> Atualização de Dados</h2>
+        <div class="code-block">
+            <span class="code-label">JavaScript</span>
+<pre><span class="comment">// Atualizando um objeto</span>
+cliente1.<span class="property">nome</span> = <span class="string">"Alberto dos Santos"</span>;
+<span class="keyword">await</span> cliente1.<span class="function">save</span>();
+<span class="function">console.log</span>(<span class="string">'Cliente Alberto atualizado!'</span>);</pre>
+        </div>
+        <div class="explain-box">
+            O <code>save()</code> detecta que o objeto <strong>já existe</strong> no banco e gera um <code>UPDATE</code> em vez de <code>INSERT</code>. A coluna <code>updatedAt</code> é atualizada automaticamente.
+        </div>
+        <h3>Estado do Banco (após atualização)</h3>
+        <table>
+            <thead><tr><th>id</th><th>nome</th><th>createdAt</th><th>updatedAt</th></tr></thead>
+            <tbody>
+                <tr style="background:rgba(56,189,248,0.08)"><td><code>1</code></td><td><strong>Alberto dos Santos</strong></td><td>2023-07-15 10:30:25</td><td><strong>2023-07-15 10:31:05</strong></td></tr>
+                <tr><td><code>2</code></td><td>Bernardo</td><td>2023-07-15 10:30:28</td><td>2023-07-15 10:30:28</td></tr>
+                <tr><td><code>3</code></td><td>Carlos</td><td>2023-07-15 10:30:30</td><td>2023-07-15 10:30:30</td></tr>
+                <tr><td><code>4</code></td><td>Daniel</td><td>2023-07-15 10:30:32</td><td>2023-07-15 10:30:32</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- SLIDE 9: Remoção -->
+<div class="slide">
+    <div class="slide-content">
+        <h2><span class="emoji">🗑️</span> Remoção de Dados</h2>
+        <div class="code-block">
+            <span class="code-label">JavaScript</span>
+<pre><span class="comment">// Deletando um objeto</span>
+<span class="keyword">await</span> cliente2.<span class="function">destroy</span>();
+<span class="function">console.log</span>(<span class="string">'Cliente Bernardo (id:2) removido!'</span>);</pre>
+        </div>
+        <div class="explain-box red">
+            <strong>⚠️ Atenção:</strong> O método <code>destroy()</code> gera um <code>DELETE FROM clientes WHERE id=2</code>. O objeto JavaScript <strong>permanece na memória</strong>, mas o registro no banco foi removido.
+        </div>
+        <h3>Estado do Banco (após remoção)</h3>
+        <table>
+            <thead><tr><th>id</th><th>nome</th><th>createdAt</th><th>updatedAt</th></tr></thead>
+            <tbody>
+                <tr><td><code>1</code></td><td>Alberto dos Santos</td><td>2023-07-15 10:30:25</td><td>2023-07-15 10:31:05</td></tr>
+                <tr style="opacity:0.35;text-decoration:line-through"><td><code>2</code></td><td>Bernardo</td><td>2023-07-15 10:30:28</td><td>2023-07-15 10:30:28</td></tr>
+                <tr><td><code>3</code></td><td>Carlos</td><td>2023-07-15 10:30:30</td><td>2023-07-15 10:30:30</td></tr>
+                <tr><td><code>4</code></td><td>Daniel</td><td>2023-07-15 10:30:32</td><td>2023-07-15 10:30:32</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- SLIDE 10: findAll -->
+<div class="slide">
+    <div class="slide-content">
+        <h2><span class="emoji">🔍</span> Consultas — <code>findAll()</code></h2>
+        <div class="code-block">
+            <span class="code-label">JavaScript</span>
+<pre><span class="comment">// Listando todos os registros</span>
+<span class="keyword">const</span> clientes = <span class="keyword">await</span> <span class="type">Cliente</span>.<span class="function">findAll</span>();
+
+<span class="comment">// Especificando atributos</span>
+<span class="keyword">const</span> nomes = <span class="keyword">await</span> <span class="type">Cliente</span>.<span class="function">findAll</span>({ <span class="property">attributes</span>: [<span class="string">'nome'</span>] });
+
+<span class="comment">// Com cláusula WHERE</span>
+<span class="keyword">const</span> filtrado = <span class="keyword">await</span> <span class="type">Cliente</span>.<span class="function">findAll</span>({ <span class="property">where</span>: { <span class="property">id</span>: <span class="number">3</span> } });</pre>
+        </div>
+        <div class="two-cols">
+            <div class="col">
+                <div class="explain-box">
+                    <code>findAll()</code> → <code>SELECT * FROM clientes</code><br>
+                    Retorna um <strong>array</strong> de instâncias.
+                </div>
+            </div>
+            <div class="col">
+                <div class="explain-box yellow">
+                    <code>attributes</code> → <code>SELECT nome FROM clientes</code><br>
+                    <code>where</code> → <code>SELECT * ... WHERE id = 3</code>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 11: findByPk e findOne -->
+<div class="slide">
+    <div class="slide-content">
+        <h2><span class="emoji">🎯</span> Consultas — <code>findByPk()</code> e <code>findOne()</code></h2>
+        <div class="two-cols">
+            <div class="col">
+                <div class="code-block">
+                    <span class="code-label">findByPk</span>
+<pre><span class="comment">// Busca por chave primária</span>
+<span class="keyword">const</span> c = <span class="keyword">await</span> <span class="type">Cliente</span>.<span class="function">findByPk</span>(<span class="number">3</span>);
+<span class="comment">// → SELECT * ... WHERE id=3 LIMIT 1</span></pre>
+                </div>
+                <div class="explain-box green">
+                    Retorna <strong>um único objeto</strong> ou <code>null</code>. Otimizado para busca por ID.
+                </div>
+            </div>
+            <div class="col">
+                <div class="code-block">
+                    <span class="code-label">findOne</span>
+<pre><span class="comment">// Busca o primeiro que satisfaz</span>
+<span class="keyword">const</span> c = <span class="keyword">await</span> <span class="type">Cliente</span>.<span class="function">findOne</span>({
+  <span class="property">where</span>: { <span class="property">id</span>: <span class="number">3</span> }
+});
+<span class="comment">// → SELECT * ... WHERE id=3 LIMIT 1</span></pre>
+                </div>
+                <div class="explain-box">
+                    Também retorna <strong>um único objeto</strong> ou <code>null</code>. Aceita qualquer condição <code>where</code>.
+                </div>
+            </div>
+        </div>
+        <div class="explain-box purple" style="text-align:center;margin-top:16px">
+            <strong>Resumo:</strong> <code>findAll()</code> retorna <strong>array</strong> &nbsp;|&nbsp; <code>findByPk()</code> e <code>findOne()</code> retornam <strong>um único objeto</strong>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 12: Resumo SQL -->
+<div class="slide">
+    <div class="slide-content">
+        <h2><span class="emoji">📋</span> Resumo — Sequelize → SQL</h2>
+        <table>
+            <thead>
+                <tr><th>Método Sequelize</th><th>SQL Gerado</th><th>Retorno</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>findAll()</code></td><td><code>SELECT * FROM clientes</code></td><td>Array</td></tr>
+                <tr><td><code>findAll({ attributes: ['nome'] })</code></td><td><code>SELECT nome FROM clientes</code></td><td>Array</td></tr>
+                <tr><td><code>findAll({ where: {id: 3} })</code></td><td><code>SELECT * … WHERE id=3</code></td><td>Array</td></tr>
+                <tr><td><code>findByPk(3)</code></td><td><code>SELECT * … WHERE id=3 LIMIT 1</code></td><td>Objeto</td></tr>
+                <tr><td><code>findOne({ where: {id: 3} })</code></td><td><code>SELECT * … WHERE id=3 LIMIT 1</code></td><td>Objeto</td></tr>
+                <tr><td><code>create({ nome: '...' })</code></td><td><code>INSERT INTO clientes …</code></td><td>Objeto</td></tr>
+                <tr><td><code>instancia.save()</code></td><td><code>INSERT</code> ou <code>UPDATE</code></td><td>—</td></tr>
+                <tr><td><code>instancia.destroy()</code></td><td><code>DELETE FROM … WHERE id=N</code></td><td>—</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- SLIDE 13: Conclusão -->
+<div class="slide conclusion-slide">
+    <div class="slide-content">
+        <div class="checkmark">✅</div>
+        <h2>Conclusão</h2>
+        <p>Neste tutorial, aprendemos os fundamentos do Sequelize:</p>
+        <div style="text-align:left;max-width:500px">
+            <ul>
+                <li>Estabelecer <strong>conexão</strong> com o banco de dados</li>
+                <li>Definir <strong>modelos</strong> que representam tabelas</li>
+                <li>Criar e manipular <strong>instâncias</strong> de modelos</li>
+                <li>Persistir dados: <strong>inserir</strong>, <strong>atualizar</strong>, <strong>remover</strong></li>
+                <li>Consultar dados com <strong>findAll</strong>, <strong>findByPk</strong>, <strong>findOne</strong></li>
+            </ul>
+        </div>
+        <div class="explain-box" style="max-width:500px;text-align:left;margin-top:12px">
+            <strong>Próximos passos:</strong> Validações, Associações (hasMany, belongsTo), Operadores avançados, Transações.
+        </div>
+    </div>
+</div>
+
+</div><!-- /slides-container -->
+
+<script src="slide-engine.js"></script>
+</body>
+</html>

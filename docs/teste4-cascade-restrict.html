@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundamentos do Sequelize - CASCADE e RESTRICT</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+        }
+
+        h3 {
+            color: #2c3e50;
+        }
+
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .code-block {
+            background-color: #f8f8f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .explanation {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .visualization {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .visualization svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .table-visualization {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .table-visualization th,
+        .table-visualization td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .table-visualization th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .table-visualization tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .highlight {
+            background-color: #ffffcc;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .nav {
+            background-color: #2c3e50;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .nav li {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            background-color: #3498db;
+        }
+
+        .nav a:hover {
+            background-color: #2980b9;
+        }
+
+        .error-box {
+            background-color: #fdecea;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            color: #c0392b;
+        }
+
+        .success-box {
+            background-color: #eafaf1;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            color: #1e8449;
+        }
+
+        .cascade-box {
+            background-color: #fef9e7;
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .restrict-box {
+            background-color: #fdecea;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .nav ul {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Fundamentos do Sequelize - CASCADE e RESTRICT</h1>
+
+    <div class="nav">
+        <ul>
+            <li><a href="#introducao">Introdução</a></li>
+            <li><a href="#modelos">Modelos</a></li>
+            <li><a href="#associacoes">Associações com Regras</a></li>
+            <li><a href="#inserindo">Inserindo Dados</a></li>
+            <li><a href="#cascade">Comportamento CASCADE</a></li>
+            <li><a href="#restrict">Comportamento RESTRICT</a></li>
+            <li><a href="#comparacao">Comparação</a></li>
+        </ul>
+    </div>
+
+    <div id="introducao" class="section">
+        <h2>Introdução</h2>
+        <div class="explanation">
+            <p>Quando temos associações entre modelos, surge a questão: <strong>o que acontece quando tentamos excluir ou
+                    atualizar um registro que tem registros dependentes?</strong></p>
+            <p>O Sequelize oferece duas estratégias principais para tratar essa situação:</p>
+            <ul>
+                <li><strong>CASCADE</strong>: A exclusão/atualização do registro pai é <strong>propagada</strong> para os
+                    registros filhos</li>
+                <li><strong>RESTRICT</strong>: A exclusão/atualização do registro pai é <strong>bloqueada</strong> se
+                    existirem registros filhos</li>
+            </ul>
+        </div>
+        <div class="visualization">
+            <svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg">
+                <!-- Title -->
+                <text x="300" y="30" font-family="Arial" font-size="18" text-anchor="middle" fill="#2c3e50"
+                    font-weight="bold">CASCADE vs RESTRICT ao excluir o registro pai</text>
+
+                <!-- CASCADE side -->
+                <rect x="20" y="50" width="260" height="150" rx="8" ry="8" fill="#fef9e7" stroke="#f39c12"
+                    stroke-width="2" />
+                <text x="150" y="75" font-family="Arial" font-size="16" text-anchor="middle" fill="#f39c12"
+                    font-weight="bold">CASCADE</text>
+
+                <rect x="100" y="90" width="100" height="30" rx="5" ry="5" fill="#e74c3c" stroke="#2c3e50" />
+                <text x="150" y="110" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Excluir
+                    Pai</text>
+
+                <text x="150" y="135" font-family="Arial" font-size="14" text-anchor="middle" fill="#2c3e50">↓</text>
+
+                <rect x="60" y="145" width="80" height="25" rx="5" ry="5" fill="#e74c3c" stroke="#2c3e50"
+                    opacity="0.6" />
+                <text x="100" y="163" font-family="Arial" font-size="11" text-anchor="middle" fill="white">Filho 1 ❌
+                </text>
+
+                <rect x="160" y="145" width="80" height="25" rx="5" ry="5" fill="#e74c3c" stroke="#2c3e50"
+                    opacity="0.6" />
+                <text x="200" y="163" font-family="Arial" font-size="11" text-anchor="middle" fill="white">Filho 2 ❌
+                </text>
+
+                <text x="150" y="190" font-family="Arial" font-size="12" text-anchor="middle" fill="#7f8c8d">Filhos
+                    excluídos automaticamente</text>
+
+                <!-- RESTRICT side -->
+                <rect x="320" y="50" width="260" height="150" rx="8" ry="8" fill="#fdecea" stroke="#e74c3c"
+                    stroke-width="2" />
+                <text x="450" y="75" font-family="Arial" font-size="16" text-anchor="middle" fill="#e74c3c"
+                    font-weight="bold">RESTRICT</text>
+
+                <rect x="400" y="90" width="100" height="30" rx="5" ry="5" fill="#bdc3c7" stroke="#2c3e50" />
+                <text x="450" y="110" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Excluir Pai
+                    🚫</text>
+
+                <text x="450" y="135" font-family="Arial" font-size="14" text-anchor="middle" fill="#e74c3c">✕
+                    BLOQUEADO</text>
+
+                <rect x="360" y="145" width="80" height="25" rx="5" ry="5" fill="#27ae60" stroke="#2c3e50" />
+                <text x="400" y="163" font-family="Arial" font-size="11" text-anchor="middle" fill="white">Filho 1 ✅
+                </text>
+
+                <rect x="460" y="145" width="80" height="25" rx="5" ry="5" fill="#27ae60" stroke="#2c3e50" />
+                <text x="500" y="163" font-family="Arial" font-size="11" text-anchor="middle" fill="white">Filho 2 ✅
+                </text>
+
+                <text x="450" y="190" font-family="Arial" font-size="12" text-anchor="middle" fill="#7f8c8d">Exclusão
+                    impedida (erro)</text>
+            </svg>
+        </div>
+    </div>
+
+    <div id="modelos" class="section">
+        <h2>Definindo os Modelos</h2>
+        <div class="code-block">
+            <pre>const { Sequelize, Model, DataTypes } = require("sequelize");
+
+const sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: 'database.sqlite'
+});
+
+// Definindo as classes de modelo
+class Cliente extends Model {
+    static init(sequelize) {
+        super.init({
+            nome: DataTypes.STRING
+        }, { sequelize, modelName: 'cliente', tableName: 'clientes' })
+    }
+}
+
+class Telefone extends Model {
+    static init(sequelize) {
+        super.init({
+            numero: DataTypes.STRING
+        }, { sequelize, modelName: 'telefone', tableName: 'telefones' })
+    }
+}
+
+class Venda extends Model {
+    static init(sequelize) {
+        super.init({
+            valor: DataTypes.FLOAT
+        }, { sequelize, modelName: 'venda', tableName: 'vendas' })
+    }
+}
+
+// Inicializando os modelos
+Cliente.init(sequelize);
+Telefone.init(sequelize);
+Venda.init(sequelize);</pre>
+        </div>
+        <div class="explanation">
+            <p>Os três modelos são idênticos ao tutorial de associações. A diferença estará nas
+                <strong>configurações das associações</strong>, onde definiremos as regras de CASCADE e RESTRICT.</p>
+        </div>
+    </div>
+
+    <div id="associacoes" class="section">
+        <h2>Configurando Associações com Regras de Integridade</h2>
+        <div class="code-block">
+            <pre>// Configurando as associações entre os modelos
+Cliente.hasMany(Telefone, {as: 'telefones', onDelete: 'CASCADE', onUpdate: 'CASCADE'});
+Venda.belongsTo(Cliente, {onDelete: 'RESTRICT', onUpdate: 'RESTRICT'});</pre>
+        </div>
+        <div class="explanation">
+            <p>Neste trecho, definimos as mesmas associações do teste anterior, mas com regras adicionais:</p>
+            <ol>
+                <li><strong>Cliente → Telefone (hasMany com CASCADE):</strong>
+                    <ul>
+                        <li><code>onDelete: 'CASCADE'</code>: Ao excluir um cliente, seus telefones são excluídos
+                            automaticamente</li>
+                        <li><code>onUpdate: 'CASCADE'</code>: Ao alterar o ID de um cliente, a FK nos telefones é
+                            atualizada automaticamente</li>
+                    </ul>
+                </li>
+                <li><strong>Venda → Cliente (belongsTo com RESTRICT):</strong>
+                    <ul>
+                        <li><code>onDelete: 'RESTRICT'</code>: Impede a exclusão de um cliente que tenha vendas
+                            vinculadas</li>
+                        <li><code>onUpdate: 'RESTRICT'</code>: Impede a alteração do ID de um cliente que tenha vendas
+                            vinculadas</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <div class="cascade-box">
+            <strong>🔄 CASCADE (Cliente → Telefone):</strong>
+            <p>Excluir o cliente? → Todos os telefones dele são excluídos junto!</p>
+            <p><em>Útil quando os filhos não fazem sentido sem o pai.</em></p>
+        </div>
+
+        <div class="restrict-box">
+            <strong>🚫 RESTRICT (Venda → Cliente):</strong>
+            <p>Excluir o cliente? → ERRO! Existem vendas vinculadas a ele.</p>
+            <p><em>Útil quando os filhos devem ser preservados (registros financeiros, históricos, etc.).</em></p>
+        </div>
+
+        <div class="visualization">
+            <svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+                <!-- Title -->
+                <text x="300" y="30" font-family="Arial" font-size="18" text-anchor="middle" fill="#2c3e50"
+                    font-weight="bold">Diagrama de Associações com Regras</text>
+
+                <!-- Cliente -->
+                <rect x="210" y="50" width="180" height="60" rx="8" ry="8" fill="#3498db" stroke="#2c3e50"
+                    stroke-width="2" />
+                <text x="300" y="75" font-family="Arial" font-size="16" text-anchor="middle" fill="white"
+                    font-weight="bold">Cliente</text>
+                <text x="300" y="95" font-family="Arial" font-size="13" text-anchor="middle" fill="white">id, nome
+                </text>
+
+                <!-- Telefone -->
+                <rect x="30" y="180" width="180" height="60" rx="8" ry="8" fill="#27ae60" stroke="#2c3e50"
+                    stroke-width="2" />
+                <text x="120" y="205" font-family="Arial" font-size="16" text-anchor="middle" fill="white"
+                    font-weight="bold">Telefone</text>
+                <text x="120" y="225" font-family="Arial" font-size="13" text-anchor="middle" fill="white">id, numero,
+                    clienteId</text>
+
+                <!-- Venda -->
+                <rect x="390" y="180" width="180" height="60" rx="8" ry="8" fill="#e67e22" stroke="#2c3e50"
+                    stroke-width="2" />
+                <text x="480" y="205" font-family="Arial" font-size="16" text-anchor="middle" fill="white"
+                    font-weight="bold">Venda</text>
+                <text x="480" y="225" font-family="Arial" font-size="13" text-anchor="middle" fill="white">id, valor,
+                    clienteId</text>
+
+                <!-- Linha Cliente → Telefone -->
+                <line x1="250" y1="110" x2="140" y2="180" stroke="#f39c12" stroke-width="3" />
+                <rect x="100" y="135" width="120" height="25" rx="5" ry="5" fill="#f39c12" />
+                <text x="160" y="152" font-family="Arial" font-size="12" text-anchor="middle" fill="white"
+                    font-weight="bold">CASCADE 🔄</text>
+                <text x="230" y="125" font-family="Arial" font-size="12" text-anchor="middle" fill="#7f8c8d">hasMany
+                </text>
+
+                <!-- Linha Cliente → Venda -->
+                <line x1="350" y1="110" x2="460" y2="180" stroke="#e74c3c" stroke-width="3" />
+                <rect x="380" y="135" width="120" height="25" rx="5" ry="5" fill="#e74c3c" />
+                <text x="440" y="152" font-family="Arial" font-size="12" text-anchor="middle" fill="white"
+                    font-weight="bold">RESTRICT 🚫</text>
+                <text x="375" y="125" font-family="Arial" font-size="12" text-anchor="middle"
+                    fill="#7f8c8d">belongsTo</text>
+
+                <!-- Nota -->
+                <text x="300" y="270" font-family="Arial" font-size="13" text-anchor="middle" fill="#7f8c8d">Mesmo
+                    cliente, comportamentos diferentes ao ser excluído</text>
+            </svg>
+        </div>
+    </div>
+
+    <div id="inserindo" class="section">
+        <h2>Inserindo Dados de Exemplo</h2>
+
+        <h3>Inserindo Cliente e Telefones</h3>
+        <div class="code-block">
+            <pre>// Inserindo um cliente e dois telefones para, depois, vincular os telefones ao cliente
+const cliente1 = await Cliente.create({ nome: "Alberto" });
+const telefone1 = await Telefone.create({ numero: "(11) 1111-1111" });
+const telefone2 = await Telefone.create({ numero: "(22) 2222-2222" });
+await cliente1.setTelefones([telefone1, telefone2]);
+
+// Inserindo um telefone já com informação do cliente
+const telefone3 = await Telefone.create({ numero: "(33) 3333-3333", clienteId: cliente1.id });</pre>
+        </div>
+        <div class="explanation">
+            <p>Criamos um cliente e três telefones vinculados a ele. Idêntico ao tutorial de associações.</p>
+        </div>
+
+        <h3>Inserindo Vendas</h3>
+        <div class="code-block">
+            <pre>// Inserindo duas vendas para, depois, vincular as vendas ao cliente
+const venda1 = await Venda.create({ valor: 100 });
+const venda2 = await Venda.create({ valor: 200 });
+await venda1.setCliente(cliente1);
+await venda2.setCliente(cliente1);
+
+// Inserindo uma venda já com informação do cliente
+const venda3 = await Venda.create({ valor: 300, clienteId: cliente1.id });</pre>
+        </div>
+        <div class="explanation">
+            <p>Criamos três vendas vinculadas ao mesmo cliente Alberto.</p>
+        </div>
+
+        <div class="visualization">
+            <svg viewBox="0 0 600 260" xmlns="http://www.w3.org/2000/svg">
+                <text x="300" y="25" font-family="Arial" font-size="16" text-anchor="middle" fill="#2c3e50"
+                    font-weight="bold">Dados no Banco de Dados</text>
+
+                <!-- Cliente -->
+                <rect x="200" y="40" width="200" height="40" rx="5" ry="5" fill="#3498db" stroke="#2c3e50"
+                    stroke-width="2" />
+                <text x="300" y="65" font-family="Arial" font-size="14" text-anchor="middle" fill="white"
+                    font-weight="bold">Cliente: Alberto (id=1)</text>
+
+                <!-- Telefones -->
+                <rect x="20" y="120" width="160" height="30" rx="5" ry="5" fill="#27ae60" stroke="#2c3e50" />
+                <text x="100" y="140" font-family="Arial" font-size="12" text-anchor="middle" fill="white">(11)
+                    1111-1111</text>
+
+                <rect x="200" y="120" width="160" height="30" rx="5" ry="5" fill="#27ae60" stroke="#2c3e50" />
+                <text x="280" y="140" font-family="Arial" font-size="12" text-anchor="middle" fill="white">(22)
+                    2222-2222</text>
+
+                <rect x="380" y="120" width="160" height="30" rx="5" ry="5" fill="#27ae60" stroke="#2c3e50" />
+                <text x="460" y="140" font-family="Arial" font-size="12" text-anchor="middle" fill="white">(33)
+                    3333-3333</text>
+
+                <text x="300" y="105" font-family="Arial" font-size="12" text-anchor="middle" fill="#f39c12"
+                    font-weight="bold">CASCADE 🔄</text>
+
+                <!-- Linhas telefones -->
+                <line x1="280" y1="80" x2="100" y2="120" stroke="#f39c12" stroke-width="1.5" />
+                <line x1="300" y1="80" x2="280" y2="120" stroke="#f39c12" stroke-width="1.5" />
+                <line x1="320" y1="80" x2="460" y2="120" stroke="#f39c12" stroke-width="1.5" />
+
+                <!-- Vendas -->
+                <rect x="60" y="200" width="130" height="30" rx="5" ry="5" fill="#e67e22" stroke="#2c3e50" />
+                <text x="125" y="220" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Venda R$
+                    100</text>
+
+                <rect x="220" y="200" width="130" height="30" rx="5" ry="5" fill="#e67e22" stroke="#2c3e50" />
+                <text x="285" y="220" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Venda R$
+                    200</text>
+
+                <rect x="380" y="200" width="130" height="30" rx="5" ry="5" fill="#e67e22" stroke="#2c3e50" />
+                <text x="445" y="220" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Venda R$
+                    300</text>
+
+                <text x="300" y="185" font-family="Arial" font-size="12" text-anchor="middle" fill="#e74c3c"
+                    font-weight="bold">RESTRICT 🚫</text>
+
+                <!-- Linhas vendas -->
+                <line x1="280" y1="80" x2="125" y2="200" stroke="#e74c3c" stroke-width="1.5" stroke-dasharray="5,3" />
+                <line x1="300" y1="80" x2="285" y2="200" stroke="#e74c3c" stroke-width="1.5" stroke-dasharray="5,3" />
+                <line x1="320" y1="80" x2="445" y2="200" stroke="#e74c3c" stroke-width="1.5" stroke-dasharray="5,3" />
+
+                <text x="300" y="255" font-family="Arial" font-size="12" text-anchor="middle" fill="#7f8c8d">Todos os
+                    registros pertencem ao Cliente Alberto (id=1)</text>
+            </svg>
+        </div>
+    </div>
+
+    <div id="cascade" class="section">
+        <h2>Testando a Exclusão: O que Acontece?</h2>
+        <div class="code-block">
+            <pre>// Tentando excluir o cliente
+await cliente1.destroy();</pre>
+        </div>
+        <div class="explanation">
+            <p>Ao tentar excluir o cliente Alberto, o Sequelize precisa verificar as regras definidas nas
+                associações:</p>
+            <ol>
+                <li><strong>Telefones (CASCADE):</strong> Os 3 telefones do cliente seriam excluídos automaticamente ✅
+                </li>
+                <li><strong>Vendas (RESTRICT):</strong> Como existem vendas vinculadas, a exclusão é <strong>bloqueada
+                        com erro</strong> ❌</li>
+            </ol>
+            <p><strong>Resultado:</strong> O RESTRICT prevalece! O cliente <strong>não pode ser excluído</strong> porque
+                existem vendas vinculadas a ele.</p>
+        </div>
+        <div class="error-box">
+            ❌ SequelizeForeignKeyConstraintError<br>
+            → Não é possível excluir o cliente porque existem vendas com RESTRICT<br>
+            → O RESTRICT bloqueia a operação para proteger os dados financeiros
+        </div>
+
+        <h3>O Comportamento CASCADE em Ação</h3>
+        <div class="cascade-box">
+            <p><strong>Se NÃO houvesse vendas</strong> (ou se vendas também fosse CASCADE), ao excluir o cliente:</p>
+            <ul>
+                <li>O cliente Alberto seria excluído</li>
+                <li>(11) 1111-1111 seria excluído automaticamente</li>
+                <li>(22) 2222-2222 seria excluído automaticamente</li>
+                <li>(33) 3333-3333 seria excluído automaticamente</li>
+            </ul>
+            <p><em>O CASCADE propaga a exclusão em cascata para todos os registros filhos.</em></p>
+        </div>
+
+        <h3>O Comportamento RESTRICT em Ação</h3>
+        <div class="restrict-box">
+            <p><strong>Como existem vendas</strong> com RESTRICT, ao tentar excluir o cliente:</p>
+            <ul>
+                <li>A operação é <strong>bloqueada</strong></li>
+                <li>O cliente NÃO é excluído</li>
+                <li>Os telefones NÃO são excluídos (a cascata nem inicia)</li>
+                <li>As vendas continuam intocadas</li>
+                <li>Um erro <code>SequelizeForeignKeyConstraintError</code> é lançado</li>
+            </ul>
+            <p><em>O RESTRICT protege a integridade dos dados impedindo exclusões perigosas.</em></p>
+        </div>
+
+        <div class="visualization">
+            <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+                <text x="300" y="25" font-family="Arial" font-size="16" text-anchor="middle" fill="#2c3e50"
+                    font-weight="bold">Resultado de cliente1.destroy()</text>
+
+                <!-- Cliente -->
+                <rect x="210" y="45" width="180" height="40" rx="5" ry="5" fill="#3498db" stroke="#2c3e50"
+                    stroke-width="2" />
+                <text x="300" y="70" font-family="Arial" font-size="14" text-anchor="middle" fill="white">Cliente
+                    Alberto</text>
+
+                <!-- X over cliente -->
+                <text x="365" y="60" font-family="Arial" font-size="24" fill="#e74c3c" font-weight="bold">✕</text>
+
+                <!-- Telefones OK to delete -->
+                <rect x="40" y="120" width="150" height="35" rx="5" ry="5" fill="#27ae60" stroke="#2c3e50"
+                    opacity="0.5" />
+                <text x="115" y="142" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Telefones
+                    (CASCADE ✅)</text>
+                <line x1="260" y1="85" x2="115" y2="120" stroke="#f39c12" stroke-width="2" />
+
+                <!-- Vendas block -->
+                <rect x="410" y="120" width="150" height="35" rx="5" ry="5" fill="#e74c3c" stroke="#2c3e50" />
+                <text x="485" y="142" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Vendas
+                    (RESTRICT 🚫)</text>
+                <line x1="340" y1="85" x2="485" y2="120" stroke="#e74c3c" stroke-width="2" />
+
+                <!-- Result -->
+                <rect x="150" y="170" width="300" height="25" rx="5" ry="5" fill="#e74c3c" stroke="#2c3e50" />
+                <text x="300" y="187" font-family="Arial" font-size="13" text-anchor="middle" fill="white">RESTRICT
+                    prevalece → Exclusão BLOQUEADA!</text>
+            </svg>
+        </div>
+    </div>
+
+    <div id="comparacao" class="section">
+        <h2>Comparação: CASCADE vs RESTRICT</h2>
+        <table class="table-visualization">
+            <thead>
+                <tr>
+                    <th>Característica</th>
+                    <th>CASCADE</th>
+                    <th>RESTRICT</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Comportamento ao excluir pai</strong></td>
+                    <td>Exclui filhos automaticamente</td>
+                    <td>Bloqueia a exclusão (erro)</td>
+                </tr>
+                <tr>
+                    <td><strong>Comportamento ao atualizar pai</strong></td>
+                    <td>Atualiza FK dos filhos</td>
+                    <td>Bloqueia a atualização (erro)</td>
+                </tr>
+                <tr>
+                    <td><strong>Protege dados filhos?</strong></td>
+                    <td>Não — filhos são perdidos</td>
+                    <td>Sim — filhos são preservados</td>
+                </tr>
+                <tr>
+                    <td><strong>Uso comum</strong></td>
+                    <td>Telefones, endereços, configurações</td>
+                    <td>Vendas, transações, históricos</td>
+                </tr>
+                <tr>
+                    <td><strong>SQL gerado</strong></td>
+                    <td><code>ON DELETE CASCADE</code></td>
+                    <td><code>ON DELETE RESTRICT</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Quando usar</strong></td>
+                    <td>Filhos não fazem sentido sem o pai</td>
+                    <td>Filhos devem ser preservados mesmo sem o pai</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="explanation">
+            <p><strong>Outras opções disponíveis no Sequelize:</strong></p>
+            <ul>
+                <li><code>SET NULL</code>: Define a FK do filho como <code>NULL</code> ao excluir o pai</li>
+                <li><code>SET DEFAULT</code>: Define a FK do filho como o valor padrão ao excluir o pai</li>
+                <li><code>NO ACTION</code>: Similar ao RESTRICT (depende do banco de dados)</li>
+            </ul>
+        </div>
+
+        <div class="visualization">
+            <svg viewBox="0 0 600 130" xmlns="http://www.w3.org/2000/svg">
+                <rect x="20" y="10" width="560" height="110" rx="8" ry="8" fill="#ecf0f1" stroke="#2c3e50"
+                    stroke-width="2" />
+                <text x="300" y="35" font-family="Arial" font-size="16" text-anchor="middle" fill="#2c3e50"
+                    font-weight="bold">Opções de onDelete / onUpdate</text>
+
+                <rect x="40" y="50" width="100" height="30" rx="5" ry="5" fill="#f39c12" />
+                <text x="90" y="70" font-family="Arial" font-size="13" text-anchor="middle" fill="white">CASCADE</text>
+
+                <rect x="155" y="50" width="100" height="30" rx="5" ry="5" fill="#e74c3c" />
+                <text x="205" y="70" font-family="Arial" font-size="13" text-anchor="middle" fill="white">RESTRICT
+                </text>
+
+                <rect x="270" y="50" width="100" height="30" rx="5" ry="5" fill="#9b59b6" />
+                <text x="320" y="70" font-family="Arial" font-size="13" text-anchor="middle" fill="white">SET NULL
+                </text>
+
+                <rect x="385" y="50" width="100" height="30" rx="5" ry="5" fill="#1abc9c" />
+                <text x="435" y="70" font-family="Arial" font-size="13" text-anchor="middle" fill="white">NO ACTION
+                </text>
+
+                <text x="90" y="100" font-family="Arial" font-size="11" text-anchor="middle"
+                    fill="#7f8c8d">Propaga</text>
+                <text x="205" y="100" font-family="Arial" font-size="11" text-anchor="middle"
+                    fill="#7f8c8d">Bloqueia</text>
+                <text x="320" y="100" font-family="Arial" font-size="11" text-anchor="middle" fill="#7f8c8d">Anula FK
+                </text>
+                <text x="435" y="100" font-family="Arial" font-size="11" text-anchor="middle" fill="#7f8c8d">≈ Restrict
+                </text>
+            </svg>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Conclusão</h2>
+        <div class="explanation">
+            <p>Neste tutorial, aprendemos sobre as regras de integridade referencial no Sequelize:</p>
+            <ul>
+                <li><strong>CASCADE</strong> propaga exclusões/atualizações do pai para os filhos</li>
+                <li><strong>RESTRICT</strong> bloqueia exclusões/atualizações quando existem registros filhos</li>
+                <li>As regras são definidas nas opções <code>onDelete</code> e <code>onUpdate</code> das associações
+                </li>
+                <li>O RESTRICT é útil para proteger dados importantes (vendas, transações, logs)</li>
+                <li>O CASCADE é útil para dados dependentes (telefones, endereços, configurações)</li>
+            </ul>
+            <p>Escolher a regra correta é fundamental para manter a integridade e a consistência dos dados no seu banco
+                de dados.</p>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Associações no Sequelize</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+        }
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .code-block {
+            background-color: #f8f8f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            margin-bottom: 20px;
+        }
+        .explanation {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .visualization {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .visualization svg {
+            max-width: 100%;
+            height: auto;
+        }
+        .table-visualization {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .table-visualization th, .table-visualization td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .table-visualization th {
+            background-color: #3498db;
+            color: white;
+        }
+        .table-visualization tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .highlight {
+            background-color: #ffffcc;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .nav {
+            background-color: #2c3e50;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .nav li {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            background-color: #3498db;
+        }
+        .nav a:hover {
+            background-color: #2980b9;
+        }
+        @media (max-width: 768px) {
+            .nav ul {
+                flex-direction: column;
+            }
+        }
+        .association-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+        }
+        .association-title {
+            font-weight: bold;
+            color: #2980b9;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Associações no Sequelize</h1>
+    
+    <div class="nav">
+        <ul>
+            <li><a href="#introducao">Introdução</a></li>
+            <li><a href="#definicao-modelos">Definição de Modelos</a></li>
+            <li><a href="#tipos-associacoes">Tipos de Associações</a></li>
+            <li><a href="#hasMany">hasMany</a></li>
+            <li><a href="#belongsTo">belongsTo</a></li>
+            <li><a href="#criacao-associacoes">Criação com Associações</a></li>
+            <li><a href="#consultas-incluindo">Consultas com Include</a></li>
+        </ul>
+    </div>
+
+    <!-- SEÇÃO 1: INTRODUÇÃO -->
+    <div id="introducao" class="section">
+        <h2>Introdução às Associações</h2>
+        <div class="explanation">
+            <p>As <strong>associações</strong> no Sequelize permitem estabelecer relacionamentos entre tabelas/modelos, assim como em bancos de dados relacionais. Os principais tipos de associações são:</p>
+            <ul>
+                <li><code>hasOne</code>: Um para um (1:1)</li>
+                <li><code>hasMany</code>: Um para muitos (1:N)</li>
+                <li><code>belongsTo</code>: Muitos para um (N:1)</li>
+                <li><code>belongsToMany</code>: Muitos para muitos (N:N)</li>
+            </ul>
+            <p>Neste tutorial, focaremos nos relacionamentos <code>hasMany</code> e <code>belongsTo</code>, que são os mais comuns.</p>
+        </div>
+        <div class="visualization">
+            <svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg">
+                <!-- Modelo Cliente -->
+                <rect x="50" y="20" width="120" height="140" rx="5" ry="5" fill="#3498db" stroke="#2c3e50" stroke-width="2"/>
+                <text x="110" y="45" font-family="Arial" font-size="16" text-anchor="middle" fill="white">Cliente</text>
+                <rect x="60" y="55" width="100" height="25" fill="#ffffff" stroke="#2c3e50"/>
+                <text x="110" y="72" font-family="Arial" font-size="12" text-anchor="middle">id (PK)</text>
+                <rect x="60" y="80" width="100" height="25" fill="#ffffff" stroke="#2c3e50"/>
+                <text x="110" y="97" font-family="Arial" font-size="12" text-anchor="middle">nome</text>
+                
+                <!-- Modelo Telefone -->
+                <rect x="230" y="20" width="120" height="60" rx="5" ry="5" fill="#e74c3c" stroke="#2c3e50" stroke-width="2"/>
+                <text x="290" y="45" font-family="Arial" font-size="16" text-anchor="middle" fill="white">Telefone</text>
+                <rect x="240" y="55" width="100" height="25" fill="#ffffff" stroke="#2c3e50"/>
+                <text x="290" y="72" font-family="Arial" font-size="12" text-anchor="middle">numero</text>
+                
+                <!-- Seta hasMany -->
+                <line x1="170" y1="50" x2="230" y2="50" stroke="#27ae60" stroke-width="2"/>
+                <polygon points="225,45 235,50 225,55" fill="#27ae60"/>
+                <text x="200" y="40" font-family="Arial" font-size="12" text-anchor="middle" fill="#2c3e50">hasMany</text>
+                
+                <!-- Modelo Venda -->
+                <rect x="230" y="100" width="120" height="60" rx="5" ry="5" fill="#9b59b6" stroke="#2c3e50" stroke-width="2"/>
+                <text x="290" y="125" font-family="Arial" font-size="16" text-anchor="middle" fill="white">Venda</text>
+                <rect x="240" y="135" width="100" height="25" fill="#ffffff" stroke="#2c3e50"/>
+                <text x="290" y="152" font-family="Arial" font-size="12" text-anchor="middle">valor</text>
+                
+                <!-- Seta belongsTo -->
+                <line x1="230" y1="130" x2="170" y2="130" stroke="#f39c12" stroke-width="2"/>
+                <polygon points="175,125 165,130 175,135" fill="#f39c12"/>
+                <text x="200" y="150" font-family="Arial" font-size="12" text-anchor="middle" fill="#2c3e50">belongsTo</text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- SEÇÃO 2: DEFINIÇÃO DE MODELOS -->
+    <div id="definicao-modelos" class="section">
+        <h2>Definição dos Modelos</h2>
+        <div class="code-block">
+            <pre>const { Sequelize, Model, DataTypes } = require("sequelize");
+
+const sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: 'database.sqlite'
+});
+
+// Definindo as classes de modelo
+class Cliente extends Model {
+    static init(sequelize) {
+        super.init({
+            nome: DataTypes.STRING
+        }, { sequelize, modelName: 'cliente', tableName: 'clientes' })
+    }
+}
+
+class Telefone extends Model {
+    static init(sequelize) {
+        super.init({
+            numero: DataTypes.STRING
+        }, { sequelize, modelName: 'telefone', tableName: 'telefones' })
+    }
+}
+
+class Venda extends Model {
+    static init(sequelize) {
+        super.init({
+            valor: DataTypes.FLOAT
+        }, { sequelize, modelName: 'venda', tableName: 'vendas' })
+    }
+}
+
+// Inicializando os modelos
+Cliente.init(sequelize);
+Telefone.init(sequelize);
+Venda.init(sequelize);</pre>
+        </div>
+        <div class="explanation">
+            <p>Neste trecho, estamos definindo três modelos que serão utilizados para demonstrar associações:</p>
+            <ol>
+                <li><strong>Cliente</strong>: representa um cliente com um atributo nome</li>
+                <li><strong>Telefone</strong>: representa um número de telefone</li>
+                <li><strong>Venda</strong>: representa uma venda com um valor</li>
+            </ol>
+            <p>Cada modelo é criado como uma classe que estende <code>Model</code> do Sequelize, e possui uma configuração básica de seus campos através do método <code>init</code>.</p>
+        </div>
+    </div>
+
+    <!-- SEÇÃO 3: TIPOS DE ASSOCIAÇÕES -->
+    <div id="tipos-associacoes" class="section">
+        <h2>Configurando as Associações</h2>
+        <div class="code-block">
+            <pre>// Configurando as associações entre os modelos
+Cliente.hasMany(Telefone, {as: 'telefones'});
+Venda.belongsTo(Cliente);</pre>
+        </div>
+        <div class="explanation">
+            <p>Este trecho configura dois tipos de associações entre nossos modelos:</p>
+            <div class="association-card">
+                <div class="association-title">Cliente.hasMany(Telefone)</div>
+                <p>Estabelece que um cliente pode ter muitos telefones (relacionamento 1:N). O parâmetro <code>{as: 'telefones'}</code> define o nome do atributo que será usado para acessar os telefones de um cliente.</p>
+                <p>Esta associação automaticamente adiciona uma chave estrangeira <code>clienteId</code> na tabela <code>telefones</code>.</p>
+            </div>
+            <div class="association-card">
+                <div class="association-title">Venda.belongsTo(Cliente)</div>
+                <p>Estabelece que uma venda pertence a um cliente (relacionamento N:1). Esta associação também adiciona uma chave estrangeira <code>clienteId</code> na tabela <code>vendas</code>.</p>
+            </div>
+        </div>
+        <div class="visualization">
+            <svg viewBox="0 0 400 290" xmlns="http://www.w3.org/2000/svg">
+                <!-- Cliente Table -->
+                <rect x="20" y="20" width="360" height="60" rx="5" ry="5" fill="#3498db" stroke="#2c3e50" stroke-width="2"/>
+                <text x="200" y="45" font-family="Arial" font-size="16" text-anchor="middle" fill="white">Tabela clientes</text>
+                
+                <!-- Cliente Headers -->
+                <rect x="40" y="60" width="80" height="20" fill="#ffffff" stroke="#2c3e50"/>
+                <text x="80" y="75" font-family="Arial" font-size="12" text-anchor="middle">id (PK)</text>
+                <rect x="120" y="60" width="120" height="20" fill="#ffffff" stroke="#2c3e50"/>
+                <text x="180" y="75" font-family="Arial" font-size="12" text-anchor="middle">nome</text>
+                <rect x="240" y="60" width="120" height="20" fill="#ffffff" stroke="#2c3e50"/>
+                <text x="300" y="75" font-family="Arial" font-size="12" text-anchor="middle">timestamps</text>
+                
+                <!-- Telefones Table -->
+                <rect x="20" y="100" width="360" height="60" rx="5" ry="5" fill="#e74c3c" stroke="#2c3e50" stroke-width="2"/>
+                <text x="200" y="125" font-family="Arial" font-size="16" text-anchor="middle" fill="white">Tabela telefones</text>
+                
+                <!-- Telefones Headers -->
+                <rect x="40" y="140" width="80" height="20" fill="#ffffff" stroke="#2c3e50"/>
+                <text x="80" y="155" font-family="Arial" font-size="12" text-anchor="middle">id (PK)</text>
+                <rect x="120" y="140" width="80" height="20" fill="#ffffff" stroke="#2c3e50"/>
+                <text x="160" y="155" font-family="Arial" font-size="12" text-anchor="middle">numero</text>
+                <rect x="200" y="140" width="80" height="20" fill="#ffffff" stroke="#2c3e50"/>
+                <text x="240" y="155" font-family="Arial" font-size="12" text-anchor="middle">clienteId (FK)</text>
+                <rect x="280" y="140" width="80" height="20" fill="#ffffff" stroke="#2c3e50"/>
+                <text x="320" y="155" font-family="Arial" font-size="12" text-anchor="middle">timestamps</text>
+                
+                <!-- FK Arrow 1 -->
+                <line x1="240" y1="140" x2="80" y2="80" stroke="#27ae60" stroke-width="2" stroke-dasharray="5,3"/>
+                <polygon points="77,85 75,75 85,77" fill="#27ae60"/>
+                <text x="190" y="95" font-family="Arial" font-size="12" text-anchor="middle" fill="#27ae60">FK criada por hasMany</text>
+                
+                <!-- Vendas Table -->
+                <rect x="20" y="180" width="360" height="60" rx="5" ry="5" fill="#9b59b6" stroke="#2c3e50" stroke-width="2"/>
+                <text x="200" y="205" font-family="Arial" font-size="16" text-anchor="middle" fill="white">Tabela vendas</text>
+                
+                <!-- Vendas Headers -->
+                <rect x="40" y="220" width="80" height="20" fill="#ffffff" stroke="#2c3e50"/>
+                <text x="80" y="235" font-family="Arial" font-size="12" text-anchor="middle">id (PK)</text>
+                <rect x="120" y="220" width="80" height="20" fill="#ffffff" stroke="#2c3e50"/>
+                <text x="160" y="235" font-family="Arial" font-size="12" text-anchor="middle">valor</text>
+                <rect x="200" y="220" width="80" height="20" fill="#ffffff" stroke="#2c3e50"/>
+                <text x="240" y="235" font-family="Arial" font-size="12" text-anchor="middle">clienteId (FK)</text>
+                <rect x="280" y="220" width="80" height="20" fill="#ffffff" stroke="#2c3e50"/>
+                <text x="320" y="235" font-family="Arial" font-size="12" text-anchor="middle">timestamps</text>
+                
+                <!-- FK Arrow 2 -->
+                <line x1="240" y1="220" x2="80" y2="80" stroke="#f39c12" stroke-width="2" stroke-dasharray="5,3"/>
+                <polygon points="77,85 75,75 85,77" fill="#f39c12"/>
+                <text x="260" y="175" font-family="Arial" font-size="12" text-anchor="middle" fill="#f39c12">FK criada por belongsTo</text>
+                
+                <!-- Explanation -->
+                <rect x="20" y="250" width="360" height="30" rx="5" ry="5" fill="#2c3e50" stroke="#2c3e50" stroke-width="2"/>
+                <text x="200" y="270" font-family="Arial" font-size="11" text-anchor="middle" fill="white">Sequelize cria automaticamente as chaves estrangeiras (FK)</text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- SEÇÃO 4: HASMANY -->
+    <div id="hasMany" class="section">
+        <h2>Associação hasMany (Um para Muitos)</h2>
+        <div class="explanation">
+            <p>A associação <code>hasMany</code> estabelece um relacionamento <strong>um para muitos</strong> entre dois modelos. No nosso exemplo, um Cliente pode ter muitos Telefones.</p>
+            <p>Quando definimos <code>Cliente.hasMany(Telefone, {as: 'telefones'})</code>, o Sequelize:</p>
+            <ol>
+                <li>Adiciona uma chave estrangeira <code>clienteId</code> na tabela <code>telefones</code></li>
+                <li>Cria vários métodos de acesso no modelo <code>Cliente</code>:</li>
+                <ul>
+                    <li><code>cliente.getTelefones()</code>: busca todos os telefones do cliente</li>
+                    <li><code>cliente.setTelefones(telefones)</code>: define os telefones do cliente</li>
+                    <li><code>cliente.addTelefone(telefone)</code>: adiciona um telefone ao cliente</li>
+                    <li><code>cliente.removeTelefone(telefone)</code>: remove um telefone do cliente</li>
+                    <li><code>cliente.hasTelefone(telefone)</code>: verifica se o cliente tem determinado telefone</li>
+                </ul>
+            </ol>
+        </div>
+        <div class="code-block">
+            <pre>// Inserindo um cliente e dois telefones para, depois, vincular os telefones ao cliente
+const cliente1 = await Cliente.create({ nome: "Alberto" });
+const telefone1 = await Telefone.create({ numero: "(11) 1111-1111" });
+const telefone2 = await Telefone.create({ numero: "(22) 2222-2222" });
+await cliente1.setTelefones([telefone1, telefone2]);
+    
+// Inserindo um telefone já com informação do cliente
+const telefone3 = await Telefone.create({ numero: "(33) 3333-3333", clienteId: cliente1.id });</pre>
+        </div>
+        <div class="visualization">
+            <svg viewBox="0 0 400 270" xmlns="http://www.w3.org/2000/svg">
+                <!-- Cliente Instance -->
+                <rect x="20" y="20" width="360" height="60" rx="5" ry="5" fill="#3498db" stroke="#2c3e50" stroke-width="2"/>
+                <text x="200" y="40" font-family="Arial" font-size="16" text-anchor="middle" fill="white">cliente1 (Cliente)</text>
+                <text x="200" y="60" font-family="Arial" font-size="14" text-anchor="middle" fill="white">{ id: 1, nome: "Alberto" }</text>
+                
+                <!-- Telephone Instances -->
+                <rect x="20" y="100" width="110" height="60" rx="5" ry="5" fill="#e74c3c" stroke="#2c3e50" stroke-width="2"/>
+                <text x="75" y="125" font-family="Arial" font-size="14" text-anchor="middle" fill="white">telefone1</text>
+                <text x="75" y="145" font-family="Arial" font-size="12" text-anchor="middle" fill="white">(11) 1111-1111</text>
+                
+                <rect x="145" y="100" width="110" height="60" rx="5" ry="5" fill="#e74c3c" stroke="#2c3e50" stroke-width="2"/>
+                <text x="200" y="125" font-family="Arial" font-size="14" text-anchor="middle" fill="white">telefone2</text>
+                <text x="200" y="145" font-family="Arial" font-size="12" text-anchor="middle" fill="white">(22) 2222-2222</text>
+                
+                <rect x="270" y="100" width="110" height="60" rx="5" ry="5" fill="#e74c3c" stroke="#2c3e50" stroke-width="2"/>
+                <text x="325" y="125" font-family="Arial" font-size="14" text-anchor="middle" fill="white">telefone3</text>
+                <text x="325" y="145" font-family="Arial" font-size="12" text-anchor="middle" fill="white">(33) 3333-3333</text>
+                
+                <!-- Association Arrows -->
+                <line x1="75" y1="100" x2="150" y2="80" stroke="#27ae60" stroke-width="2"/>
+                <line x1="200" y1="100" x2="200" y2="80" stroke="#27ae60" stroke-width="2"/>
+                <line x1="325" y1="100" x2="250" y2="80" stroke="#27ae60" stroke-width="2"/>
+                
+                <!-- Association Methods -->
+                <rect x="20" y="180" width="360" height="80" rx="5" ry="5" fill="#f39c12" stroke="#2c3e50" stroke-width="2"/>
+                <text x="200" y="205" font-family="Arial" font-size="16" text-anchor="middle" fill="white">Métodos de Associação</text>
+                <text x="200" y="230" font-family="Arial" font-size="14" text-anchor="middle" fill="white">cliente1.setTelefones([telefone1, telefone2])</text>
+                <text x="200" y="250" font-family="Arial" font-size="14" text-anchor="middle" fill="white">telefone3 criado com clienteId: cliente1.id</text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- SEÇÃO 5: BELONGSTO -->
+    <div id="belongsTo" class="section">
+        <h2>Associação belongsTo (Muitos para Um)</h2>
+        <div class="explanation">
+            <p>A associação <code>belongsTo</code> estabelece um relacionamento <strong>muitos para um</strong> entre dois modelos. No nosso exemplo, uma Venda pertence a um Cliente.</p>
+            <p>Quando definimos <code>Venda.belongsTo(Cliente)</code>, o Sequelize:</p>
+            <ol>
+                <li>Adiciona uma chave estrangeira <code>clienteId</code> na tabela <code>vendas</code></li>
+                <li>Cria vários métodos de acesso no modelo <code>Venda</code>:</li>
+                <ul>
+                    <li><code>venda.getCliente()</code>: busca o cliente associado à venda</li>
+                    <li><code>venda.setCliente(cliente)</code>: define o cliente da venda</li>
+                </ul>
+            </ol>
+            <p><strong>Observação:</strong> Associar com <code>belongsTo</code> significa que a chave estrangeira existe no modelo fonte (neste caso, em <code>Venda</code>).</p>
+        </div>
+        <div class="code-block">
+            <pre>// Inserindo duas vendas para, depois, vincular as vendas ao cliente
+const venda1 = await Venda.create({ valor: 100 });
+const venda2 = await Venda.create({ valor: 200 });
+await venda1.setCliente(cliente1);
+await venda2.setCliente(cliente1);
+    
+// Inserindo uma venda já com informação do cliente
+const venda3 = await Venda.create({ valor: 300, clienteId: cliente1.id });</pre>
+        </div>
+        <div class="visualization">
+            <svg viewBox="0 0 400 270" xmlns="http://www.w3.org/2000/svg">
+                <!-- Cliente Instance -->
+                <rect x="145" y="20" width="110" height="60" rx="5" ry="5" fill="#3498db" stroke="#2c3e50" stroke-width="2"/>
+                <text x="200" y="45" font-family="Arial" font-size="16" text-anchor="middle" fill="white">cliente1</text>
+                <text x="200" y="65" font-family="Arial" font-size="14" text-anchor="middle" fill="white">id: 1</text>
+                
+                <!-- Venda Instances -->
+                <rect x="20" y="100" width="110" height="60" rx="5" ry="5" fill="#9b59b6" stroke="#2c3e50" stroke-width="2"/>
+                <text x="75" y="125" font-family="Arial" font-size="14" text-anchor="middle" fill="white">venda1</text>
+                <text x="75" y="145" font-family="Arial" font-size="12" text-anchor="middle" fill="white">valor: 100</text>
+                
+                <rect x="145" y="100" width="110" height="60" rx="5" ry="5" fill="#9b59b6" stroke="#2c3e50" stroke-width="2"/>
+                <text x="200" y="125" font-family="Arial" font-size="14" text-anchor="middle" fill="white">venda2</text>
+                <text x="200" y="145" font-family="Arial" font-size="12" text-anchor="middle" fill="white">valor: 200</text>
+                
+                <rect x="270" y="100" width="110" height="60" rx="5" ry="5" fill="#9b59b6" stroke="#2c3e50" stroke-width="2"/>
+                <text x="325" y="125" font-family="Arial" font-size="14" text-anchor="middle" fill="white">venda3</text>
+                <text x="325" y="145" font-family="Arial" font-size="12" text-anchor="middle" fill="white">valor: 300</text>
+                
+                <!-- Association Arrows -->
+                <line x1="75" y1="100" x2="170" y2="70" stroke="#f39c12" stroke-width="2"/>
+                <line x1="200" y1="100" x2="200" y2="80" stroke="#f39c12" stroke-width="2"/>
+                <line x1="325" y1="100" x2="230" y2="70" stroke="#f39c12" stroke-width="2"/>
+                
+                <!-- Association Methods -->
+                <rect x="20" y="180" width="360" height="80" rx="5" ry="5" fill="#e74c3c" stroke="#2c3e50" stroke-width="2"/>
+                <text x="200" y="205" font-family="Arial" font-size="16" text-anchor="middle" fill="white">Métodos de Associação</text>
+                <text x="200" y="230" font-family="Arial" font-size="14" text-anchor="middle" fill="white">venda1.setCliente(cliente1)</text>
+                <text x="200" y="250" font-family="Arial" font-size="14" text-anchor="middle" fill="white">venda3 criada com clienteId: cliente1.id</text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- SEÇÃO 6: CRIANDO REGISTROS COM ASSOCIAÇÕES -->
+    <div id="criacao-associacoes" class="section">
+        <h2>Criando Registros com Associações</h2>
+        <div class="explanation">
+            <p>Existem duas maneiras principais de criar registros com associações no Sequelize:</p>
+            <ol>
+                <li><strong>Criação separada e posterior associação</strong>: Cria-se os registros separadamente e depois os associa usando os métodos gerados pelo Sequelize</li>
+                <li><strong>Criação com chave estrangeira direta</strong>: Insere-se o registro já informando a chave estrangeira</li>
+            </ol>
+        </div>
+        <div class="code-block">
+            <pre>// Método 1: Criação separada e posterior associação
+const cliente1 = await Cliente.create({ nome: "Alberto" });
+const telefone1 = await Telefone.create({ numero: "(11) 1111-1111" });
+await cliente1.addTelefone(telefone1);
+
+// Método 2: Criação com chave estrangeira direta
+const telefone2 = await Telefone.create({ 
+    numero: "(22) 2222-2222",
+    clienteId: cliente1.id 
+});</pre>
+        </div>
+        <div class="table-visualization">
+            <h3>Estado do Banco Após Criação das Associações</h3>
+            <table class="table-visualization">
+                <thead>
+                    <tr>
+                        <th colspan="3">Tabela clientes</th>
+                    </tr>
+                    <tr>
+                        <th>id</th>
+                        <th>nome</th>
+                        <th>timestamps</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Alberto</td>
+                        <td>2023-07-15 10:30:25</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <table class="table-visualization" style="margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th colspan="4">Tabela telefones</th>
+                    </tr>
+                    <tr>
+                        <th>id</th>
+                        <th>numero</th>
+                        <th>clienteId</th>
+                        <th>timestamps</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>(11) 1111-1111</td>
+                        <td>1</td>
+                        <td>2023-07-15 10:30:28</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>(22) 2222-2222</td>
+                        <td>1</td>
+                        <td>2023-07-15 10:30:30</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>(33) 3333-3333</td>
+                        <td>1</td>
+                        <td>2023-07-15 10:30:32</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <table class="table-visualization" style="margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th colspan="4">Tabela vendas</th>
+                    </tr>
+                    <tr>
+                        <th>id</th>
+                        <th>valor</th>
+                        <th>clienteId</th>
+                        <th>timestamps</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>100</td>
+                        <td>1</td>
+                        <td>2023-07-15 10:31:00</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>200</td>
+                        <td>1</td>
+                        <td>2023-07-15 10:31:05</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>300</td>
+                        <td>1</td>
+                        <td>2023-07-15 10:31:10</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- SEÇÃO 7: CONSULTAS COM INCLUDE -->
+    <div id="consultas-incluindo" class="section">
+        <h2>Consultas Incluindo Associações</h2>
+        <div class="explanation">
+            <p>Um dos grandes benefícios de usar um ORM como o Sequelize é a capacidade de realizar consultas que automaticamente incluem dados de tabelas relacionadas, similar a JOINs em SQL.</p>
+            <p>O Sequelize fornece o parâmetro <code>include</code> que permite buscar dados relacionados em uma única consulta.</p>
+        </div>
+        <div class="code-block">
+            <pre>// Listando todos os clientes, incluindo suas informações de telefones
+const clientes1 = await Cliente.findAll({include: 'telefones'});
+console.log("\nCliente.findAll({include: 'telefones'}): \n", JSON.stringify(clientes1, null, 2));</pre>
+        </div>
+        <div class="visualization">
+            <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- SQL block -->
+                <rect x="20" y="20" width="360" height="80" rx="5" ry="5" fill="#e74c3c" stroke="#2c3e50" stroke-width="2"/>
+                <text x="200" y="45" font-family="Arial" font-size="16" text-anchor="middle" fill="white">SQL gerado:</text>
+                <text x="200" y="70" font-family="Arial" font-size="14" text-anchor="middle" fill="white">SELECT * FROM clientes;</text>
+                <text x="200" y="90" font-family="Arial" font-size="14" text-anchor="middle" fill="white">SELECT * FROM telefones WHERE clienteId = 1;</text>
+                
+                <!-- Result block -->
+                <rect x="20" y="120" width="360" height="60" rx="5" ry="5" fill="#3498db" stroke="#2c3e50" stroke-width="2"/>
+                <text x="200" y="140" font-family="Arial" font-size="16" text-anchor="middle" fill="white">Resultado:</text>
+                <text x="200" y="165" font-family="Arial" font-size="14" text-anchor="middle" fill="white">[{ id: 1, nome: "Alberto", telefones: [{...}, {...}, {...}] }]</text>
+            </svg>
+        </div>
+        <div class="explanation">
+            <p>Quando usamos <code>include: 'telefones'</code>, o Sequelize:</p>
+            <ol>
+                <li>Executa uma consulta para buscar todos os clientes</li>
+                <li>Para cada cliente encontrado, executa uma consulta adicional para buscar seus telefones</li>
+                <li>Organiza os resultados em uma estrutura de objetos aninhados</li>
+            </ol>
+            <p>Isso nos permite acessar facilmente as associações, como <code>cliente.telefones</code>, sem precisar escrever JOINs SQL manualmente.</p>
+        </div>
+        <div class="code-block">
+            <pre>// Exemplo de resultado da consulta com include:
+[
+  {
+    "id": 1,
+    "nome": "Alberto",
+    "createdAt": "2023-07-15T10:30:25.000Z",
+    "updatedAt": "2023-07-15T10:30:25.000Z",
+    "telefones": [
+      {
+        "id": 1,
+        "numero": "(11) 1111-1111",
+        "createdAt": "2023-07-15T10:30:28.000Z",
+        "updatedAt": "2023-07-15T10:30:28.000Z",
+        "clienteId": 1
+      },
+      {
+        "id": 2,
+        "numero": "(22) 2222-2222",
+        "createdAt": "2023-07-15T10:30:30.000Z",
+        "updatedAt": "2023-07-15T10:30:30.000Z",
+        "clienteId": 1
+      },
+      {
+        "id": 3,
+        "numero": "(33) 3333-3333",
+        "createdAt": "2023-07-15T10:30:32.000Z",
+        "updatedAt": "2023-07-15T10:30:32.000Z",
+        "clienteId": 1
+      }
+    ]
+  }
+]</pre>
+        </div>
+    </div>
+
+    <!-- SEÇÃO 8: OPÇÕES AVANÇADAS -->
+    <div id="opcoes-avancadas" class="section">
+        <h2>Opções Avançadas de Associações</h2>
+        <div class="explanation">
+            <p>O Sequelize oferece várias opções avançadas ao configurar associações:</p>
+            <div class="association-card">
+                <div class="association-title">Personalização de chaves estrangeiras</div>
+                <pre>Cliente.hasMany(Telefone, {
+  foreignKey: 'dono_id' // Altera o nome da chave estrangeira
+});</pre>
+            </div>
+            <div class="association-card">
+                <div class="association-title">Cascata de operações</div>
+                <pre>Cliente.hasMany(Telefone, {
+  onDelete: 'CASCADE', // DELETE CASCADE
+  onUpdate: 'CASCADE'  // UPDATE CASCADE
+});</pre>
+                <p>As opções de cascata definem o que acontece com os registros relacionados quando um registro principal é atualizado ou excluído.</p>
+            </div>
+            <div class="association-card">
+                <div class="association-title">Consultas mais complexas com include</div>
+                <pre>// Opções complexas de include
+const clientes = await Cliente.findAll({
+  include: [{
+    model: Telefone,
+    as: 'telefones',
+    where: { numero: { [Op.like]: '(11)%' } }
+  }]
+});</pre>
+                <p>Essa consulta busca apenas clientes que têm telefones começando com "(11)".</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEÇÃO 9: CONCLUSÃO -->
+    <div id="conclusao" class="section">
+        <h2>Conclusão</h2>
+        <div class="explanation">
+            <p>As associações no Sequelize são poderosas e flexíveis, permitindo representar todos os tipos de relacionamentos encontrados em bancos de dados relacionais:</p>
+            <ul>
+                <li><code>hasOne</code> e <code>belongsTo</code>: para relacionamentos um-para-um</li>
+                <li><code>hasMany</code> e <code>belongsTo</code>: para relacionamentos um-para-muitos</li>
+                <li><code>belongsToMany</code>: para relacionamentos muitos-para-muitos</li>
+            </ul>
+            <p>Principais benefícios das associações:</p>
+            <ul>
+                <li>Código mais limpo e expressivo</li>
+                <li>Métodos auxiliares gerados automaticamente (get, set, add, etc.)</li>
+                <li>Facilidade para realizar consultas que incluem dados relacionados</li>
+                <li>Manutenção da integridade referencial (chaves estrangeiras)</li>
+            </ul>
+            <p>Para aprofundar seus conhecimentos, explore:</p>
+            <ul>
+                <li>Associações muitos-para-muitos com tabelas intermediárias</li>
+                <li>Eager loading (carregamento antecipado) vs. Lazy loading (carregamento preguiçoso)</li>
+                <li>Consultas complexas com várias associações aninhadas</li>
+                <li>Uso de transações para manter a consistência dos dados</li>
+            </ul>
+        </div>
+    </div>
+    
+</body>
+</html>
