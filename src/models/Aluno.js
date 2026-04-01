@@ -39,7 +39,7 @@ class Aluno extends Model {
       },
       responsavelLegal: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
       },
       situacaoAcesso: {
         type: DataTypes.STRING,

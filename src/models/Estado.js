@@ -1,4 +1,4 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes } from 'sequelize'; 
 
 class Estado extends Model {
 
@@ -6,12 +6,12 @@ class Estado extends Model {
     super.init({
       codigo: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
+        primaryKey: true, 
         autoIncrement: true
       },
       nome: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: false, 
         validate: {
           notNull: { msg: 'O nome do estado deve ser preenchido!' },
           notEmpty: { msg: 'O nome do estado nao pode ser vazio!' },
@@ -31,7 +31,7 @@ class Estado extends Model {
       sequelize,
       modelName: 'estado',
       tableName: 'estados',
-      timestamps: false
+      timestamps: false 
     });
   }
 

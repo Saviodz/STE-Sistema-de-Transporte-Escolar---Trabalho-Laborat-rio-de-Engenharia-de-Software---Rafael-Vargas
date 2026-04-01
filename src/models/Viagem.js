@@ -53,6 +53,16 @@ class Viagem extends Model {
         }
       }
     });
+    this.belongsTo(models.onibus, {
+      as: 'onibus',
+      foreignKey: {
+        name: 'onibusId',
+        allowNull: false,
+        validate: {
+          notNull: { msg: 'O onibus da viagem deve ser preenchido!' }
+        }
+      }
+    });
     this.hasMany(models.registroAcesso, {
       as: 'registrosAcesso',
       foreignKey: {
