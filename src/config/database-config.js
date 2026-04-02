@@ -1,3 +1,4 @@
+/*
 // Configuração do banco de dados no ambiente de teste
 export const databaseConfig = {
   dialect: 'sqlite',
@@ -9,21 +10,23 @@ export const databaseConfig = {
   }
 };
 
-/*
+*/
+
+
 // Configuração do banco de dados no ambiente de desenvolvimento
 export const databaseConfig = {
   dialect: 'postgres',
   host: 'localhost',
   username: 'postgres',
-  password: 'postgres',
-  database: 'scv-backend-node-sequelize',
+  password: '1234',
+  database: 'STE-Sistema-de-Transporte-Escolar',
   define: {
     timestamps: true,
     freezeTableName: true,
     underscored: true
   }
 };
-*/
+
 
 /*
 // Configuração do banco de dados no ambiente de produção
