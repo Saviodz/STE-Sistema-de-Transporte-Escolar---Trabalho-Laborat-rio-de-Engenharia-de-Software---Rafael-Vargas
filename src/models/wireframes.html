@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wireframes - Sistema de Gestão de Transporte Escolar</title>
+    <style>
+        :root {
+            --bg-color: #f4f4f5;
+            --card-bg: #ffffff;
+            --border-color: #e4e4e7;
+            --text-main: #18181b;
+            --text-muted: #71717a;
+            --primary: #18181b;
+            --primary-hover: #27272a;
+            --secondary: #ffffff;
+            --secondary-border: #d4d4d8;
+            --secondary-hover: #f4f4f5;
+            --input-bg: #fafafa;
+            --input-border: #d4d4d8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .screen-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+        }
+
+        .screen-header {
+            background-color: #fafafa;
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px 24px;
+        }
+
+        .screen-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-main);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .screen-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .logout-message {
+            text-align: center;
+            font-size: 1rem;
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+
+        .logout-submessage {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .photo-upload-box {
+            width: 100%;
+            min-height: 150px;
+            border: 1px dashed var(--input-border);
+            border-radius: 6px;
+            background-color: var(--input-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .photo-preview {
+            width: 90px;
+            height: 90px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: #f4f4f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .photo-upload-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .photo-upload-help {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .photo-upload-input {
+            width: 100%;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+        }
+
+        textarea.form-input {
+            height: auto;
+            min-height: 76px;
+            resize: none;
+            padding-top: 10px;
+        }
+
+        .form-label {
+            width: 35%;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-main);
+            padding-right: 16px;
+            text-align: left;
+        }
+
+        .form-input-wrapper {
+            width: 65%;
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 38px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            color: var(--text-muted);
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #a1a1aa;
+        }
+
+        .form-input.disabled {
+            background-color: #f4f4f5;
+            color: #a1a1aa;
+        }
+
+        .form-select {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .form-help-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+            border-left: 2px solid var(--text-muted);
+            border-bottom: 2px solid var(--text-muted);
+            transform: translateY(-70%) rotate(-45deg);
+        }
+
+        .screen-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--border-color);
+            background-color: #fafafa;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 8px 24px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 120px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: 1px solid var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: var(--text-main);
+            border: 1px solid var(--secondary-border);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--secondary-hover);
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        .page-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .access-section {
+            margin-top: 16px;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 16px;
+        }
+
+        .access-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .access-label {
+            width: auto;
+        }
+
+        .access-caption {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .access-list {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--input-bg);
+            overflow: hidden;
+        }
+
+        .access-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+        }
+
+        .access-row+.access-row {
+            border-top: 1px solid var(--border-color);
+        }
+
+        .access-student {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .access-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .access-check-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .access-help {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .access-search {
+            margin-bottom: 12px;
+        }
+
+        .access-search-input {
+            width: 100%;
+        }
+
+        .access-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: #f8f8f8;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .access-student-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .access-student-code {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .access-empty {
+            padding: 12px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .report-filters {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .report-table-wrapper {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            background: var(--input-bg);
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        .report-table thead {
+            background-color: #f8f8f8;
+        }
+
+        .report-table th,
+        .report-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            text-align: left;
+            color: var(--text-main);
+        }
+
+        .report-table th {
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .report-table th:last-child,
+        .report-table td:last-child {
+            border-right: none;
+        }
+
+        .report-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .report-title-note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .date-input-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1rem;
+            pointer-events: none;
+        }
+
+        .form-input.with-icon {
+            padding-right: 36px;
+        }
+
+        .list-table-wrapper {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            background: var(--input-bg);
+        }
+
+        .list-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        .list-table thead {
+            background-color: #f8f8f8;
+        }
+
+        .list-table th,
+        .list-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            text-align: left;
+            color: var(--text-main);
+        }
+
+        .list-table th {
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .list-table th:last-child,
+        .list-table td:last-child {
+            border-right: none;
+        }
+
+        .list-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .list-note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .report-title-note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .date-input-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1rem;
+            pointer-events: none;
+        }
+
+        .form-input.with-icon {
+            padding-right: 36px;
+        }
+
+        .list-table-wrapper {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            background: var(--input-bg);
+        }
+
+        .list-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        .list-table thead {
+            background-color: #f8f8f8;
+        }
+
+        .list-table th,
+        .list-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            text-align: left;
+            color: var(--text-main);
+        }
+
+        .list-table th {
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .list-table th:last-child,
+        .list-table td:last-child {
+            border-right: none;
+        }
+
+        .list-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .list-note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h1 class="page-title">Sistema de Gestão de Transporte Escolar</h1>
+        <p class="page-subtitle">Marco Antonio, José Carlos e Sávio
+        </p>
+    </div>
+
+    <!-- TELA LOGIN -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Login</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Usuário*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="Digite seu usuário">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Senha*</label>
+                <div class="form-input-wrapper">
+                    <input type="password" class="form-input" placeholder="Digite sua senha">
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label class="form-label"></label>
+                <div class="form-input-wrapper">
+                </div>
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Entrar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA 1 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Cadastro de Aluno</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Código*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input disabled" value="(Gerado automaticamente)" disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nome*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Foto do Aluno</label>
+                <div class="form-input-wrapper">
+                    <div class="photo-upload-box">
+                        <div class="photo-preview">Sem foto</div>
+                        <div class="photo-upload-label">Selecionar foto</div>
+                        <input type="file" class="photo-upload-input" accept=".png, .jpg, .jpeg">
+                        <div class="photo-upload-help">Formatos aceitos: JPG, JPEG ou PNG</div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">CPF*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Data de Nascimento*</label>
+                <div class="form-input-wrapper">
+                    <input type="date" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Prefeitura*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Instituição de Ensino*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Endereço*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Telefone(s)*</label>
+                <div class="form-input-wrapper">
+                    <textarea class="form-input" rows="2" placeholder=""></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Responsável legal*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                    <div style="margin-top: 4px; font-size: 0.8rem; color: var(--text-muted); font-style: italic;">
+                        Obrigatório para menores de 18 anos
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Situação do Acesso*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option>Ativo</option>
+                        <option>Bloqueado</option>
+                        <option>Suspenso</option>
+                        <option>Inativo</option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Salvar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA 2 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Cadastro de Instituição de Ensino</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Código*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input disabled" value="(Gerado automaticamente)" disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nome*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Cidade*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Endereço</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Telefone(s)*</label>
+                <div class="form-input-wrapper">
+                    <textarea class="form-input" rows="2" placeholder=""></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Tipo de Instituição</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option>Pública / Privada</option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Salvar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA 3 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Cadastro de Cidade</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Código*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input disabled" value="(Gerado automaticamente)" disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nome*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">UF*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Salvar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA 4 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Cadastro de Prefeitura</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Código*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input disabled" value="(Gerado automaticamente)" disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Razão Social*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">UF*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option value="AC">Acre (AC)</option>
+                        <option value="AL">Alagoas (AL)</option>
+                        <option value="AP">Amapá (AP)</option>
+                        <option value="AM">Amazonas (AM)</option>
+                        <option value="BA">Bahia (BA)</option>
+                        <option value="CE">Ceará (CE)</option>
+                        <option value="DF">Distrito Federal (DF)</option>
+                        <option value="ES">Espírito Santo (ES)</option>
+                        <option value="GO">Goiás (GO)</option>
+                        <option value="MA">Maranhão (MA)</option>
+                        <option value="MT">Mato Grosso (MT)</option>
+                        <option value="MS">Mato Grosso do Sul (MS)</option>
+                        <option value="MG">Minas Gerais (MG)</option>
+                        <option value="PA">Pará (PA)</option>
+                        <option value="PB">Paraíba (PB)</option>
+                        <option value="PR">Paraná (PR)</option>
+                        <option value="PE">Pernambuco (PE)</option>
+                        <option value="PI">Piauí (PI)</option>
+                        <option value="RJ">Rio de Janeiro (RJ)</option>
+                        <option value="RN">Rio Grande do Norte (RN)</option>
+                        <option value="RS">Rio Grande do Sul (RS)</option>
+                        <option value="RO">Rondônia (RO)</option>
+                        <option value="RR">Roraima (RR)</option>
+                        <option value="SC">Santa Catarina (SC)</option>
+                        <option value="SP">São Paulo (SP)</option>
+                        <option value="SE">Sergipe (SE)</option>
+                        <option value="TO">Tocantins (TO)</option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">CNPJ*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="00.000.000/0000-00" maxlength="18">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Endereço*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Telefone(s)*</label>
+                <div class="form-input-wrapper">
+                    <textarea class="form-input" rows="2" placeholder=""></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Salvar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA 5 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Cadastro de Motorista</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Código*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input disabled" value="(Gerado automaticamente)" disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nome*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">CPF*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">CNH*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Validade CNH*</label>
+                <div class="form-input-wrapper">
+                    <input type="date" class="form-input">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Categoria CNH*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                        <option>D</option>
+                        <option>E</option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Telefone(s)*</label>
+                <div class="form-input-wrapper">
+                    <textarea class="form-input" rows="2" placeholder=""></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Situação</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option>Ativo</option>
+                        <option>Afastado</option>
+                        <option>Inativo</option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Salvar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA 6 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Cadastro de Ônibus</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Código*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input disabled" value="(Gerado automaticamente)" disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Placa*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Modelo</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Capacidade*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Ano</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Situação</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option>Ativo</option>
+                        <option>Manutenção</option>
+                        <option>Inativo</option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Salvar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA 7 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Cadastro de Rota</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Código*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input disabled" value="(Gerado automaticamente)" disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Cidade Origem*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Cidade Destino*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Turno*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option>Manhã</option>
+                        <option>Tarde</option>
+                        <option>Noite</option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Descrição</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Observação</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div style="margin-top: 16px; border-top: 1px dashed var(--border-color); padding-top: 16px;">
+                <label class="form-label" style="width: 100%; display: block; margin-bottom: 8px;">Alunos Vinculados à
+                    Rota</label>
+                <div
+                    style="border: 1px solid var(--border-color); border-radius: 4px; padding: 12px; background: var(--input-bg); max-height: 120px; overflow-y: auto;">
+                    <label
+                        style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); cursor: pointer;"><input
+                            type="checkbox" checked> [101] João Silva</label>
+                    <label
+                        style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); cursor: pointer;"><input
+                            type="checkbox" checked> [102] Maria Souza</label>
+                    <label
+                        style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--text-muted); cursor: pointer;"><input
+                            type="checkbox"> [103] Pedro Santos</label>
+                </div>
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Salvar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA 8 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Registro de Viagem</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Código*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input disabled" value="(Gerado automaticamente)" disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Rota*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Motorista*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Ônibus*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option></option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Data*</label>
+                <div class="form-input-wrapper">
+                    <input type="date" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Horário de Saída*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Horário de Chegada</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input" placeholder="">
+                </div>
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Salvar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA 9 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Registro de Acesso</h2>
+        </div>
+        <div class="screen-body">
+            <div class="form-group">
+                <label class="form-label">Código*</label>
+                <div class="form-input-wrapper">
+                    <input type="text" class="form-input disabled" value="(Gerado automaticamente)" disabled>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Viagem (Data e Rota)*</label>
+                <div class="form-input-wrapper">
+                    <select class="form-input form-select">
+                        <option>[Selecione a Viagem]</option>
+                        <option>[201] 10/03/2026 - Cachoeiro x Alegre - Manhã</option>
+                        <option>[202] 10/03/2026 - Cachoeiro x Vitória - Noite</option>
+                    </select>
+                    <div class="select-arrow"></div>
+                </div>
+            </div>
+
+            <div class="access-section">
+                <div class="access-header">
+                    <label class="form-label access-label">Lista de Presença</label>
+                    <span class="access-caption">Pesquisa por código ou nome</span>
+                </div>
+
+                <div class="access-search">
+                    <input type="text" class="form-input access-search-input"
+                        placeholder="Pesquisar aluno por código ou nome">
+                </div>
+
+                <div class="access-list">
+                    <div class="access-list-header">
+                        <span>Aluno</span>
+                        <span>Ações</span>
+                    </div>
+
+                    <div class="access-row">
+                        <div class="access-student-group">
+                            <span class="access-student">José Carlos Ceccon</span>
+                            <span class="access-student-code">Código: 101</span>
+                        </div>
+                        <div class="access-actions">
+                            <label class="access-check-label">
+                                <input type="checkbox"> Entrou
+                            </label>
+                            <label class="access-check-label">
+                                <input type="checkbox"> Saiu
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="access-row">
+                        <div class="access-student-group">
+                            <span class="access-student">Marco Antonio</span>
+                            <span class="access-student-code">Código: 102</span>
+                        </div>
+                        <div class="access-actions">
+                            <label class="access-check-label">
+                                <input type="checkbox"> Entrou
+                            </label>
+                            <label class="access-check-label">
+                                <input type="checkbox"> Saiu
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="access-row">
+                        <div class="access-student-group">
+                            <span class="access-student">Sávio</span>
+                            <span class="access-student-code">Código: 103</span>
+                        </div>
+                        <div class="access-actions">
+                            <label class="access-check-label">
+                                <input type="checkbox"> Entrou
+                            </label>
+                            <label class="access-check-label">
+                                <input type="checkbox"> Saiu
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="access-help">
+                    Os alunos são carregados automaticamente conforme a viagem selecionada e podem ser localizados pela
+                    pesquisa.
+                </div>
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Salvar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA SAÍDA DO SISTEMA -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Sair do Sistema</h2>
+        </div>
+        <div class="screen-body">
+            <div class="logout-message">
+                Tem certeza que deseja sair do sistema?
+            </div>
+            <div class="logout-submessage">
+                Ao confirmar, sua sessão será encerrada.
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Sim, sair</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA 10 -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Listagem de Viagens</h2>
+        </div>
+        <div class="screen-body">
+            <div class="report-filters">
+                <div class="form-group">
+                    <label class="form-label">Selecione a Rota</label>
+                    <div class="form-input-wrapper">
+                        <select class="form-input form-select">
+                            <option>[Todas]</option>
+                            <option>Cachoeiro x Alegre</option>
+                            <option>Cachoeiro x Vitória</option>
+                            <option>Alegre x Cachoeiro</option>
+                        </select>
+                        <div class="select-arrow"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Selecione o Motorista</label>
+                    <div class="form-input-wrapper">
+                        <select class="form-input form-select">
+                            <option>[Todos]</option>
+                            <option>Marco Antonio</option>
+                            <option>José Carlos</option>
+                            <option>Sávio</option>
+                        </select>
+                        <div class="select-arrow"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Selecione o Ônibus</label>
+                    <div class="form-input-wrapper">
+                        <select class="form-input form-select">
+                            <option>[Todos]</option>
+                            <option>Ônibus 12</option>
+                            <option>Ônibus 08</option>
+                            <option>Ônibus 03</option>
+                        </select>
+                        <div class="select-arrow"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Data Início</label>
+                    <div class="form-input-wrapper">
+                        <input type="date" class="form-input with-icon">
+                        <span class="date-input-icon">📅</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Data Término</label>
+                    <div class="form-input-wrapper">
+                        <input type="date" class="form-input with-icon">
+                        <span class="date-input-icon">📅</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-table-wrapper">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Data</th>
+                            <th>Rota</th>
+                            <th>Motorista</th>
+                            <th>Ônibus</th>
+                            <th>Saída</th>
+                            <th>Chegada</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>201</td>
+                            <td>10/03/2026</td>
+                            <td>Cachoeiro x Alegre</td>
+                            <td>Marco Antonio</td>
+                            <td>Ônibus 12</td>
+                            <td>06:30</td>
+                            <td>07:40</td>
+                        </tr>
+                        <tr>
+                            <td>202</td>
+                            <td>10/03/2026</td>
+                            <td>Cachoeiro x Vitória</td>
+                            <td>José Carlos</td>
+                            <td>Ônibus 08</td>
+                            <td>18:00</td>
+                            <td>20:10</td>
+                        </tr>
+                        <tr>
+                            <td>203</td>
+                            <td>11/03/2026</td>
+                            <td>Alegre x Cachoeiro</td>
+                            <td>Sávio</td>
+                            <td>Ônibus 03</td>
+                            <td>06:20</td>
+                            <td>07:25</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="report-title-note">
+                A listagem permite consultar as viagens cadastradas por rota, motorista, ônibus e período.
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Pesquisar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA LISTAGEM DE PREFEITURA -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Listagem de Prefeitura</h2>
+        </div>
+        <div class="screen-body">
+            <div class="list-table-wrapper">
+                <table class="list-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Razão Social</th>
+                            <th>CNPJ</th>
+                            <th>UF</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Prefeitura de Marataízes</td>
+                            <td>11.222.333/0000-00</td>
+                            <td>ES</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Prefeitura de Cachoeiro de Itapemirim</td>
+                            <td>44.555.666/1111-11</td>
+                            <td>ES</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Prefeitura de Presidente Kennedy</td>
+                            <td>77.888.999/2222-22</td>
+                            <td>ES</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Prefeitura de Itaperuna</td>
+                            <td>99.888.777/3333-22</td>
+                            <td>RJ</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="list-note">
+                A listagem apresenta as prefeituras cadastradas no sistema.
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Pesquisar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- TELA LISTAGEM DE ALUNO -->
+    <div class="screen-container">
+        <div class="screen-header">
+            <h2 class="screen-title">Listagem de Aluno</h2>
+        </div>
+        <div class="screen-body">
+            <div class="list-table-wrapper">
+                <table class="list-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>Instituição de Ensino</th>
+                            <th>Prefeitura</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>José Carlos Ceccon</td>
+                            <td>123.456.781-00</td>
+                            <td>IFES Cachoeiro</td>
+                            <td>Prefeitura de Cachoeiro de Itapemirim</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Rafael Mesquita Vargas</td>
+                            <td>987.654.321-99</td>
+                            <td>UFLA</td>
+                            <td>Prefeitura de Marataízes</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Marco Antonio</td>
+                            <td>456.123.789-55</td>
+                            <td>IFES Cachoeiro</td>
+                            <td>Prefeitura de Presidente Kennedy</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="list-note">
+                A listagem apresenta os alunos cadastrados no sistema.
+            </div>
+        </div>
+        <div class="screen-footer">
+            <button class="btn btn-primary">Pesquisar</button>
+            <button class="btn btn-secondary">Cancelar</button>
+        </div>
+    </div>
+    </div>
+
+</body>
+
+</html>
