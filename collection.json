@@ -1,0 +1,897 @@
+{
+  "info": {
+    "_postman_id": "b7d7a090-f356-4b80-9d38-5a023fd127a1",
+    "name": "STE - Sistema de Transporte Escolar",
+    "description": "Collection da API do Sistema de Transporte Escolar.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Raiz",
+      "item": [
+        {
+          "name": "Status da API",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Estados",
+      "item": [
+        {
+          "name": "Listar estados",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/estados"
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar estado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/estados/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Criar estado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Sao Paulo\",\n  \"siglaUF\": \"SP\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/estados"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar estado",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Sao Paulo Atualizado\",\n  \"siglaUF\": \"SP\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/estados/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Remover estado",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/estados/1"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cidades",
+      "item": [
+        {
+          "name": "Listar cidades",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/cidades"
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar cidade",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/cidades/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar cidades por estado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/cidades/findByEstado/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Criar cidade",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Marataizes\",\n  \"estadoId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/cidades"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar cidade",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Marataizes Atualizada\",\n  \"estadoId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/cidades/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Remover cidade",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/cidades/1"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Prefeituras",
+      "item": [
+        {
+          "name": "Listar prefeituras",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/prefeituras"
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar prefeitura",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/prefeituras/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Criar prefeitura",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"razaoSocial\": \"Prefeitura Municipal de Marataizes\",\n  \"cnpj\": \"27.111.222/0001-33\",\n  \"endereco\": \"Avenida Principal, 100\",\n  \"telefones\": \"(28) 99999-0000\",\n  \"email\": \"transporte@marataizes.es.gov.br\",\n  \"cidadeId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/prefeituras"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar prefeitura",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"razaoSocial\": \"Prefeitura Municipal Atualizada\",\n  \"cnpj\": \"27.111.222/0001-33\",\n  \"endereco\": \"Avenida Principal, 200\",\n  \"telefones\": \"(28) 99999-0001\",\n  \"email\": \"educacao@marataizes.es.gov.br\",\n  \"cidadeId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/prefeituras/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Remover prefeitura",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/prefeituras/1"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Instituicoes Ensino",
+      "item": [
+        {
+          "name": "Listar instituicoes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/instituicoes-ensino"
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar instituicao",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/instituicoes-ensino/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Criar instituicao",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Escola Municipal Central\",\n  \"endereco\": \"Rua da Escola, 50\",\n  \"telefones\": \"(28) 3333-4444\",\n  \"tipoInstituicao\": \"Escola Municipal\",\n  \"cidadeId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/instituicoes-ensino"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar instituicao",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Escola Municipal Central Atualizada\",\n  \"endereco\": \"Rua da Escola, 60\",\n  \"telefones\": \"(28) 3333-5555\",\n  \"tipoInstituicao\": \"Escola Municipal\",\n  \"cidadeId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/instituicoes-ensino/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Remover instituicao",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/instituicoes-ensino/1"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Alunos",
+      "item": [
+        {
+          "name": "Listar alunos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/alunos"
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar aluno",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/alunos/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Criar aluno",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Ana Silva\",\n  \"foto\": null,\n  \"cpf\": \"111.222.333-44\",\n  \"dataNascimento\": \"2008-03-10\",\n  \"endereco\": \"Rua das Flores, 123\",\n  \"telefones\": \"(28) 99999-1111\",\n  \"responsavelLegal\": \"Maria Silva\",\n  \"situacaoAcesso\": \"Ativo\",\n  \"prefeituraId\": 1,\n  \"instituicaoEnsinoId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/alunos"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar aluno",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Ana Silva Atualizada\",\n  \"foto\": null,\n  \"cpf\": \"111.222.333-44\",\n  \"dataNascimento\": \"2008-03-10\",\n  \"endereco\": \"Rua das Flores, 456\",\n  \"telefones\": \"(28) 99999-1112\",\n  \"responsavelLegal\": \"Maria Silva\",\n  \"situacaoAcesso\": \"Ativo\",\n  \"prefeituraId\": 1,\n  \"instituicaoEnsinoId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/alunos/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Remover aluno",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/alunos/1"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Motoristas",
+      "item": [
+        {
+          "name": "Listar motoristas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/motoristas"
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar motorista",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/motoristas/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Criar motorista",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Carlos Pereira\",\n  \"cpf\": \"222.333.444-55\",\n  \"cnh\": \"12345678900\",\n  \"validadeCNH\": \"2028-12-31\",\n  \"categoriaCNH\": \"D\",\n  \"telefones\": \"(28) 99999-2222\",\n  \"situacao\": \"Ativo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/motoristas"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar motorista",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Carlos Pereira Atualizado\",\n  \"cpf\": \"222.333.444-55\",\n  \"cnh\": \"12345678900\",\n  \"validadeCNH\": \"2029-12-31\",\n  \"categoriaCNH\": \"D\",\n  \"telefones\": \"(28) 99999-2223\",\n  \"situacao\": \"Ativo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/motoristas/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Remover motorista",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/motoristas/1"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Onibus",
+      "item": [
+        {
+          "name": "Listar onibus",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/onibus"
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar onibus",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/onibus/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Criar onibus",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"placa\": \"ABC-1D23\",\n  \"modelo\": \"Marcopolo Volare\",\n  \"capacidade\": 32,\n  \"ano\": 2024,\n  \"situacao\": \"Ativo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/onibus"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar onibus",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"placa\": \"ABC-1D23\",\n  \"modelo\": \"Marcopolo Volare Atualizado\",\n  \"capacidade\": 36,\n  \"ano\": 2024,\n  \"situacao\": \"Ativo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/onibus/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Remover onibus",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/onibus/1"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Rotas",
+      "item": [
+        {
+          "name": "Listar rotas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/rotas"
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar rota",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/rotas/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Criar rota",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"turno\": \"Matutino\",\n  \"descricao\": \"Linha Centro x Escola\",\n  \"observacao\": \"Sem observacoes\",\n  \"origemId\": 1,\n  \"destinoId\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/rotas"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar rota",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"turno\": \"Vespertino\",\n  \"descricao\": \"Linha Centro x Escola Atualizada\",\n  \"observacao\": \"Rota atualizada\",\n  \"origemId\": 1,\n  \"destinoId\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/rotas/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Remover rota",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/rotas/1"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Viagens",
+      "item": [
+        {
+          "name": "Listar viagens",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/viagens"
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar viagem",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/viagens/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Criar viagem",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": \"2026-04-10\",\n  \"horarioSaida\": \"06:30\",\n  \"horarioChegada\": \"07:20\",\n  \"rotaId\": 1,\n  \"motoristaId\": 1,\n  \"onibusId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/viagens"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar viagem",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": \"2026-04-11\",\n  \"horarioSaida\": \"06:40\",\n  \"horarioChegada\": \"07:30\",\n  \"rotaId\": 1,\n  \"motoristaId\": 1,\n  \"onibusId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/viagens/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Remover viagem",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/viagens/1"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Matriculas Transporte",
+      "item": [
+        {
+          "name": "Listar matriculas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/matriculas-transporte"
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar matricula",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/matriculas-transporte/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Criar matricula",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"alunoId\": 1,\n  \"rotaId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/matriculas-transporte"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar matricula",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"alunoId\": 1,\n  \"rotaId\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/matriculas-transporte/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Remover matricula",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/matriculas-transporte/1"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Registros Acesso",
+      "item": [
+        {
+          "name": "Listar registros",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/registros-acesso"
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar registro",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/registros-acesso/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Criar registro",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"EMBARQUE\",\n  \"dataHora\": \"2026-04-10T06:35:00\",\n  \"alunoId\": 1,\n  \"viagemId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/registros-acesso"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar registro",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"DESEMBARQUE\",\n  \"dataHora\": \"2026-04-10T07:25:00\",\n  \"alunoId\": 1,\n  \"viagemId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{base_url}}/registros-acesso/1"
+          },
+          "response": []
+        },
+        {
+          "name": "Remover registro",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/registros-acesso/1"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3333"
+    }
+  ]
+}
