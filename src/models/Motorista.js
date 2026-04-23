@@ -51,13 +51,7 @@ class Motorista extends Model {
   }
 
   static associate(models) {
-    this.hasMany(models.viagem, {
-      as: 'viagens',
-      foreignKey: {
-        name: 'motoristaId',
-        allowNull: false
-      }
-    });
+   
   }
   
 }

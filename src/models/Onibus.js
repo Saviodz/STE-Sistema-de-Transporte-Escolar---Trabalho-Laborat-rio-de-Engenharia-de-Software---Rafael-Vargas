@@ -39,13 +39,7 @@ class Onibus extends Model {
   }
 
   static associate(models) {
-    this.hasMany(models.viagem, {
-      as: 'viagens',
-      foreignKey: {
-        name: 'onibusId',
-        allowNull: false
-      }
-    });
+    
   }
 
 }

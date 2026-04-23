@@ -63,13 +63,7 @@ class Viagem extends Model {
         }
       }
     });
-    this.hasMany(models.registroAcesso, {
-      as: 'registrosAcesso',
-      foreignKey: {
-        name: 'viagemId',
-        allowNull: false
-      }
-    });
+
   }
   
 }

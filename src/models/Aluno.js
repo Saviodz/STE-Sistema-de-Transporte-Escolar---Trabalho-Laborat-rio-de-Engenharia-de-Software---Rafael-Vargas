@@ -74,20 +74,7 @@ class Aluno extends Model {
         }
       }
     });
-    this.hasMany(models.matriculaTransporte, {
-      as: 'matriculasTransporte',
-      foreignKey: {
-        name: 'alunoId',
-        allowNull: false
-      }
-    });
-    this.hasMany(models.registroAcesso, {
-      as: 'registrosAcesso',
-      foreignKey: {
-        name: 'alunoId',
-        allowNull: false
-      }
-    });
+
   }
   
 }

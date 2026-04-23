@@ -44,13 +44,7 @@ class InstituicaoEnsino extends Model {
         }
       }
     });
-    this.hasMany(models.aluno, {
-      as: 'alunos',
-      foreignKey: {
-        name: 'instituicaoEnsinoId',
-        allowNull: false
-      }
-    });
+  
   }
   
 }

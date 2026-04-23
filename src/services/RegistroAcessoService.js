@@ -7,7 +7,7 @@ class RegistroAcessoService {
   }
 
   static async findByPk(req) {
-    const { id } = req.params;
+    const { id } = req.params; 
     const obj = await RegistroAcesso.findByPk(id, { include: { all: true, nested: true } });
     return obj;
   }

@@ -44,27 +44,6 @@ class Cidade extends Model {
         allowNull: false
       }
     });
-    this.hasMany(models.instituicaoEnsino, {
-      as: 'instituicoesEnsino',
-      foreignKey: {
-        name: 'cidadeId',
-        allowNull: false
-      }
-    });
-    this.hasMany(models.rota, {
-      as: 'rotasOrigem',
-      foreignKey: {
-        name: 'origemId',
-        allowNull: false
-      }
-    });
-    this.hasMany(models.rota, {
-      as: 'rotasDestino',
-      foreignKey: {
-        name: 'destinoId',
-        allowNull: false
-      }
-    });
   }
   
 }

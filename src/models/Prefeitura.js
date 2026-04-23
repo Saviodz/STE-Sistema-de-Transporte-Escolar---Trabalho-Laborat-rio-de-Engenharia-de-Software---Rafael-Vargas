@@ -60,13 +60,7 @@ class Prefeitura extends Model {
         }
       }
     });
-    this.hasMany(models.aluno, {
-      as: 'alunos',
-      foreignKey: {
-        name: 'prefeituraId',
-        allowNull: false
-      }
-    });
+
   }
   
 }

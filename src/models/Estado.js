@@ -36,16 +36,7 @@ class Estado extends Model {
   }
 
   static associate(models) {
-    this.hasMany(models.cidade, {
-      as: 'cidades',
-      foreignKey: {
-        name: 'estadoId',
-        allowNull: false,
-        validate: {
-          notNull: { msg: 'O estado da cidade deve ser preenchido!' }
-        }
-      }
-    });
+   
   }
   
 }
