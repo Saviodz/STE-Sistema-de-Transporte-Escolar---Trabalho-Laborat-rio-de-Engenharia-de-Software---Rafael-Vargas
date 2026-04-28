@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Acesso – STE</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+<div id="sidebar"></div>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div id="main-content">
+  <header class="topbar">
+    <div class="d-flex align-items-center gap-3">
+      <button id="sidebar-toggle" class="btn-icon" style="background:transparent;color:var(--ste-text);">
+        <i class="bi bi-list" style="font-size:22px"></i>
+      </button>
+      <span class="topbar-title">Registro de Acesso</span>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbar-avatar-letter">U</div>
+        <span id="topbar-username">Usuário</span>
+      </div>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="page-header">
+      <div><h1>Registrar Acesso</h1><p class="page-subtitle">Registre embarques e desembarques dos alunos</p></div>
+    </div>
+    <div id="alert-area"></div>
+    <form id="formAcesso" novalidate>
+      <div class="ste-card">
+        <div class="ste-card-header">
+          <div class="card-icon"><i class="bi bi-qr-code-scan"></i></div>
+          <h2>Dados do Registro</h2>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label for="tipo" class="form-label">Tipo <span class="text-danger">*</span></label>
+            <select id="tipo" class="form-select" required>
+              <option value="">-- Selecione --</option>
+              <option value="EMBARQUE">🟢 Embarque</option>
+              <option value="DESEMBARQUE">🔴 Desembarque</option>
+            </select>
+            <div class="invalid-feedback">Selecione o tipo.</div>
+          </div>
+          <div class="col-md-4">
+            <label for="dataHora" class="form-label">Data e Hora <span class="text-danger">*</span></label>
+            <input type="datetime-local" id="dataHora" class="form-control" required>
+            <div class="invalid-feedback">Informe a data e hora.</div>
+          </div>
+        </div>
+        <div class="row g-3 mt-0">
+          <div class="col-md-5">
+            <label for="alunoId" class="form-label">Aluno <span class="text-danger">*</span></label>
+            <select id="alunoId" class="form-select" required>
+              <option value="">-- Carregando... --</option>
+            </select>
+            <div class="invalid-feedback">Selecione o aluno.</div>
+          </div>
+          <div class="col-md-5">
+            <label for="viagemId" class="form-label">Viagem <span class="text-danger">*</span></label>
+            <select id="viagemId" class="form-select" required>
+              <option value="">-- Carregando... --</option>
+            </select>
+            <div class="invalid-feedback">Selecione a viagem.</div>
+          </div>
+        </div>
+
+        <!-- Viagem preview -->
+        <div id="viagemPreview" class="mt-3" style="display:none">
+          <div class="p-3 rounded-3" style="background:rgba(25,195,125,.06); border:1px solid rgba(25,195,125,.2)">
+            <div class="row g-2 fs-13">
+              <div class="col-md-4">
+                <span class="text-muted">Rota:</span>
+                <span class="fw-600 ms-1" id="pvRota">—</span>
+              </div>
+              <div class="col-md-3">
+                <span class="text-muted">Data:</span>
+                <span class="fw-600 ms-1" id="pvData">—</span>
+              </div>
+              <div class="col-md-2">
+                <span class="text-muted">Saída:</span>
+                <span class="fw-600 ms-1" id="pvSaida">—</span>
+              </div>
+              <div class="col-md-3">
+                <span class="text-muted">Motorista:</span>
+                <span class="fw-600 ms-1" id="pvMotorista">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 justify-content-end">
+        <a href="index.html" class="btn-ste-secondary"><i class="bi bi-x"></i> Cancelar</a>
+        <button type="submit" class="btn-ste-primary" id="btnSalvar">
+          <i class="bi bi-check-lg"></i> Registrar Acesso
+        </button>
+      </div>
+    </form>
+
+    <!-- Últimos registros -->
+    <div class="ste-card mt-4">
+      <div class="ste-card-header">
+        <div class="card-icon"><i class="bi bi-clock-history"></i></div>
+        <h2>Últimos Registros</h2>
+      </div>
+      <div class="table-wrapper">
+        <table class="ste-table">
+          <thead><tr><th>#</th><th>Tipo</th><th>Aluno</th><th>Viagem</th><th>Data/Hora</th><th>Ações</th></tr></thead>
+          <tbody id="tbodyAcessos">
+            <tr><td colspan="6" class="text-center py-3 text-muted"><div class="spinner-border spinner-border-sm"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<div id="toast-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module">
+  import { injectSidebar } from '../assets/js/sidebar.js';
+  import { showToast, populateSelect, badgeSituacao, confirmDelete, fmtDate } from '../assets/js/ui.js';
+  import { api } from '../assets/js/api.js';
+  if (!localStorage.getItem('ste-user')) window.location.href = 'login.html';
+
+  let viagensData = [];
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    injectSidebar();
+    // Set default datetime = now
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('dataHora').value = now.toISOString().slice(0,16);
+
+    try {
+      const [alunos, viagens] = await Promise.all([
+        api.get('/alunos'),
+        api.get('/viagens?include=true'),
+      ]);
+      viagensData = viagens;
+      populateSelect('alunoId',
+        alunos.filter(a => a.situacaoAcesso === 'ATIVO'),
+        'codigo', a => `${a.nome} – ${a.cpf}`, 'Selecione o aluno');
+      populateSelect('viagemId', viagens, 'codigo',
+        v => `#${v.codigo} | ${fmtDate(v.data)} | ${v.rota?.origem?.nome ?? '?'} → ${v.rota?.destino?.nome ?? '?'} (${v.horarioSaida})`,
+        'Selecione a viagem');
+    } catch(e) { showToast('Erro ao carregar dados: ' + e.message, 'error'); }
+
+    document.getElementById('viagemId').addEventListener('change', e => {
+      const id = parseInt(e.target.value);
+      const v = viagensData.find(x => x.codigo === id);
+      const pv = document.getElementById('viagemPreview');
+      if (v) {
+        document.getElementById('pvRota').textContent = `${v.rota?.origem?.nome ?? '?'} → ${v.rota?.destino?.nome ?? '?'}`;
+        document.getElementById('pvData').textContent = fmtDate(v.data);
+        document.getElementById('pvSaida').textContent = v.horarioSaida;
+        document.getElementById('pvMotorista').textContent = v.motorista?.nome ?? '—';
+        pv.style.display = 'block';
+      } else { pv.style.display = 'none'; }
+    });
+
+    document.getElementById('formAcesso').addEventListener('submit', async e => {
+      e.preventDefault();
+      const form = e.target;
+      form.classList.add('was-validated');
+      if (!form.checkValidity()) return;
+      const btn = document.getElementById('btnSalvar');
+      btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Registrando...';
+      try {
+        await api.post('/registros-acesso', {
+          tipo:     document.getElementById('tipo').value,
+          dataHora: new Date(document.getElementById('dataHora').value).toISOString(),
+          alunoId:  parseInt(document.getElementById('alunoId').value),
+          viagemId: parseInt(document.getElementById('viagemId').value),
+        });
+        showToast('Registro de acesso criado!', 'success');
+        form.reset(); form.classList.remove('was-validated');
+        document.getElementById('viagemPreview').style.display = 'none';
+        const now2 = new Date(); now2.setMinutes(now2.getMinutes() - now2.getTimezoneOffset());
+        document.getElementById('dataHora').value = now2.toISOString().slice(0,16);
+        await loadAcessos();
+      } catch(e) {
+        document.getElementById('alert-area').innerHTML =
+          `<div class="alert alert-danger alert-dismissible d-flex gap-2 align-items-center mb-3 fade show">
+            <i class="bi bi-exclamation-triangle-fill"></i><span>${e.message}</span>
+            <button class="btn-close" data-bs-dismiss="alert"></button></div>`;
+      } finally {
+        btn.disabled = false; btn.innerHTML = '<i class="bi bi-check-lg"></i> Registrar Acesso';
+      }
+    });
+
+    await loadAcessos();
+  });
+
+  async function loadAcessos() {
+    try {
+      const list = await api.get('/registros-acesso?include=true');
+      const tbody = document.getElementById('tbodyAcessos');
+      if (!list.length) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">Nenhum registro encontrado.</td></tr>`;
+        return;
+      }
+      const recent = list.slice(-20).reverse();
+      tbody.innerHTML = recent.map(r => {
+        const tipo = r.tipo === 'EMBARQUE'
+          ? `<span class="badge-ste embarque"><i class="bi bi-arrow-up-circle"></i>Embarque</span>`
+          : `<span class="badge-ste desembarque"><i class="bi bi-arrow-down-circle"></i>Desembarque</span>`;
+        const dt = r.dataHora ? new Date(r.dataHora).toLocaleString('pt-BR') : '—';
+        return `
+          <tr>
+            <td class="fw-600 text-accent">${r.codigo}</td>
+            <td>${tipo}</td>
+            <td class="fw-600">${r.aluno?.nome ?? r.alunoId}</td>
+            <td>#${r.viagemId}</td>
+            <td style="font-size:12px">${dt}</td>
+            <td>
+              <div class="action-btns">
+                <button class="btn-icon delete" onclick="deleteAcesso(${r.codigo})"><i class="bi bi-trash-fill"></i></button>
+              </div>
+            </td>
+          </tr>`;
+      }).join('');
+    } catch(e) { showToast('Erro ao listar registros.', 'error'); }
+  }
+
+  window.deleteAcesso = id => {
+    confirmDelete(`Excluir o registro de acesso #${id}?`, async () => {
+      try {
+        await api.delete(`/registros-acesso/${id}`);
+        showToast('Registro excluído!', 'success');
+        await loadAcessos();
+      } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+    });
+  };
+</script>
+</body>
+</html>

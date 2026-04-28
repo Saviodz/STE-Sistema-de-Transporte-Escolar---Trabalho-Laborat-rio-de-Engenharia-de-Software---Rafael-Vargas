@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listagem de Prefeituras – STE</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+<div id="sidebar"></div>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div id="main-content">
+  <header class="topbar">
+    <div class="d-flex align-items-center gap-3">
+      <button id="sidebar-toggle" class="btn-icon" style="background:transparent;color:var(--ste-text);">
+        <i class="bi bi-list" style="font-size:22px"></i>
+      </button>
+      <span class="topbar-title">Prefeituras</span>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbar-avatar-letter">U</div>
+        <span id="topbar-username">Usuário</span>
+      </div>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="page-header">
+      <div><h1>Prefeituras Cadastradas</h1><p class="page-subtitle">Gerencie as prefeituras parceiras do STE</p></div>
+      <a href="cadastro-prefeitura.html" class="btn-ste-primary"><i class="bi bi-plus-lg"></i> Nova Prefeitura</a>
+    </div>
+    <div class="ste-card">
+      <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+        <div class="search-bar">
+          <i class="bi bi-search search-icon"></i>
+          <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nome ou CNPJ…">
+        </div>
+        <span class="fs-13 text-muted" id="countLabel">Carregando…</span>
+      </div>
+      <div class="table-wrapper">
+        <table class="ste-table">
+          <thead>
+            <tr><th>#</th><th>Razão Social</th><th>CNPJ</th><th>Cidade</th><th>E-mail</th><th>Ações</th></tr>
+          </thead>
+          <tbody id="tbodyPrefeituras">
+            <tr><td colspan="6" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Carregando…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title fw-600"><i class="bi bi-pencil-square me-2 text-accent"></i>Editar Prefeitura</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body pt-0">
+        <form id="formEdit" novalidate>
+          <input type="hidden" id="editCodigo">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label">Razão Social <span class="text-danger">*</span></label>
+              <input type="text" id="editRazao" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">CNPJ <span class="text-danger">*</span></label>
+              <input type="text" id="editCnpj" class="form-control" required maxlength="18">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">E-mail <span class="text-danger">*</span></label>
+              <input type="email" id="editEmail" class="form-control" required>
+            </div>
+            <div class="col-md-8">
+              <label class="form-label">Endereço <span class="text-danger">*</span></label>
+              <input type="text" id="editEndereco" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Telefones <span class="text-danger">*</span></label>
+              <input type="text" id="editTelefones" class="form-control" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Cidade <span class="text-danger">*</span></label>
+              <select id="editCidade" class="form-select" required><option value="">-- Carregando --</option></select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button class="btn-ste-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn-ste-primary" id="btnSalvarEdit"><i class="bi bi-check-lg"></i> Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module">
+  import { injectSidebar } from '../assets/js/sidebar.js';
+  import { showToast, populateSelect, confirmDelete } from '../assets/js/ui.js';
+  import { api } from '../assets/js/api.js';
+  if (!localStorage.getItem('ste-user')) window.location.href = 'login.html';
+
+  let allData = [];
+  const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    injectSidebar();
+    await loadAll();
+    document.getElementById('searchInput').addEventListener('input', e => {
+      const q = e.target.value.toLowerCase();
+      renderTable(allData.filter(p => p.razaoSocial?.toLowerCase().includes(q) || p.cnpj?.includes(q)));
+    });
+    document.getElementById('btnSalvarEdit').addEventListener('click', saveEdit);
+  });
+
+  async function loadAll() {
+    try {
+      allData = await api.get('/prefeituras?include=true');
+      renderTable(allData);
+      const cidades = await api.get('/cidades?include=true');
+      populateSelect('editCidade', cidades, 'codigo', c => `${c.nome} – ${c.estado?.sigla ?? ''}`);
+    } catch(e) { showToast('Erro ao carregar: ' + e.message, 'error'); }
+  }
+
+  function renderTable(list) {
+    document.getElementById('countLabel').textContent = `${list.length} registro(s)`;
+    const tbody = document.getElementById('tbodyPrefeituras');
+    if (!list.length) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="bi bi-building"></i><p>Nenhuma prefeitura encontrada.</p></div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = list.map(p => `
+      <tr>
+        <td class="fw-600 text-accent">${p.codigo}</td>
+        <td class="fw-600">${p.razaoSocial}</td>
+        <td style="font-family:monospace">${p.cnpj}</td>
+        <td>${p.cidade?.nome ?? '—'}</td>
+        <td>${p.email}</td>
+        <td>
+          <div class="action-btns">
+            <button class="btn-icon edit" onclick="openEdit(${p.codigo})"><i class="bi bi-pencil-fill"></i></button>
+            <button class="btn-icon delete" onclick="deletePref(${p.codigo},'${p.razaoSocial.replace(/'/g,"\\'")}')"><i class="bi bi-trash-fill"></i></button>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+
+  window.openEdit = async id => {
+    const p = await api.get(`/prefeituras/${id}?include=true`);
+    document.getElementById('editCodigo').value   = p.codigo;
+    document.getElementById('editRazao').value    = p.razaoSocial;
+    document.getElementById('editCnpj').value     = p.cnpj;
+    document.getElementById('editEmail').value    = p.email;
+    document.getElementById('editEndereco').value = p.endereco;
+    document.getElementById('editTelefones').value= p.telefones;
+    document.getElementById('editCidade').value   = p.cidadeId;
+    editModal.show();
+  };
+
+  async function saveEdit() {
+    const form = document.getElementById('formEdit');
+    form.classList.add('was-validated');
+    if (!form.checkValidity()) return;
+    const id = document.getElementById('editCodigo').value;
+    const btn = document.getElementById('btnSalvarEdit');
+    btn.disabled = true;
+    try {
+      await api.put(`/prefeituras/${id}`, {
+        razaoSocial: document.getElementById('editRazao').value.trim(),
+        cnpj: document.getElementById('editCnpj').value.trim(),
+        email: document.getElementById('editEmail').value.trim(),
+        endereco: document.getElementById('editEndereco').value.trim(),
+        telefones: document.getElementById('editTelefones').value.trim(),
+        cidadeId: parseInt(document.getElementById('editCidade').value),
+      });
+      showToast('Prefeitura atualizada!', 'success');
+      editModal.hide();
+      await loadAll();
+    } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+    finally { btn.disabled = false; }
+  }
+
+  window.deletePref = (id, nome) => {
+    confirmDelete(`Excluir a prefeitura "${nome}"?`, async () => {
+      try {
+        await api.delete(`/prefeituras/${id}`);
+        showToast('Prefeitura excluída!', 'success');
+        allData = allData.filter(p => p.codigo !== id);
+        renderTable(allData);
+      } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+    });
+  };
+</script>
+</body>
+</html>

@@ -22,6 +22,7 @@ app.get('/app', (req, res) => {
 app.use(routes);
 app.use(errorHandler);
 
-app.listen(3333, () => {
-  console.log('Servidor executando em http://localhost:3333 | Frontend inicial em http://localhost:3333/app');
+const PORT = process.env.PORT || 3333;
+app.listen(PORT, () => {
+  console.log(`Servidor executando na porta ${PORT} | Frontend: http://localhost:${PORT}/app`);
 });

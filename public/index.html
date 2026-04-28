@@ -1,11 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>STE – Sistema de Transporte Escolar</title>
+  <meta http-equiv="refresh" content="0; url=pages/login.html">
+  <style>
+    body { margin:0; font-family: sans-serif; display:flex; align-items:center;
+           justify-content:center; min-height:100vh; background:#0d2137; color:#fff; }
+    p { font-size:14px; opacity:.6; }
+  </style>
 </head>
 <body>
-  
+  <p>Redirecionando… <a href="pages/login.html" style="color:#1e90ff">clique aqui</a></p>
+  <script>
+    // If already logged in, go directly to dashboard
+    if (localStorage.getItem('ste-user')) {
+      window.location.replace('pages/index.html');
+    } else {
+      window.location.replace('pages/login.html');
+    }
+  </script>
 </body>
 </html>
