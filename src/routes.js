@@ -11,6 +11,7 @@ import { RotaController } from './controllers/RotaController.js';
 import { ViagemController } from './controllers/ViagemController.js';
 import { MatriculaTransporteController } from './controllers/MatriculaTransporteController.js';
 import { RegistroAcessoController } from './controllers/RegistroAcessoController.js';
+import { RelatorioController } from './controllers/RelatorioController.js';
 
 const routes = express.Router();
 
@@ -87,5 +88,8 @@ routes.get('/registros-acesso/:id', RegistroAcessoController.findByPk);
 routes.post('/registros-acesso', RegistroAcessoController.create);
 routes.delete('/registros-acesso/:id', RegistroAcessoController.delete);
 routes.put('/registros-acesso/:id', RegistroAcessoController.update);
+
+routes.get('/relatorios/alunos-por-rota/:rotaId', RelatorioController.alunosPorRota);
+routes.get('/relatorios/acessos-por-periodo', RelatorioController.acessosPorPeriodo);
 
 export default routes;

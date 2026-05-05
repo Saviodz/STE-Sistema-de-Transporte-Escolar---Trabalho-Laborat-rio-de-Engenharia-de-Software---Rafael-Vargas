@@ -1576,6 +1576,86 @@
           ]
         },
         {
+          "name": "POST - RN01 - Motorista ja designado na mesma data",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/viagens",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": \"2026-04-01\",\n  \"horarioSaida\": \"10:00\",\n  \"horarioChegada\": \"11:30\",\n  \"rotaId\": 2,\n  \"motoristaId\": 1,\n  \"onibusId\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400 - RN01 motorista duplicado na data\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"Mensagem de erro da RN01\", function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.erro).to.include(\"motorista\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - RN02 - Onibus ja alocado na mesma data",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/viagens",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": \"2026-04-01\",\n  \"horarioSaida\": \"10:00\",\n  \"horarioChegada\": \"11:30\",\n  \"rotaId\": 2,\n  \"motoristaId\": 3,\n  \"onibusId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400 - RN02 onibus duplicado na data\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"Mensagem de erro da RN02\", function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.erro).to.include(\"onibus\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "PUT - Alterar",
           "request": {
             "method": "PUT",
@@ -1695,7 +1775,7 @@
             "url": "{{base_url}}/matriculas-transporte",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"alunoId\": 1,\n  \"rotaId\": 1\n}",
+              "raw": "{\n  \"alunoId\": 1,\n  \"rotaId\": 2\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1750,6 +1830,86 @@
                 "exec": [
                   "pm.test(\"Status code is 400\", function () {",
                   "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - RN01 - Aluno bloqueado nao pode matricular",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/matriculas-transporte",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"alunoId\": 6,\n  \"rotaId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400 - RN01 aluno bloqueado\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"Mensagem de erro da RN01\", function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.erro).to.include(\"Ativo\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - RN02 - Aluno ja matriculado na mesma rota",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/matriculas-transporte",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"alunoId\": 1,\n  \"rotaId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400 - RN02 matricula duplicada\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"Mensagem de erro da RN02\", function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.erro).to.include(\"matriculado\");",
                   "});"
                 ]
               }
@@ -1938,6 +2098,86 @@
           ]
         },
         {
+          "name": "POST - RN01 - Aluno com mais de 2 embarques no dia",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/registros-acesso",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"EMBARQUE\",\n  \"dataHora\": \"2026-04-01T20:00:00\",\n  \"alunoId\": 1,\n  \"viagemId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400 - RN01 limite de embarques\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"Mensagem de erro da RN01\", function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.erro).to.include(\"2 embarques\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - RN02 - Desembarque sem embarque disponivel",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/registros-acesso",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"DESEMBARQUE\",\n  \"dataHora\": \"2026-04-01T20:30:00\",\n  \"alunoId\": 1,\n  \"viagemId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400 - RN02 desembarque invalido\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"Mensagem de erro da RN02\", function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.erro).to.include(\"desembarque\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "PUT - Alterar",
           "request": {
             "method": "PUT",
@@ -1979,6 +2219,84 @@
             "method": "DELETE",
             "header": [],
             "url": "{{base_url}}/registros-acesso/{{registro_acesso_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Relatorios",
+      "item": [
+        {
+          "name": "GET - Alunos por Rota",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/relatorios/alunos-por-rota/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "relatorios",
+                "alunos-por-rota",
+                "1"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Acessos por Periodo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/relatorios/acessos-por-periodo?dataInicial=2026-04-01&dataFinal=2026-04-30",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "relatorios",
+                "acessos-por-periodo"
+              ],
+              "query": [
+                {
+                  "key": "dataInicial",
+                  "value": "2026-04-01"
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "2026-04-30"
+                }
+              ]
+            }
           },
           "response": [],
           "event": [

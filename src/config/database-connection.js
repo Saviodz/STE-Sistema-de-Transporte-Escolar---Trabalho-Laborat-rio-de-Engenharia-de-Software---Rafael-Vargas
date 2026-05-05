@@ -189,6 +189,17 @@ function databaseInserts() {
       prefeituraId: prefeitura6.codigo,
       instituicaoEnsinoId: instituicao1.codigo
     });
+    const aluno6 = await Aluno.create({
+      nome: 'Lucas Oliveira Santos',
+      cpf: '123.456.789-06',
+      dataNascimento: '2006-03-25',
+      endereco: 'Rua das Palmeiras, 45 - Alegre - ES',
+      telefones: '(28) 99911-1006',
+      responsavelLegal: 'Ana Santos',
+      situacaoAcesso: 'Bloqueado',
+      prefeituraId: prefeitura2.codigo,
+      instituicaoEnsinoId: instituicao3.codigo
+    });
 
     const motorista1 = await Motorista.create({
       nome: 'Marcos Vinicius Pires',
@@ -343,6 +354,21 @@ function databaseInserts() {
       dataHora: '2026-04-01T05:44:00',
       alunoId: aluno5.codigo,
       viagemId: viagem1.codigo
+    });
+
+    // Segundo embarque do aluno 1 em 2026-04-01 (para teste RN01 de RegistroAcesso)
+    await RegistroAcesso.create({
+      tipo: 'EMBARQUE',
+      dataHora: '2026-04-01T17:50:00',
+      alunoId: aluno1.codigo,
+      viagemId: viagem2.codigo
+    });
+    // Segundo desembarque do aluno 1 em 2026-04-01 (para teste RN02 de RegistroAcesso)
+    await RegistroAcesso.create({
+      tipo: 'DESEMBARQUE',
+      dataHora: '2026-04-01T19:00:00',
+      alunoId: aluno1.codigo,
+      viagemId: viagem2.codigo
     });
   })();
 }

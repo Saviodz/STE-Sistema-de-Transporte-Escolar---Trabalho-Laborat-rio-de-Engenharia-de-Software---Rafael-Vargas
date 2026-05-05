@@ -1,4 +1,6 @@
 import { MatriculaTransporte } from '../models/MatriculaTransporte.js';
+import { Aluno } from '../models/Aluno.js';
+import sequelize from '../config/database-connection.js';
 
 class MatriculaTransporteService {
   static async findAll() {
@@ -14,8 +16,44 @@ class MatriculaTransporteService {
 
   static async create(req) {
     const { alunoId, rotaId } = req.body;
-    const obj = await MatriculaTransporte.create({ alunoId, rotaId });
-    return await MatriculaTransporte.findByPk(obj.codigo, { include: { all: true, nested: true } });
+    if (await this.verificarRegrasDeNegocio(req)) {
+      const t = await sequelize.transaction();
+      try {
+        const obj = await MatriculaTransporte.create({
+          alunoId,
+          rotaId
+        }, { transaction: t });
+        await t.commit();
+        return await MatriculaTransporte.findByPk(obj.codigo, { include: { all: true, nested: true } });
+      } catch (error) {
+        await t.rollback();
+        throw "Erro ao registrar a matricula de transporte!";
+      }
+    }
+  }
+
+  // ==========================================
+  // Verificacao das Regras de Negocio
+  // ==========================================
+  static async verificarRegrasDeNegocio(req) {
+    const { alunoId, rotaId } = req.body;
+
+    // Regra de Negocio 1: O aluno com situacao diferente de 'Ativo' nao pode ser matriculado em uma rota de transporte
+    const aluno = await Aluno.findByPk(alunoId);
+    if (aluno == null) throw "Aluno nao encontrado!";
+    if (aluno.situacaoAcesso !== 'Ativo') {
+      throw "O aluno com situacao diferente de 'Ativo' nao pode ser matriculado em uma rota de transporte!";
+    }
+
+    // Regra de Negocio 2: O aluno nao pode ser matriculado mais de uma vez na mesma rota
+    const matriculaExistente = await MatriculaTransporte.findAll({
+      where: { alunoId: alunoId, rotaId: rotaId }
+    });
+    if (matriculaExistente.length > 0) {
+      throw "O aluno ja esta matriculado nesta rota de transporte!";
+    }
+
+    return true;
   }
 
   static async update(req) {
