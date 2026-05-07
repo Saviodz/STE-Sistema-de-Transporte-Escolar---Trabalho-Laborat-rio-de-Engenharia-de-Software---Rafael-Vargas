@@ -11,7 +11,7 @@ class RelatorioService {
       include: { all: true, nested: true }
     });
     // Retorna apenas os objetos de Aluno mapeados
-    return matriculas.map(m => m.Aluno);
+    return matriculas.map(m => m.aluno);
   }
 
   // Relatório de Acessos por Período
