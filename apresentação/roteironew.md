@@ -34,7 +34,7 @@ Siga rigorosamente a estrutura abaixo para montar a apresentação de cada integ
 - **Código em tela:** Trecho do Sequelize verificando o motorista `await Viagem.findAll({ where: { data, motoristaId } })`.
 - **SQL Resultante (SQL Tradicional):**
   ```sql
-  SELECT id, data, horario_saida, rota_id, motorista_id, onibus_id 
+  SELECT codigo, data, horario_saida, rota_id, motorista_id, onibus_id 
   FROM viagens 
   WHERE data = '2026-04-10' AND motorista_id = 1;
   ```
@@ -43,7 +43,7 @@ Siga rigorosamente a estrutura abaixo para montar a apresentação de cada integ
 - **Código em tela:** Trecho do Sequelize verificando o ônibus `await Viagem.findAll({ where: { data, onibusId } })`.
 - **SQL Resultante (SQL Tradicional):**
   ```sql
-  SELECT id, data, horario_saida, rota_id, motorista_id, onibus_id 
+  SELECT codigo, data, horario_saida, rota_id, motorista_id, onibus_id 
   FROM viagens 
   WHERE data = '2026-04-10' AND onibus_id = 3;
   ```
@@ -75,18 +75,18 @@ Siga rigorosamente a estrutura abaixo para montar a apresentação de cada integ
 - **Código em tela:** Print geral do método `verificarRegrasDeNegocio(req)`.
 
 **Slide 05: Implementação das Regras (Buscando o Histórico do Dia)**
-- **Código em tela:** Trecho do Sequelize buscando acessos: `RegistroAcesso.findAll({ where: { alunoId, dataHora: { [Op.gte]: inicioDia, [Op.lte]: fimDia } } })`.
+- **Código em tela:** Trecho do Sequelize buscando acessos: `RegistroAcesso.findAll({ where: { alunoId, dataHora: { [Op.gte]: inicio, [Op.lt]: fim } } })` — onde `inicio` é 00:00:00 e `fim` é o início do dia seguinte.
 - **SQL Resultante (SQL Tradicional):**
   ```sql
   SELECT codigo, tipo, data_hora, aluno_id, viagem_id 
   FROM registros_acesso 
   WHERE aluno_id = 3 
   AND data_hora >= '2026-05-05 00:00:00' 
-  AND data_hora <= '2026-05-05 23:59:59';
+  AND data_hora < '2026-05-06 00:00:00';
   ```
 
 **Slide 06: Processamento das Regras (Lógica)**
-- **Explicação Visual:** Mostrar como o código javascript separa os registros do banco em variáveis `embarquesHoje` e `desembarquesHoje`, fazendo a validação (`embarquesHoje.length >= 2`).
+- **Explicação Visual:** Mostrar como o código filtra `embarquesDoDia` (total do dia, para RN01) e `registrosPrevios` (apenas antes do horário atual, para RN02), comparando `embarquesPrevios` e `desembarquesPrevios` para determinar se o aluno está fisicamente dentro do veículo.
 
 ---
 
@@ -123,13 +123,12 @@ Siga rigorosamente a estrutura abaixo para montar a apresentação de cada integ
   ```
 
 **Slide 06: Implementação da Regra 2**
-- **Código em tela:** Trecho verificando a duplicidade de matrícula: `await MatriculaTransporte.findOne({ where: { alunoId, rotaId } })`.
+- **Código em tela:** Trecho verificando a duplicidade de matrícula: `await MatriculaTransporte.findAll({ where: { alunoId: alunoId, rotaId: rotaId } })` seguido da checagem `if (matriculaExistente.length > 0)`.
 - **SQL Resultante (SQL Tradicional):**
   ```sql
   SELECT codigo, aluno_id, rota_id 
   FROM matriculas_transporte 
-  WHERE aluno_id = 5 AND rota_id = 2 
-  LIMIT 1;
+  WHERE aluno_id = 5 AND rota_id = 2;
   ```
 
 
@@ -178,10 +177,10 @@ Passamos essa variável pro `create` e, se tudo der certo, executamos o `await t
 "Para que a gravação não aceite falhas logísticas, eu delimitei duas regras de negócio. A RN01 é um controle rigoroso de limite e fraude: o aluno só tem o direito de ter 2 embarques processados por dia, que correspondem à ida à escola e à volta pra casa. Já a RN02 é uma regra de integridade estrutural: é proibido gerar um registro de 'Desembarque' se aquele aluno não tiver um 'Embarque' em aberto para balancear a viagem. Fazer um desembarque sem entrar no ônibus seria um dado fantasma na base."
 
 **[SLIDE 05: Implementação das Regras (Buscando o Histórico do Dia)]**
-"E como nós aplicamos isso na prática? Para evitar consultas custosas, o nosso código junta as validações buscando de uma vez todo o histórico do dia daquele aluno. O Sequelize recebe a cláusula de Maior ou Igual para o início do dia, e Menor ou Igual para o fim do dia. Ele traduz isso diretamente no bloco SQL ali de baixo, trazendo todos os registros gerados naquele intervalo de 24 horas."
+"E como nós aplicamos isso na prática? O código usa `Op.gte` para o início do dia — meia-noite — e `Op.lt` para o início do dia seguinte, também meia-noite. Isso é mais robusto do que um `BETWEEN` com string fixa, porque usa objetos `Date` reais e cobre qualquer fuso. O Sequelize traduz isso diretamente no bloco SQL ali de baixo, trazendo todos os registros gerados naquele intervalo de 24 horas."
 
 **[SLIDE 06: Processamento das Regras (Lógica)]**
-"Com o retorno do banco em mãos, meu código JavaScript usa filtros locais para separar o que é embarque e desembarque do dia. Se a variável `embarquesHoje` tiver um tamanho maior ou igual a dois, a RN01 barra tudo e devolve o erro 400. Depois, eu somo os embarques e subtraio os desembarques: se o saldo for menor ou igual a zero, significa que o aluno não está ativamente 'dentro' do veículo, e a RN02 também barra a inserção. Com isso garantimos relatórios cem por cento confiáveis. Passo agora pro Sávio."
+"Com o retorno do banco em mãos, o código faz dois recortes. Para a RN01, ele conta todos os `embarquesDoDia` do dia inteiro: se já forem dois, barra o terceiro embarque. Para a RN02, ele vai além: filtra apenas os `registrosPrevios` — ou seja, registros com horário anterior ao da nova solicitação — e compara `embarquesPrevios` com `desembarquesPrevios`. Se os embarques anteriores não superarem os desembarques anteriores, significa que o aluno já saiu do veículo e não pode registrar outro desembarque. Com isso garantimos relatórios cem por cento confiáveis. Passo agora pro Sávio."
 
 ---
 
@@ -203,4 +202,4 @@ Passamos essa variável pro `create` e, se tudo der certo, executamos o `await t
 "A checagem de status na Regra 1 é o que vemos aqui. Através da função primária `findByPk`, o nosso ORM levanta um `SELECT` rápido buscando aquele cadastro do aluno pela sua chave principal. O código então intercepta a propriedade `situacao_acesso`. Se ele for suspenso, desligado ou qualquer coisa diferente de ativo, o erro é jogado na tela antes do commit."
 
 **[SLIDE 06: Implementação da Regra 2]**
-"E na nossa proteção contra duplicidades, nós rodamos um `findOne`, passando uma cláusula `where` composta que une a checagem do ID do aluno e o ID da rota. Reparem ali no SQL que o Sequelize adicionou a trava `LIMIT 1` automaticamente para economizar busca na tabela e ganhar performance no back-end. Caso o banco retorne um resultado, nós impedimos o cadastro duplo e mantemos nossa base íntegra e coerente com a nossa modelagem. E com isso encerramos o fluxo do projeto, muito obrigado pela atenção!"
+"E na nossa proteção contra duplicidades, nós rodamos um `findAll`, passando uma cláusula `where` composta que une a checagem do ID do aluno e o ID da rota. O Sequelize traduz isso num `SELECT` direto na tabela, retornando todos os registros que batem com essa combinação. Se o array retornado tiver qualquer elemento — ou seja, `.length` maior que zero — nós bloqueamos a operação e impedimos o cadastro duplo, mantendo nossa base íntegra e coerente com a nossa modelagem. E com isso encerramos o fluxo do projeto, muito obrigado pela atenção!"

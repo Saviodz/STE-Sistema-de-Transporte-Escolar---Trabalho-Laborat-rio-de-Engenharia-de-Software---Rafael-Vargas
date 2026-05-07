@@ -1,4 +1,5 @@
 import { Viagem } from '../models/Viagem.js';
+import { Op } from 'sequelize';
 import sequelize from '../config/database-connection.js';
 
 class ViagemService {
@@ -38,23 +39,26 @@ class ViagemService {
   // ==========================================
   // Verificacao das Regras de Negocio
   // ==========================================
-  static async verificarRegrasDeNegocio(req) {
-    const { data, horarioSaida, horarioChegada, rotaId, motoristaId, onibusId } = req.body;
+  static async verificarRegrasDeNegocio(req, viagemAtualId = null) {
+    const { data, motoristaId, onibusId } = req.body;
 
-    // Regra de Negocio 1: O motorista nao pode ser designado para mais de uma viagem na mesma data
+    // Condicao base da busca, excluindo a propria viagem no caso de update.
+    const whereBase = viagemAtualId != null ? { codigo: { [Op.ne]: viagemAtualId } } : {};
+
+    // RN01: O motorista nao pode ser designado para mais de uma viagem na mesma data.
     const viagensMotorista = await Viagem.findAll({
-      where: { motoristaId: motoristaId, data: data }
+      where: { ...whereBase, motoristaId, data }
     });
     if (viagensMotorista.length > 0) {
-      throw "Este motorista ja esta designado para outra viagem nesta data!";
+      throw 'RN01: Este motorista ja esta designado para outra viagem nesta data!';
     }
 
-    // Regra de Negocio 2: O onibus nao pode ser utilizado em mais de uma viagem na mesma data
+    // RN02: O onibus nao pode ser utilizado em mais de uma viagem na mesma data.
     const viagensOnibus = await Viagem.findAll({
-      where: { onibusId: onibusId, data: data }
+      where: { ...whereBase, onibusId, data }
     });
     if (viagensOnibus.length > 0) {
-      throw "Este onibus ja esta alocado em outra viagem nesta data!";
+      throw 'RN02: Este onibus ja esta alocado em outra viagem nesta data!';
     }
 
     return true;
@@ -65,6 +69,10 @@ class ViagemService {
     const { data, horarioSaida, horarioChegada, rotaId, motoristaId, onibusId } = req.body;
     const obj = await Viagem.findByPk(id, { include: { all: true, nested: true } });
     if (obj == null) throw 'Viagem nao encontrada!';
+
+    // Reaplica as regras de negocio, ignorando a propria viagem na contagem.
+    await this.verificarRegrasDeNegocio(req, id);
+
     Object.assign(obj, { data, horarioSaida, horarioChegada, rotaId, motoristaId, onibusId });
     await obj.save();
     return await Viagem.findByPk(obj.codigo, { include: { all: true, nested: true } });
