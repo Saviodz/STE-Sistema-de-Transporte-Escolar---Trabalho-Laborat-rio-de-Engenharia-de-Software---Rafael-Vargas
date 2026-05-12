@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matrícula de Transporte – STE</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+<div id="sidebar"></div>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div id="main-content">
+  <header class="topbar">
+    <div class="d-flex align-items-center gap-3">
+      <button id="sidebar-toggle" class="btn-icon" style="background:transparent;color:var(--ste-text);">
+        <i class="bi bi-list" style="font-size:22px"></i>
+      </button>
+      <span class="topbar-title">Matrícula de Transporte</span>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbar-avatar-letter">U</div>
+        <span id="topbar-username">Usuário</span>
+      </div>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="page-header">
+      <div><h1 id="pageTitle">Nova Matrícula</h1><p class="page-subtitle" id="pageSubtitle">Vincule um aluno ativo a uma rota</p></div>
+    </div>
+    <div id="alert-area"></div>
+    <div class="ste-card" style="max-width:800px">
+      <div class="ste-card-header">
+        <div class="card-icon"><i class="bi bi-card-checklist"></i></div>
+        <h2>Dados da Matrícula</h2>
+      </div>
+      <form id="formMatricula" novalidate>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="alunoId" class="form-label">Aluno <span class="text-danger">*</span></label>
+            <select id="alunoId" class="form-select" required>
+              <option value="">-- Carregando... --</option>
+            </select>
+            <div class="invalid-feedback">Selecione o aluno.</div>
+            <small class="text-muted">Apenas alunos com situação ATIVO.</small>
+          </div>
+          <div class="col-md-6">
+            <label for="rotaId" class="form-label">Rota <span class="text-danger">*</span></label>
+            <select id="rotaId" class="form-select" required>
+              <option value="">-- Carregando... --</option>
+            </select>
+            <div class="invalid-feedback">Selecione a rota.</div>
+          </div>
+        </div>
+        <div class="d-flex gap-3 justify-content-end mt-4">
+          <button type="button" class="btn-ste-secondary" id="btnCancelar" style="display:none;"><i class="bi bi-x"></i> Cancelar Edição</button>
+          <button type="button" class="btn-ste-secondary" id="btnLimpar" onclick="resetForm()"><i class="bi bi-eraser"></i> Limpar</button>
+          <button type="submit" class="btn-ste-primary" id="btnSalvar">
+            <i class="bi bi-check-lg"></i> <span id="btnSalvarText">Salvar Matrícula</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Listagem rápida -->
+    <div class="ste-card mt-4">
+      <div class="ste-card-header">
+        <div class="card-icon"><i class="bi bi-list-ul"></i></div>
+        <h2>Matrículas Realizadas</h2>
+      </div>
+      <div class="table-wrapper">
+        <table class="ste-table">
+          <thead><tr><th>#</th><th>Aluno</th><th>CPF</th><th>Rota</th><th>Turno</th><th>Ações</th></tr></thead>
+          <tbody id="tbodyMatriculas">
+            <tr><td colspan="6" class="text-center py-3 text-muted"><div class="spinner-border spinner-border-sm"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<div id="toast-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module">
+  import { injectSidebar } from '../assets/js/sidebar.js';
+  import { showToast, populateSelect, confirmDelete } from '../assets/js/ui.js';
+  import { api } from '../assets/js/api.js';
+  if (!localStorage.getItem('ste-user')) window.location.href = 'login.html';
+
+  let editId = null;
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    injectSidebar();
+    try {
+      const [alunos, rotas] = await Promise.all([
+          api.get('/alunos'),
+          api.get('/rotas?include=true')
+      ]);
+      populateSelect('alunoId', alunos, 'codigo', a => `${a.nome} – ${a.cpf} ${(a.situacaoAcesso || '').toUpperCase() !== 'ATIVO' ? '(Inativo)' : ''}`, 'Selecione o aluno');
+      populateSelect('rotaId', rotas, 'codigo', r => `${r.descricao} - ${r.turno}`, 'Selecione a rota');
+    } catch(e) { showToast('Erro ao carregar dados.', 'error'); }
+    await loadMatriculas();
+
+    document.getElementById('formMatricula').addEventListener('submit', async e => {
+      e.preventDefault();
+      const form = e.target;
+      form.classList.add('was-validated');
+      if (!form.checkValidity()) return;
+      
+      const btn = document.getElementById('btnSalvar');
+      const btnText = document.getElementById('btnSalvarText');
+      btn.disabled = true; btnText.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Salvando...';
+      
+      try {
+        const payload = {
+          alunoId: parseInt(document.getElementById('alunoId').value),
+          rotaId: parseInt(document.getElementById('rotaId').value)
+        };
+
+        if (editId) {
+            await api.put(`/matriculas-transporte/${editId}`, payload);
+            showToast('Matrícula atualizada com sucesso!', 'success');
+        } else {
+            await api.post('/matriculas-transporte', payload);
+            showToast('Matrícula cadastrada com sucesso!', 'success');
+        }
+        
+        resetForm();
+        await loadMatriculas();
+      } catch(e) {
+        document.getElementById('alert-area').innerHTML =
+          `<div class="alert alert-danger alert-dismissible d-flex gap-2 align-items-center mb-3 fade show">
+            <i class="bi bi-exclamation-triangle-fill"></i><span>${e.message}</span>
+            <button class="btn-close" data-bs-dismiss="alert"></button></div>`;
+      } finally {
+        btn.disabled = false; btnText.innerHTML = editId ? 'Salvar Alterações' : 'Salvar Matrícula';
+      }
+    });
+
+    document.getElementById('btnCancelar').addEventListener('click', resetForm);
+  });
+
+  window.resetForm = () => {
+      document.getElementById('formMatricula').reset();
+      document.getElementById('formMatricula').classList.remove('was-validated');
+      editId = null;
+      document.getElementById('pageTitle').innerText = 'Nova Matrícula';
+      document.getElementById('pageSubtitle').innerText = 'Vincule um aluno ativo a uma rota';
+      document.getElementById('btnSalvarText').innerText = 'Salvar Matrícula';
+      document.getElementById('btnCancelar').style.display = 'none';
+      document.getElementById('btnLimpar').style.display = 'inline-flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  async function loadMatriculas() {
+    try {
+      const matriculas = await api.get('/matriculas-transporte?include=true');
+      const tbody = document.getElementById('tbodyMatriculas');
+      if (!matriculas.length) { tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">Nenhuma matrícula cadastrada.</td></tr>`; return; }
+      tbody.innerHTML = matriculas.map(m => `
+        <tr>
+          <td class="fw-600 text-accent">${m.codigo}</td>
+          <td class="fw-600">${m.aluno?.nome ?? '-'}</td>
+          <td>${m.aluno?.cpf ?? '-'}</td>
+          <td>${m.rota?.descricao ?? '-'}</td>
+          <td><span class="badge bg-secondary">${m.rota?.turno ?? '-'}</span></td>
+          <td>
+            <div class="action-btns">
+              <button class="btn-icon edit" onclick="editMatricula(${m.codigo}, ${m.aluno?.codigo}, ${m.rota?.codigo})"><i class="bi bi-pencil-fill"></i></button>
+              <button class="btn-icon delete" onclick="deleteMatricula(${m.codigo},'do aluno ${m.aluno?.nome ?? ''}')"><i class="bi bi-trash-fill"></i></button>
+            </div>
+          </td>
+        </tr>`).join('');
+    } catch(e) { showToast('Erro ao listar matrículas.', 'error'); }
+  }
+
+  window.editMatricula = (id, alunoId, rotaId) => {
+      editId = id;
+      document.getElementById('alunoId').value = alunoId;
+      document.getElementById('rotaId').value = rotaId;
+      document.getElementById('pageTitle').innerText = 'Editar Matrícula';
+      document.getElementById('pageSubtitle').innerText = `Editando matrícula #${id}`;
+      document.getElementById('btnSalvarText').innerText = 'Salvar Alterações';
+      document.getElementById('btnCancelar').style.display = 'inline-flex';
+      document.getElementById('btnLimpar').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  window.deleteMatricula = (id, msgDesc) => {
+    confirmDelete(`Excluir a matrícula ${msgDesc}?`, async () => {
+      try {
+        await api.delete(`/matriculas-transporte/${id}`);
+        showToast('Matrícula excluída!', 'success');
+        if (editId === id) resetForm();
+        await loadMatriculas();
+      } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+    });
+  };
+</script>
+</body>
+</html>

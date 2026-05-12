@@ -56,7 +56,8 @@
         <div class="row g-3 mt-0">
           <div class="col-md-5">
             <label for="alunoId" class="form-label">Aluno <span class="text-danger">*</span></label>
-            <select id="alunoId" class="form-select" required>
+            <input type="text" id="filtroAluno" class="form-control mb-2" placeholder="Pesquisar aluno por nome ou código..." onkeyup="filtrarAlunos()">
+            <select id="alunoId" class="form-select" size="4" required>
               <option value="">-- Carregando... --</option>
             </select>
             <div class="invalid-feedback">Selecione o aluno.</div>
@@ -95,10 +96,11 @@
         </div>
       </div>
 
-      <div class="d-flex gap-3 justify-content-end">
-        <a href="index.html" class="btn-ste-secondary"><i class="bi bi-x"></i> Cancelar</a>
+      <div class="d-flex gap-3 justify-content-end mt-4">
+        <button type="button" class="btn-ste-secondary" id="btnCancelar" style="display:none;"><i class="bi bi-x"></i> Cancelar Edição</button>
+        <button type="button" class="btn-ste-secondary" id="btnLimpar" onclick="resetForm()"><i class="bi bi-eraser"></i> Limpar</button>
         <button type="submit" class="btn-ste-primary" id="btnSalvar">
-          <i class="bi bi-check-lg"></i> Registrar Acesso
+          <i class="bi bi-check-lg"></i> <span id="btnSalvarText">Registrar Acesso</span>
         </button>
       </div>
     </form>
@@ -129,6 +131,7 @@
   if (!localStorage.getItem('ste-user')) window.location.href = 'login.html';
 
   let viagensData = [];
+  let editId = null;
 
   document.addEventListener('DOMContentLoaded', async () => {
     injectSidebar();
@@ -144,8 +147,8 @@
       ]);
       viagensData = viagens;
       populateSelect('alunoId',
-        alunos.filter(a => a.situacaoAcesso === 'ATIVO'),
-        'codigo', a => `${a.nome} – ${a.cpf}`, 'Selecione o aluno');
+        alunos,
+        'codigo', a => `${a.nome} – ${a.cpf} ${(a.situacaoAcesso || '').toUpperCase() !== 'ATIVO' ? '(Inativo)' : ''}`, 'Selecione o aluno');
       populateSelect('viagemId', viagens, 'codigo',
         v => `#${v.codigo} | ${fmtDate(v.data)} | ${v.rota?.origem?.nome ?? '?'} → ${v.rota?.destino?.nome ?? '?'} (${v.horarioSaida})`,
         'Selecione a viagem');
@@ -170,19 +173,25 @@
       form.classList.add('was-validated');
       if (!form.checkValidity()) return;
       const btn = document.getElementById('btnSalvar');
-      btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Registrando...';
+      const btnText = document.getElementById('btnSalvarText');
+      btn.disabled = true; btnText.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Registrando...';
       try {
-        await api.post('/registros-acesso', {
+        const payload = {
           tipo:     document.getElementById('tipo').value,
           dataHora: new Date(document.getElementById('dataHora').value).toISOString(),
           alunoId:  parseInt(document.getElementById('alunoId').value),
           viagemId: parseInt(document.getElementById('viagemId').value),
-        });
-        showToast('Registro de acesso criado!', 'success');
-        form.reset(); form.classList.remove('was-validated');
-        document.getElementById('viagemPreview').style.display = 'none';
-        const now2 = new Date(); now2.setMinutes(now2.getMinutes() - now2.getTimezoneOffset());
-        document.getElementById('dataHora').value = now2.toISOString().slice(0,16);
+        };
+
+        if (editId) {
+            await api.put(`/registros-acesso/${editId}`, payload);
+            showToast('Registro de acesso atualizado!', 'success');
+        } else {
+            await api.post('/registros-acesso', payload);
+            showToast('Registro de acesso criado!', 'success');
+        }
+
+        resetForm();
         await loadAcessos();
       } catch(e) {
         document.getElementById('alert-area').innerHTML =
@@ -190,12 +199,29 @@
             <i class="bi bi-exclamation-triangle-fill"></i><span>${e.message}</span>
             <button class="btn-close" data-bs-dismiss="alert"></button></div>`;
       } finally {
-        btn.disabled = false; btn.innerHTML = '<i class="bi bi-check-lg"></i> Registrar Acesso';
+        btn.disabled = false; btnText.innerHTML = editId ? 'Salvar Alterações' : 'Registrar Acesso';
       }
     });
 
+    document.getElementById('btnCancelar').addEventListener('click', resetForm);
     await loadAcessos();
   });
+
+  window.resetForm = () => {
+      document.getElementById('formAcesso').reset();
+      document.getElementById('formAcesso').classList.remove('was-validated');
+      editId = null;
+      document.getElementById('viagemPreview').style.display = 'none';
+      const now2 = new Date(); now2.setMinutes(now2.getMinutes() - now2.getTimezoneOffset());
+      document.getElementById('dataHora').value = now2.toISOString().slice(0,16);
+
+      document.querySelector('.page-header h1').innerText = 'Registrar Acesso';
+      document.querySelector('.page-header .page-subtitle').innerText = 'Registre embarques e desembarques dos alunos';
+      document.getElementById('btnSalvarText').innerText = 'Registrar Acesso';
+      document.getElementById('btnCancelar').style.display = 'none';
+      document.getElementById('btnLimpar').style.display = 'inline-flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   async function loadAcessos() {
     try {
@@ -220,6 +246,7 @@
             <td style="font-size:12px">${dt}</td>
             <td>
               <div class="action-btns">
+                <button class="btn-icon edit" onclick="editAcesso(${r.codigo}, '${r.tipo}', '${r.dataHora}', ${r.alunoId}, ${r.viagemId})"><i class="bi bi-pencil-fill"></i></button>
                 <button class="btn-icon delete" onclick="deleteAcesso(${r.codigo})"><i class="bi bi-trash-fill"></i></button>
               </div>
             </td>
@@ -228,14 +255,50 @@
     } catch(e) { showToast('Erro ao listar registros.', 'error'); }
   }
 
+  window.editAcesso = (id, tipo, dataHora, alunoId, viagemId) => {
+      editId = id;
+      document.getElementById('tipo').value = tipo;
+      if (dataHora) {
+          const dt = new Date(dataHora);
+          dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
+          document.getElementById('dataHora').value = dt.toISOString().slice(0,16);
+      }
+      document.getElementById('alunoId').value = alunoId;
+      document.getElementById('viagemId').value = viagemId;
+      // Triggers change event for viagem to show preview
+      document.getElementById('viagemId').dispatchEvent(new Event('change'));
+      
+      document.querySelector('.page-header h1').innerText = 'Editar Registro de Acesso';
+      document.querySelector('.page-header .page-subtitle').innerText = `Editando registro #${id}`;
+      document.getElementById('btnSalvarText').innerText = 'Salvar Alterações';
+      document.getElementById('btnCancelar').style.display = 'inline-flex';
+      document.getElementById('btnLimpar').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   window.deleteAcesso = id => {
     confirmDelete(`Excluir o registro de acesso #${id}?`, async () => {
       try {
         await api.delete(`/registros-acesso/${id}`);
         showToast('Registro excluído!', 'success');
+        if (editId === id) resetForm();
         await loadAcessos();
       } catch(e) { showToast('Erro: ' + e.message, 'error'); }
     });
+  };
+
+  window.filtrarAlunos = function() {
+    const filter = document.getElementById('filtroAluno').value.toUpperCase();
+    const select = document.getElementById('alunoId');
+    const options = select.getElementsByTagName('option');
+    for (let i = 0; i < options.length; i++) {
+      const txtValue = options[i].textContent || options[i].innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1 || options[i].value === "") {
+        options[i].style.display = "";
+      } else {
+        options[i].style.display = "none";
+      }
+    }
   };
 </script>
 </body>

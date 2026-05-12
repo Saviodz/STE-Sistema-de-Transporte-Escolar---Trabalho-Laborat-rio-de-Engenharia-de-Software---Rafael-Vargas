@@ -50,6 +50,7 @@ class Rota extends Model {
         }
       }
     });
+    this.hasMany(models.matriculaTransporte, { as: 'matriculas', foreignKey: 'rotaId' });
   }
   
 }

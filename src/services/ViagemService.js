@@ -45,6 +45,25 @@ class ViagemService {
     // Condicao base da busca, excluindo a propria viagem no caso de update.
     const whereBase = viagemAtualId != null ? { codigo: { [Op.ne]: viagemAtualId } } : {};
 
+    // RF37 Regra 4: Motorista Ativo e CNH valida na data da viagem.
+    const { Motorista } = (await import('../models/Motorista.js'));
+    const motorista = await Motorista.findByPk(motoristaId);
+    if (!motorista) throw 'Motorista não encontrado!';
+    if (motorista.situacao.toUpperCase() !== 'ATIVO') {
+      throw 'RN: O motorista selecionado não está ativo.';
+    }
+    if (new Date(motorista.validadeCNH) < new Date(data)) {
+      throw 'RN: A CNH do motorista está vencida para a data desta viagem.';
+    }
+
+    // RF37 Regra 5: Ônibus Ativo.
+    const { Onibus } = (await import('../models/Onibus.js'));
+    const onibus = await Onibus.findByPk(onibusId);
+    if (!onibus) throw 'Ônibus não encontrado!';
+    if (onibus.situacao.toUpperCase() !== 'ATIVO') {
+      throw 'RN: O ônibus selecionado não está ativo.';
+    }
+
     // RN01: O motorista nao pode ser designado para mais de uma viagem na mesma data.
     const viagensMotorista = await Viagem.findAll({
       where: { ...whereBase, motoristaId, data }

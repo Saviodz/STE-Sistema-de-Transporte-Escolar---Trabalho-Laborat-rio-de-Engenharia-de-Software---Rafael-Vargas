@@ -95,7 +95,20 @@ class RegistroAcessoService {
   // ==========================================
   static async verificarRegrasDeNegocio(req, registroAtualId = null) {
     // Recebe os dados necessarios para aplicar as RN do registro de acesso.
-    const { tipo, dataHora, alunoId } = req.body;
+    const { tipo, dataHora, alunoId, viagemId } = req.body;
+
+    // RF41 Regra 8: Não permitir acesso para alunos não vinculados à rota da viagem.
+    const { Viagem } = (await import('../models/Viagem.js'));
+    const { MatriculaTransporte } = (await import('../models/MatriculaTransporte.js'));
+    const viagem = await Viagem.findByPk(viagemId);
+    if (!viagem) throw 'Viagem não encontrada!';
+    
+    const matricula = await MatriculaTransporte.findOne({
+      where: { alunoId, rotaId: viagem.rotaId }
+    });
+    if (!matricula) {
+      throw 'RN: O aluno não possui matrícula ativa na rota correspondente a esta viagem.';
+    }
 
     // Normaliza o tipo para validar sempre com o mesmo padrao.
     const tipoNormalizado = this.normalizarTipo(tipo);

@@ -34,8 +34,8 @@
   <main class="page-content">
     <div class="page-header">
       <div>
-        <h1>Novo Aluno</h1>
-        <p class="page-subtitle">Preencha os dados para cadastrar um aluno no sistema</p>
+        <h1 id="pageTitle">Novo Aluno</h1>
+        <p class="page-subtitle" id="pageSubtitle">Preencha os dados para cadastrar um aluno no sistema</p>
       </div>
       <a href="listagem-aluno.html" class="btn-ste-secondary">
         <i class="bi bi-arrow-left"></i> Ver listagem
@@ -78,21 +78,24 @@
             <div class="invalid-feedback">Informe ao menos um telefone.</div>
           </div>
           <div class="col-md-6">
-            <label for="responsavelLegal" class="form-label">Responsável Legal</label>
-            <input type="text" id="responsavelLegal" name="responsavelLegal" class="form-control" placeholder="Nome do responsável (opcional)">
+            <label for="responsavelLegal" id="lblResponsavelLegal" class="form-label">Responsável Legal <span id="asteriscoResponsavel" class="text-danger" style="display:none;">*</span></label>
+            <input type="text" id="responsavelLegal" name="responsavelLegal" class="form-control" placeholder="Nome do responsável (obrigatório se < 18 anos)">
+            <div class="invalid-feedback">Informe o responsável legal para alunos menores de 18 anos.</div>
           </div>
           <div class="col-md-3">
             <label for="situacaoAcesso" class="form-label">Situação de Acesso <span class="text-danger">*</span></label>
             <select id="situacaoAcesso" name="situacaoAcesso" class="form-select" required>
               <option value="">-- Selecione --</option>
               <option value="ATIVO">Ativo</option>
+              <option value="BLOQUEADO">Bloqueado</option>
+              <option value="SUSPENSO">Suspenso</option>
               <option value="INATIVO">Inativo</option>
             </select>
             <div class="invalid-feedback">Selecione a situação.</div>
           </div>
           <div class="col-md-3">
             <label for="foto" class="form-label">Foto (opcional)</label>
-            <input type="file" id="foto" name="foto" class="form-control" accept="image/*">
+            <input type="file" id="foto" name="foto" class="form-control" accept=".jpg,.jpeg,.png">
           </div>
         </div>
       </div>
@@ -127,7 +130,7 @@
           <i class="bi bi-x"></i> Cancelar
         </a>
         <button type="submit" class="btn-ste-primary" id="btnSalvar">
-          <i class="bi bi-check-lg"></i> Salvar Aluno
+          <i class="bi bi-check-lg"></i> <span id="btnSalvarText">Salvar Aluno</span>
         </button>
       </div>
     </form>
@@ -144,12 +147,56 @@
 
   if (!localStorage.getItem('ste-user')) window.location.href = 'login.html';
 
+  let editId = null;
+
   document.addEventListener('DOMContentLoaded', async () => {
     injectSidebar();
     await loadSelects();
     setupCPFMask();
+    setupAgeValidation();
     setupFormSubmit();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('id')) {
+        editId = parseInt(urlParams.get('id'));
+        await loadAlunoForEdit(editId);
+    }
   });
+
+  async function loadAlunoForEdit(id) {
+      try {
+          const a = await api.get(`/alunos/${id}`);
+          const form = document.getElementById('formAluno');
+          form.nome.value = a.nome;
+          form.cpf.value = a.cpf;
+          form.dataNascimento.value = a.dataNascimento;
+          form.endereco.value = a.endereco;
+          form.telefones.value = a.telefones;
+          form.responsavelLegal.value = a.responsavelLegal || '';
+          form.situacaoAcesso.value = (a.situacaoAcesso || '').toUpperCase();
+          form.prefeituraId.value = a.prefeituraId;
+          form.instituicaoEnsinoId.value = a.instituicaoEnsinoId;
+
+          document.getElementById('pageTitle').innerText = 'Editar Aluno';
+          document.getElementById('pageSubtitle').innerText = `Editando cadastro #${id}`;
+          document.getElementById('btnSalvarText').innerText = 'Salvar Alterações';
+          
+          if (a.foto) {
+            const container = document.getElementById('foto').parentElement;
+            let preview = document.getElementById('fotoPreview');
+            if (!preview) {
+              preview = document.createElement('img');
+              preview.id = 'fotoPreview';
+              preview.className = 'img-thumbnail mt-2 d-block';
+              preview.style.maxHeight = '100px';
+              container.appendChild(preview);
+            }
+            preview.src = a.foto;
+          }
+      } catch (e) {
+          showToast('Erro ao carregar dados do aluno para edição: ' + e.message, 'error');
+      }
+  }
 
   async function loadSelects() {
     try {
@@ -175,6 +222,39 @@
     });
   }
 
+  function setupAgeValidation() {
+    const dtNasc = document.getElementById('dataNascimento');
+    const respLegal = document.getElementById('responsavelLegal');
+    const asterisco = document.getElementById('asteriscoResponsavel');
+
+    const checkAge = () => {
+      if (!dtNasc.value) {
+        respLegal.required = false;
+        asterisco.style.display = 'none';
+        return;
+      }
+      const hoje = new Date();
+      const nascimento = new Date(dtNasc.value);
+      let idade = hoje.getFullYear() - nascimento.getFullYear();
+      const m = hoje.getMonth() - nascimento.getMonth();
+      if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) {
+        idade--;
+      }
+      
+      if (idade < 18) {
+        respLegal.required = true;
+        asterisco.style.display = 'inline';
+      } else {
+        respLegal.required = false;
+        asterisco.style.display = 'none';
+      }
+    };
+
+    dtNasc.addEventListener('change', checkAge);
+    // Verificar na edicao
+    setTimeout(checkAge, 500);
+  }
+
   function setupFormSubmit() {
     document.getElementById('formAluno').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -198,16 +278,40 @@
         instituicaoEnsinoId: parseInt(form.instituicaoEnsinoId.value),
       };
 
+      const fileInput = document.getElementById('foto');
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        try {
+          body.foto = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+          });
+        } catch (err) {
+          showAlert("Erro ao processar a foto do aluno.");
+          btn.disabled = false;
+          btn.innerHTML = editId ? '<i class="bi bi-check-lg"></i> Salvar Alterações' : '<i class="bi bi-check-lg"></i> Salvar Aluno';
+          return;
+        }
+      }
+
       try {
-        await api.post('/alunos', body);
-        showToast('Aluno cadastrado com sucesso!', 'success');
-        form.reset();
-        form.classList.remove('was-validated');
+        if (editId) {
+            await api.put(`/alunos/${editId}`, body);
+            showToast('Aluno atualizado com sucesso!', 'success');
+            setTimeout(() => window.location.href = 'listagem-aluno.html', 1500);
+        } else {
+            await api.post('/alunos', body);
+            showToast('Aluno cadastrado com sucesso!', 'success');
+            form.reset();
+            form.classList.remove('was-validated');
+        }
       } catch (e) {
         showAlert(e.message);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-check-lg"></i> Salvar Aluno';
+        btn.innerHTML = editId ? '<i class="bi bi-check-lg"></i> Salvar Alterações' : '<i class="bi bi-check-lg"></i> Salvar Aluno';
       }
     });
   }

@@ -12,8 +12,18 @@ class RotaService {
     return obj;
   }
 
+  // ==========================================
+  // Verificacao das Regras de Negocio
+  // ==========================================
+  static verificarRegrasDeNegocio(origemId, destinoId) {
+    if (origemId === destinoId) {
+      throw 'RN: A Cidade de Origem não pode ser igual à Cidade de Destino.';
+    }
+  }
+
   static async create(req) {
     const { turno, descricao, observacao, origemId, destinoId } = req.body;
+    this.verificarRegrasDeNegocio(origemId, destinoId);
     const obj = await Rota.create({ turno, descricao, observacao, origemId, destinoId });
     return await Rota.findByPk(obj.codigo, { include: { all: true, nested: true } });
   }
@@ -21,6 +31,7 @@ class RotaService {
   static async update(req) {
     const { id } = req.params;
     const { turno, descricao, observacao, origemId, destinoId } = req.body;
+    this.verificarRegrasDeNegocio(origemId, destinoId);
     const obj = await Rota.findByPk(id, { include: { all: true, nested: true } });
     if (obj == null) throw 'Rota nao encontrada!';
     Object.assign(obj, { turno, descricao, observacao, origemId, destinoId });

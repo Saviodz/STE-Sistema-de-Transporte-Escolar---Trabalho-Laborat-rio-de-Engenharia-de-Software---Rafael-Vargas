@@ -21,8 +21,30 @@ class CidadeService {
     return objs;
   }
 
+  // ==========================================
+  // Verificacao das Regras de Negocio
+  // ==========================================
+  static async verificarRegrasDeNegocio(nome, estadoId, cidadeAtualId = null) {
+    const { Op } = (await import('sequelize'));
+    
+    const baseWhere = cidadeAtualId ? { codigo: { [Op.ne]: cidadeAtualId } } : {};
+
+    const conflito = await Cidade.findOne({
+      where: {
+        ...baseWhere,
+        nome,
+        estadoId
+      }
+    });
+
+    if (conflito) {
+      throw 'RN: Já existe uma cidade com este nome cadastrada neste estado!';
+    }
+  }
+
   static async create(req) {
     const { nome, estadoId } = req.body;
+    await this.verificarRegrasDeNegocio(nome, estadoId);
     const obj = await Cidade.create({ nome, estadoId });
     return await Cidade.findByPk(obj.codigo, { include: { all: true, nested: true } });
   }
@@ -30,6 +52,7 @@ class CidadeService {
   static async update(req) {
     const { id } = req.params;
     const { nome, estadoId } = req.body;
+    await this.verificarRegrasDeNegocio(nome, estadoId, id);
     const obj = await Cidade.findByPk(id, { include: { all: true, nested: true } });
     if (obj == null) throw 'Cidade nao encontrada!';
     Object.assign(obj, { nome, estadoId });

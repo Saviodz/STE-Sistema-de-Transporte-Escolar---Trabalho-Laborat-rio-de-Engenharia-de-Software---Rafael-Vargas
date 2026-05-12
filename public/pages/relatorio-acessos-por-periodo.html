@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório de Acessos por Período – STE</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="../styles/main.css">
+</head>
+<body>
+<div id="sidebar"></div>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div id="main-content">
+  <header class="topbar">
+    <div class="d-flex align-items-center gap-3">
+      <button id="sidebar-toggle" class="btn-icon" style="background:transparent;color:var(--ste-text);">
+        <i class="bi bi-list" style="font-size:22px"></i>
+      </button>
+      <span class="topbar-title">Relatório de Acessos por Período</span>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbar-avatar-letter">U</div>
+        <span id="topbar-username">Usuário</span>
+      </div>
+    </div>
+  </header>
+  <main class="page-content">
+    <div class="page-header">
+      <div><h1>Acessos por Período</h1><p class="page-subtitle">Consulte o histórico de acessos num intervalo de datas</p></div>
+    </div>
+    
+    <div class="ste-card mb-4" style="max-width:800px">
+      <div class="ste-card-header">
+        <div class="card-icon"><i class="bi bi-calendar-range-fill"></i></div>
+        <h2>Filtro de Período</h2>
+      </div>
+      <form id="formFiltro" class="row g-3 align-items-end">
+        <div class="col-md-5">
+          <label for="dataInicial" class="form-label">Data Inicial <span class="text-danger">*</span></label>
+          <input type="date" id="dataInicial" class="form-control" required>
+        </div>
+        <div class="col-md-5">
+          <label for="dataFinal" class="form-label">Data Final <span class="text-danger">*</span></label>
+          <input type="date" id="dataFinal" class="form-control" required>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn-ste-primary w-100" id="btnBuscar">
+            <i class="bi bi-search"></i> Buscar
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Resultados -->
+    <div class="ste-card">
+      <div class="ste-card-header">
+        <div class="card-icon"><i class="bi bi-table"></i></div>
+        <h2>Resultados</h2>
+      </div>
+      <div class="table-wrapper">
+        <table class="ste-table">
+          <thead><tr><th>ID</th><th>Tipo</th><th>Data/Hora</th><th>Aluno</th><th>Viagem (Data)</th></tr></thead>
+          <tbody id="tbodyResultados">
+            <tr><td colspan="5" class="text-center py-3 text-muted">Selecione o período e clique em Buscar.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<div id="toast-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module">
+  import { injectSidebar } from '../assets/js/sidebar.js';
+  import { showToast } from '../assets/js/ui.js';
+  import { api } from '../assets/js/api.js';
+  if (!localStorage.getItem('ste-user')) window.location.href = 'login.html';
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    injectSidebar();
+
+    document.getElementById('formFiltro').addEventListener('submit', async e => {
+      e.preventDefault();
+      const dataInicial = document.getElementById('dataInicial').value;
+      const dataFinal = document.getElementById('dataFinal').value;
+      
+      if (dataInicial > dataFinal) {
+          showToast('A data inicial não pode ser maior que a final.', 'error');
+          return;
+      }
+      
+      const btn = document.getElementById('btnBuscar');
+      btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+      
+      try {
+        const registros = await api.get(`/relatorios/acessos-por-periodo?dataInicial=${dataInicial}&dataFinal=${dataFinal}`);
+        const tbody = document.getElementById('tbodyResultados');
+        if (!registros.length) { 
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-3 text-muted">Nenhum registro encontrado no período.</td></tr>`; 
+        } else {
+            tbody.innerHTML = registros.map(r => `
+              <tr>
+                <td class="fw-600 text-accent">${r.codigo}</td>
+                <td><span class="badge ${r.tipo === 'EMBARQUE' ? 'bg-success' : 'bg-info text-dark'}">${r.tipo}</span></td>
+                <td>${new Date(r.dataHora).toLocaleString('pt-BR')}</td>
+                <td>${r.aluno?.nome ?? '-'}</td>
+                <td>Viagem #${r.viagem?.codigo ?? '-'} (${r.viagem?.data ? new Date(r.viagem.data).toLocaleDateString('pt-BR') : '-'})</td>
+              </tr>`).join('');
+        }
+      } catch(e) {
+        showToast('Erro ao buscar dados: ' + e.message, 'error');
+      } finally {
+        btn.disabled = false; btn.innerHTML = '<i class="bi bi-search"></i> Buscar';
+      }
+    });
+  });
+</script>
+</body>
+</html>

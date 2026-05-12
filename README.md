@@ -1,6 +1,6 @@
 # STE - Sistema de Transporte Escolar
 
-Projeto academico desenvolvido para a disciplina de Laboratorio de Engenharia de Software, com foco no gerenciamento de transporte escolar. O sistema centraliza o cadastro de alunos, cidades, prefeituras, instituicoes de ensino, motoristas, onibus, rotas, viagens e registros de acesso.
+Projeto academico desenvolvido para a disciplina de Laboratorio de Engenharia de Software, com foco no gerenciamento de transporte escolar. O sistema centraliza o cadastro de alunos, cidades, prefeituras, instituicoes de ensino, motoristas, onibus, rotas, viagens, matriculas de transporte e registros de acesso.
 
 ## Integrantes
 
@@ -15,8 +15,10 @@ O STE tem como proposta apoiar o controle operacional do transporte escolar, per
 - cadastrar alunos e vinculos com instituicoes de ensino;
 - gerenciar cidades, estados e prefeituras responsaveis;
 - cadastrar motoristas e onibus;
-- organizar rotas e viagens;
-- registrar embarques e desembarques dos alunos.
+- organizar rotas e matricular alunos nas rotas de transporte;
+- registrar viagens com motorista e onibus designados;
+- registrar embarques e desembarques dos alunos;
+- emitir relatorios de alunos por rota e acessos por periodo.
 
 ## Tecnologias utilizadas
 
@@ -47,6 +49,8 @@ Principais recursos da API:
 - `viagens`
 - `matriculas-transporte`
 - `registros-acesso`
+- `relatorios/alunos-por-rota/:rotaId`
+- `relatorios/acessos-por-periodo`
 
 ## Como executar o projeto
 
@@ -98,21 +102,14 @@ npm start
 
 ## Telas disponiveis no frontend
 
-Algumas paginas ja existentes no projeto:
+A aplicação possui interface completa para gerenciamento do sistema. Todas as telas de cadastro suportam operações de Criação (POST) e Edição (PUT) seguindo um padrão visual unificado.
 
-- login
-- cadastro de aluno
-- cadastro de cidade
-- cadastro de instituicao de ensino
-- cadastro de motorista
-- cadastro de onibus
-- cadastro de prefeitura
-- cadastro de rota
-- listagem de alunos
-- listagem de prefeituras
-- listagem de viagens
-- registro de acesso
-- registro de viagem
+- **Cadastros Base**: Estado, Cidade, Instituição de Ensino, Prefeitura
+- **Operacional**: Motorista, Ônibus, Rota
+- **Alunos**: Cadastro e Listagem, Matrícula de Transporte
+- **Viagens e Acessos**: Registrar Viagem, Registro de Acesso, Listagem de Viagens
+- **Relatórios**: Alunos por Rota, Acessos por Período
+- **Autenticação**: Login (simulado), Sair do sistema
 
 ## Arquivos de apoio
 

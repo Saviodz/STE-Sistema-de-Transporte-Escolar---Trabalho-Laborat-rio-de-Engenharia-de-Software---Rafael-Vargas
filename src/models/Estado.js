@@ -15,7 +15,8 @@ class Estado extends Model {
         validate: {
           notNull: { msg: 'O nome do estado deve ser preenchido!' },
           notEmpty: { msg: 'O nome do estado nao pode ser vazio!' },
-          len: { args: [2, 50], msg: 'O nome do estado deve ter entre 2 e 50 caracteres!' }
+          len: { args: [2, 50], msg: 'O nome do estado deve ter entre 2 e 50 caracteres!' },
+          is: { args: [/^[a-zA-ZÀ-ÿ\s]+$/], msg: 'O nome do estado não deve conter números ou caracteres especiais!' }
         }
       },
       siglaUF: {
@@ -36,7 +37,7 @@ class Estado extends Model {
   }
 
   static associate(models) {
-   
+    this.hasMany(models.cidade, { as: 'cidades', foreignKey: 'estadoId' });
   }
   
 }

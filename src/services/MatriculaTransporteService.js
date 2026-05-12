@@ -42,7 +42,7 @@ class MatriculaTransporteService {
     // RN01: O aluno com situacao diferente de 'Ativo' nao pode ser matriculado em uma rota de transporte.
     const aluno = await Aluno.findByPk(alunoId);
     if (aluno == null) throw 'Aluno nao encontrado!';
-    if (aluno.situacaoAcesso !== 'Ativo') {
+    if (aluno.situacaoAcesso.toUpperCase() !== 'ATIVO') {
       throw "RN01: O aluno com situacao diferente de 'Ativo' nao pode ser matriculado em uma rota de transporte!";
     }
 

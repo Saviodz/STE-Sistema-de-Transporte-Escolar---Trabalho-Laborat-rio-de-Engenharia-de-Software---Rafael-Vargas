@@ -12,8 +12,24 @@ class PrefeituraService {
     return obj;
   }
 
+  // ==========================================
+  // Verificacao das Regras de Negocio
+  // ==========================================
+  static async verificarRegrasDeNegocio(cidadeId, prefeituraAtualId = null) {
+    const { Op } = (await import('sequelize'));
+    const whereClause = { cidadeId };
+    if (prefeituraAtualId) {
+      whereClause.codigo = { [Op.ne]: prefeituraAtualId };
+    }
+    const count = await Prefeitura.count({ where: whereClause });
+    if (count > 0) {
+      throw 'RN: Já existe uma prefeitura vinculada a esta cidade.';
+    }
+  }
+
   static async create(req) {
     const { razaoSocial, cnpj, endereco, telefones, email, cidadeId } = req.body;
+    await this.verificarRegrasDeNegocio(cidadeId);
     const obj = await Prefeitura.create({
       razaoSocial,
       cnpj,
@@ -28,6 +44,7 @@ class PrefeituraService {
   static async update(req) {
     const { id } = req.params;
     const { razaoSocial, cnpj, endereco, telefones, email, cidadeId } = req.body;
+    await this.verificarRegrasDeNegocio(cidadeId, id);
     const obj = await Prefeitura.findByPk(id, { include: { all: true, nested: true } });
     if (obj == null) throw 'Prefeitura nao encontrada!';
     Object.assign(obj, { razaoSocial, cnpj, endereco, telefones, email, cidadeId });

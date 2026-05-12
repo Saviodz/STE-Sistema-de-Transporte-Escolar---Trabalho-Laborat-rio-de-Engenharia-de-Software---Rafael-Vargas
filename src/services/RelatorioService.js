@@ -20,6 +20,9 @@ class RelatorioService {
     if (!dataInicial || !dataFinal) {
       throw "Parâmetros 'dataInicial' e 'dataFinal' são obrigatórios na query string!";
     }
+    if (new Date(dataInicial) > new Date(dataFinal)) {
+      throw "RN: A data inicial não pode ser posterior à data final.";
+    }
     const registros = await RegistroAcesso.findAll({
       where: {
         dataHora: {

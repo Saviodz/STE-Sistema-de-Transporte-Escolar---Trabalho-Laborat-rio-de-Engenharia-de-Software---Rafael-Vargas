@@ -76,6 +76,10 @@
             </select>
             <div class="invalid-feedback">Selecione a cidade.</div>
           </div>
+          <div class="col-md-2">
+            <label for="estadoNome" class="form-label">Estado</label>
+            <input type="text" id="estadoNome" class="form-control" placeholder="Automático" disabled>
+          </div>
         </div>
       </div>
       <div class="d-flex gap-3 justify-content-end">
@@ -95,12 +99,26 @@
   import { api } from '../assets/js/api.js';
   if (!localStorage.getItem('ste-user')) window.location.href = 'login.html';
 
+  let cidadesDisponiveis = [];
+
   document.addEventListener('DOMContentLoaded', async () => {
     injectSidebar();
     try {
-      const cidades = await api.get('/cidades?include=true');
-      populateSelect('cidadeId', cidades, 'codigo', c => `${c.nome} – ${c.estado?.sigla ?? ''}`, 'Selecione a cidade');
+      cidadesDisponiveis = await api.get('/cidades?include=true');
+      populateSelect('cidadeId', cidadesDisponiveis, 'codigo', c => `${c.nome}`, 'Selecione a cidade');
     } catch(e) { showToast('Erro ao carregar cidades.', 'error'); }
+
+    const selectCidade = document.getElementById('cidadeId');
+    const inputEstado = document.getElementById('estadoNome');
+    
+    selectCidade.addEventListener('change', (e) => {
+      const cidadeSelecionada = cidadesDisponiveis.find(c => c.codigo == e.target.value);
+      if (cidadeSelecionada && cidadeSelecionada.estado) {
+        inputEstado.value = cidadeSelecionada.estado.nome;
+      } else {
+        inputEstado.value = '';
+      }
+    });
 
     // CNPJ mask
     const cnpjEl = document.getElementById('cnpj');

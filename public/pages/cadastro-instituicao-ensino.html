@@ -47,14 +47,8 @@
             <label for="tipoInstituicao" class="form-label">Tipo <span class="text-danger">*</span></label>
             <select id="tipoInstituicao" class="form-select" required>
               <option value="">-- Selecione --</option>
-              <option>Escola Estadual</option>
-              <option>Escola Municipal</option>
-              <option>IFES</option>
-              <option>UFES</option>
-              <option>UFLA</option>
-              <option>UFMG</option>
-              <option>Faculdade Particular</option>
-              <option>Outro</option>
+              <option value="Pública">Pública</option>
+              <option value="Privada">Privada</option>
             </select>
             <div class="invalid-feedback">Selecione o tipo.</div>
           </div>
@@ -68,19 +62,27 @@
             <input type="text" id="telefones" class="form-control" placeholder="(28) 3300-0000" required>
             <div class="invalid-feedback">Informe o telefone.</div>
           </div>
-          <div class="col-md-6">
-            <label for="cidadeId" class="form-label">Cidade <span class="text-danger">*</span></label>
-            <select id="cidadeId" class="form-select" required>
+          <div class="col-md-4">
+            <label for="estadoId" class="form-label">Estado <span class="text-danger">*</span></label>
+            <select id="estadoId" class="form-select" required>
               <option value="">-- Carregando... --</option>
+            </select>
+            <div class="invalid-feedback">Selecione o estado.</div>
+          </div>
+          <div class="col-md-4">
+            <label for="cidadeId" class="form-label">Cidade <span class="text-danger">*</span></label>
+            <select id="cidadeId" class="form-select" required disabled>
+              <option value="">-- Selecione o Estado --</option>
             </select>
             <div class="invalid-feedback">Selecione a cidade.</div>
           </div>
         </div>
       </div>
-      <div class="d-flex gap-3 justify-content-end">
-        <a href="index.html" class="btn-ste-secondary"><i class="bi bi-x"></i> Cancelar</a>
+      <div class="d-flex gap-3 justify-content-end mt-4">
+        <button type="button" class="btn-ste-secondary" id="btnCancelar" style="display:none;"><i class="bi bi-x"></i> Cancelar Edição</button>
+        <button type="button" class="btn-ste-secondary" id="btnLimpar" onclick="resetForm()"><i class="bi bi-eraser"></i> Limpar</button>
         <button type="submit" class="btn-ste-primary" id="btnSalvar">
-          <i class="bi bi-check-lg"></i> Salvar Instituição
+          <i class="bi bi-check-lg"></i> <span id="btnSalvarText">Salvar Instituição</span>
         </button>
       </div>
     </form>
@@ -110,13 +112,34 @@
   import { api } from '../assets/js/api.js';
   if (!localStorage.getItem('ste-user')) window.location.href = 'login.html';
 
+  let editId = null;
+
   document.addEventListener('DOMContentLoaded', async () => {
     injectSidebar();
     try {
-      const cidades = await api.get('/cidades?include=true');
-      populateSelect('cidadeId', cidades, 'codigo', c => `${c.nome} – ${c.estado?.sigla ?? ''}`);
-    } catch(e) { showToast('Erro ao carregar cidades.', 'error'); }
+      const estados = await api.get('/estados');
+      populateSelect('estadoId', estados, 'codigo', e => `${e.nome} (${e.siglaUF})`, 'Selecione o estado');
+    } catch(e) { showToast('Erro ao carregar estados.', 'error'); }
     await loadInst();
+
+    document.getElementById('estadoId').addEventListener('change', async (e) => {
+      const estadoId = e.target.value;
+      const cidadeSelect = document.getElementById('cidadeId');
+      cidadeSelect.innerHTML = '<option value="">-- Carregando... --</option>';
+      cidadeSelect.disabled = true;
+      if (!estadoId) {
+        cidadeSelect.innerHTML = '<option value="">-- Selecione o Estado --</option>';
+        return;
+      }
+      try {
+        const cidades = await api.get(`/cidades/findByEstado/${estadoId}`);
+        populateSelect('cidadeId', cidades, 'codigo', c => c.nome, 'Selecione a cidade');
+        cidadeSelect.disabled = false;
+      } catch(err) {
+        cidadeSelect.innerHTML = '<option value="">Erro ao carregar</option>';
+        showToast('Erro ao carregar cidades.', 'error');
+      }
+    });
 
     document.getElementById('formInst').addEventListener('submit', async e => {
       e.preventDefault();
@@ -124,17 +147,26 @@
       form.classList.add('was-validated');
       if (!form.checkValidity()) return;
       const btn = document.getElementById('btnSalvar');
-      btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Salvando...';
+      const btnText = document.getElementById('btnSalvarText');
+      btn.disabled = true; btnText.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Salvando...';
       try {
-        await api.post('/instituicoes-ensino', {
+        const payload = {
           nome: document.getElementById('nome').value.trim(),
           tipoInstituicao: document.getElementById('tipoInstituicao').value,
           endereco: document.getElementById('endereco').value.trim(),
           telefones: document.getElementById('telefones').value.trim(),
           cidadeId: parseInt(document.getElementById('cidadeId').value),
-        });
-        showToast('Instituição cadastrada com sucesso!', 'success');
-        form.reset(); form.classList.remove('was-validated');
+        };
+        
+        if (editId) {
+            await api.put(`/instituicoes-ensino/${editId}`, payload);
+            showToast('Instituição atualizada com sucesso!', 'success');
+        } else {
+            await api.post('/instituicoes-ensino', payload);
+            showToast('Instituição cadastrada com sucesso!', 'success');
+        }
+        
+        resetForm();
         await loadInst();
       } catch(e) {
         document.getElementById('alert-area').innerHTML =
@@ -142,10 +174,26 @@
             <i class="bi bi-exclamation-triangle-fill"></i><span>${e.message}</span>
             <button class="btn-close" data-bs-dismiss="alert"></button></div>`;
       } finally {
-        btn.disabled = false; btn.innerHTML = '<i class="bi bi-check-lg"></i> Salvar Instituição';
+        btn.disabled = false; btnText.innerHTML = editId ? 'Salvar Alterações' : 'Salvar Instituição';
       }
     });
+
+    document.getElementById('btnCancelar').addEventListener('click', resetForm);
   });
+
+  window.resetForm = () => {
+      document.getElementById('formInst').reset();
+      document.getElementById('formInst').classList.remove('was-validated');
+      editId = null;
+      document.getElementById('cidadeId').disabled = true;
+      document.getElementById('cidadeId').innerHTML = '<option value="">-- Selecione o Estado --</option>';
+      document.querySelector('.page-header h1').innerText = 'Nova Instituição de Ensino';
+      document.querySelector('.page-header .page-subtitle').innerText = 'Cadastre uma instituição vinculada ao sistema de transporte';
+      document.getElementById('btnSalvarText').innerText = 'Salvar Instituição';
+      document.getElementById('btnCancelar').style.display = 'none';
+      document.getElementById('btnLimpar').style.display = 'inline-flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   async function loadInst() {
     try {
@@ -161,6 +209,7 @@
           <td>${i.telefones}</td>
           <td>
             <div class="action-btns">
+              <button class="btn-icon edit" onclick="editInst(${i.codigo}, '${i.nome.replace(/'/g,"\\'")}', '${i.tipoInstituicao}', '${i.endereco.replace(/'/g,"\\'")}', '${i.telefones}', ${i.cidade?.estadoId || null}, ${i.cidadeId})"><i class="bi bi-pencil-fill"></i></button>
               <button class="btn-icon delete" onclick="deleteInst(${i.codigo},'${i.nome.replace(/'/g,"\\'")}')"><i class="bi bi-trash-fill"></i></button>
             </div>
           </td>
@@ -168,11 +217,42 @@
     } catch(e) { showToast('Erro ao listar instituições.', 'error'); }
   }
 
+  window.editInst = async (id, nome, tipo, endereco, telefones, estadoId, cidadeId) => {
+      editId = id;
+      document.getElementById('nome').value = nome;
+      document.getElementById('tipoInstituicao').value = tipo;
+      document.getElementById('endereco').value = endereco;
+      document.getElementById('telefones').value = telefones;
+      
+      if (estadoId) {
+        document.getElementById('estadoId').value = estadoId;
+        const cidadeSelect = document.getElementById('cidadeId');
+        cidadeSelect.innerHTML = '<option value="">-- Carregando... --</option>';
+        cidadeSelect.disabled = true;
+        try {
+          const cidades = await api.get(`/cidades/findByEstado/${estadoId}`);
+          populateSelect('cidadeId', cidades, 'codigo', c => c.nome, 'Selecione a cidade');
+          cidadeSelect.disabled = false;
+          cidadeSelect.value = cidadeId;
+        } catch(err) {
+          showToast('Erro ao carregar cidades para edição.', 'error');
+        }
+      }
+
+      document.querySelector('.page-header h1').innerText = 'Editar Instituição';
+      document.querySelector('.page-header .page-subtitle').innerText = `Editando: ${nome}`;
+      document.getElementById('btnSalvarText').innerText = 'Salvar Alterações';
+      document.getElementById('btnCancelar').style.display = 'inline-flex';
+      document.getElementById('btnLimpar').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   window.deleteInst = (id, nome) => {
     confirmDelete(`Excluir a instituição "${nome}"?`, async () => {
       try {
         await api.delete(`/instituicoes-ensino/${id}`);
         showToast('Instituição excluída!', 'success');
+        if (editId === id) resetForm();
         await loadInst();
       } catch(e) { showToast('Erro: ' + e.message, 'error'); }
     });

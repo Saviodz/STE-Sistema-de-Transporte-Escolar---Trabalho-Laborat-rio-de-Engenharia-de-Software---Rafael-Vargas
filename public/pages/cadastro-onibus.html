@@ -72,10 +72,11 @@
           </div>
         </div>
       </div>
-      <div class="d-flex gap-3 justify-content-end">
-        <a href="index.html" class="btn-ste-secondary"><i class="bi bi-x"></i> Cancelar</a>
+      <div class="d-flex gap-3 justify-content-end mt-4">
+        <button type="button" class="btn-ste-secondary" id="btnCancelar" style="display:none;"><i class="bi bi-x"></i> Cancelar Edição</button>
+        <button type="button" class="btn-ste-secondary" id="btnLimpar" onclick="resetForm()"><i class="bi bi-eraser"></i> Limpar</button>
         <button type="submit" class="btn-ste-primary" id="btnSalvar">
-          <i class="bi bi-check-lg"></i> Salvar Ônibus
+          <i class="bi bi-check-lg"></i> <span id="btnSalvarText">Salvar Ônibus</span>
         </button>
       </div>
     </form>
@@ -105,6 +106,8 @@
   import { api } from '../assets/js/api.js';
   if (!localStorage.getItem('ste-user')) window.location.href = 'login.html';
 
+  let editId = null;
+
   document.addEventListener('DOMContentLoaded', async () => {
     injectSidebar();
     // Placa mask: auto uppercase
@@ -119,17 +122,26 @@
       form.classList.add('was-validated');
       if (!form.checkValidity()) return;
       const btn = document.getElementById('btnSalvar');
-      btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Salvando...';
+      const btnText = document.getElementById('btnSalvarText');
+      btn.disabled = true; btnText.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Salvando...';
       try {
-        await api.post('/onibus', {
+        const payload = {
           placa:      document.getElementById('placa').value.trim(),
           modelo:     document.getElementById('modelo').value.trim(),
           capacidade: parseInt(document.getElementById('capacidade').value),
           ano:        parseInt(document.getElementById('ano').value),
           situacao:   document.getElementById('situacao').value,
-        });
-        showToast('Ônibus cadastrado com sucesso!', 'success');
-        form.reset(); form.classList.remove('was-validated');
+        };
+
+        if (editId) {
+            await api.put(`/onibus/${editId}`, payload);
+            showToast('Ônibus atualizado com sucesso!', 'success');
+        } else {
+            await api.post('/onibus', payload);
+            showToast('Ônibus cadastrado com sucesso!', 'success');
+        }
+
+        resetForm();
         await loadOnibus();
       } catch(e) {
         document.getElementById('alert-area').innerHTML =
@@ -137,10 +149,24 @@
             <i class="bi bi-exclamation-triangle-fill"></i><span>${e.message}</span>
             <button class="btn-close" data-bs-dismiss="alert"></button></div>`;
       } finally {
-        btn.disabled = false; btn.innerHTML = '<i class="bi bi-check-lg"></i> Salvar Ônibus';
+        btn.disabled = false; btnText.innerHTML = editId ? 'Salvar Alterações' : 'Salvar Ônibus';
       }
     });
+
+    document.getElementById('btnCancelar').addEventListener('click', resetForm);
   });
+
+  window.resetForm = () => {
+      document.getElementById('formOnibus').reset();
+      document.getElementById('formOnibus').classList.remove('was-validated');
+      editId = null;
+      document.querySelector('.page-header h1').innerText = 'Novo Ônibus';
+      document.querySelector('.page-header .page-subtitle').innerText = 'Cadastre um veículo para o transporte escolar';
+      document.getElementById('btnSalvarText').innerText = 'Salvar Ônibus';
+      document.getElementById('btnCancelar').style.display = 'none';
+      document.getElementById('btnLimpar').style.display = 'inline-flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   async function loadOnibus() {
     try {
@@ -157,6 +183,7 @@
           <td>${badgeSituacao(o.situacao)}</td>
           <td>
             <div class="action-btns">
+              <button class="btn-icon edit" onclick="editOnibus(${o.codigo}, '${o.placa}', '${o.modelo.replace(/'/g,"\\'")}', ${o.capacidade}, ${o.ano}, '${o.situacao}')"><i class="bi bi-pencil-fill"></i></button>
               <button class="btn-icon delete" onclick="deleteOnibus(${o.codigo},'${o.placa}')"><i class="bi bi-trash-fill"></i></button>
             </div>
           </td>
@@ -164,11 +191,28 @@
     } catch(e) { showToast('Erro ao listar ônibus.', 'error'); }
   }
 
+  window.editOnibus = (id, placa, modelo, capacidade, ano, situacao) => {
+      editId = id;
+      document.getElementById('placa').value = placa;
+      document.getElementById('modelo').value = modelo;
+      document.getElementById('capacidade').value = capacidade;
+      document.getElementById('ano').value = ano;
+      document.getElementById('situacao').value = (situacao || '').toUpperCase();
+      
+      document.querySelector('.page-header h1').innerText = 'Editar Ônibus';
+      document.querySelector('.page-header .page-subtitle').innerText = `Editando: Placa ${placa}`;
+      document.getElementById('btnSalvarText').innerText = 'Salvar Alterações';
+      document.getElementById('btnCancelar').style.display = 'inline-flex';
+      document.getElementById('btnLimpar').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   window.deleteOnibus = (id, placa) => {
     confirmDelete(`Excluir o ônibus de placa "${placa}"?`, async () => {
       try {
         await api.delete(`/onibus/${id}`);
         showToast('Ônibus excluído!', 'success');
+        if (editId === id) resetForm();
         await loadOnibus();
       } catch(e) { showToast('Erro: ' + e.message, 'error'); }
     });

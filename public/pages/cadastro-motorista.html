@@ -80,16 +80,18 @@
             <select id="situacao" class="form-select" required>
               <option value="">-- Selecione --</option>
               <option value="ATIVO">Ativo</option>
+              <option value="AFASTADO">Afastado</option>
               <option value="INATIVO">Inativo</option>
             </select>
             <div class="invalid-feedback">Selecione a situação.</div>
           </div>
         </div>
       </div>
-      <div class="d-flex gap-3 justify-content-end">
-        <a href="index.html" class="btn-ste-secondary"><i class="bi bi-x"></i> Cancelar</a>
+      <div class="d-flex gap-3 justify-content-end mt-4">
+        <button type="button" class="btn-ste-secondary" id="btnCancelar" style="display:none;"><i class="bi bi-x"></i> Cancelar Edição</button>
+        <button type="button" class="btn-ste-secondary" id="btnLimpar" onclick="resetForm()"><i class="bi bi-eraser"></i> Limpar</button>
         <button type="submit" class="btn-ste-primary" id="btnSalvar">
-          <i class="bi bi-check-lg"></i> Salvar Motorista
+          <i class="bi bi-check-lg"></i> <span id="btnSalvarText">Salvar Motorista</span>
         </button>
       </div>
     </form>
@@ -102,9 +104,9 @@
       </div>
       <div class="table-wrapper">
         <table class="ste-table">
-          <thead><tr><th>#</th><th>Nome</th><th>CPF</th><th>CNH</th><th>Categoria</th><th>Validade CNH</th><th>Situação</th><th>Ações</th></tr></thead>
+          <thead><tr><th>#</th><th>Nome</th><th>CPF</th><th>CNH</th><th>Categoria</th><th>Validade CNH</th><th>Telefones</th><th>Situação</th><th>Ações</th></tr></thead>
           <tbody id="tbodyMotoristas">
-            <tr><td colspan="8" class="text-center py-3 text-muted"><div class="spinner-border spinner-border-sm"></div></td></tr>
+            <tr><td colspan="9" class="text-center py-3 text-muted"><div class="spinner-border spinner-border-sm"></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -118,6 +120,8 @@
   import { showToast, badgeSituacao, confirmDelete } from '../assets/js/ui.js';
   import { api } from '../assets/js/api.js';
   if (!localStorage.getItem('ste-user')) window.location.href = 'login.html';
+
+  let editId = null;
 
   document.addEventListener('DOMContentLoaded', async () => {
     injectSidebar();
@@ -136,9 +140,10 @@
       form.classList.add('was-validated');
       if (!form.checkValidity()) return;
       const btn = document.getElementById('btnSalvar');
-      btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Salvando...';
+      const btnText = document.getElementById('btnSalvarText');
+      btn.disabled = true; btnText.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Salvando...';
       try {
-        await api.post('/motoristas', {
+        const payload = {
           nome: document.getElementById('nome').value.trim(),
           cpf: document.getElementById('cpf').value.trim(),
           telefones: document.getElementById('telefones').value.trim(),
@@ -146,9 +151,17 @@
           categoriaCNH: document.getElementById('categoriaCNH').value,
           validadeCNH: document.getElementById('validadeCNH').value,
           situacao: document.getElementById('situacao').value,
-        });
-        showToast('Motorista cadastrado com sucesso!', 'success');
-        form.reset(); form.classList.remove('was-validated');
+        };
+
+        if (editId) {
+            await api.put(`/motoristas/${editId}`, payload);
+            showToast('Motorista atualizado com sucesso!', 'success');
+        } else {
+            await api.post('/motoristas', payload);
+            showToast('Motorista cadastrado com sucesso!', 'success');
+        }
+
+        resetForm();
         await loadMotoristas();
       } catch(e) {
         document.getElementById('alert-area').innerHTML =
@@ -156,16 +169,30 @@
             <i class="bi bi-exclamation-triangle-fill"></i><span>${e.message}</span>
             <button class="btn-close" data-bs-dismiss="alert"></button></div>`;
       } finally {
-        btn.disabled = false; btn.innerHTML = '<i class="bi bi-check-lg"></i> Salvar Motorista';
+        btn.disabled = false; btnText.innerHTML = editId ? 'Salvar Alterações' : 'Salvar Motorista';
       }
     });
+
+    document.getElementById('btnCancelar').addEventListener('click', resetForm);
   });
+
+  window.resetForm = () => {
+      document.getElementById('formMotorista').reset();
+      document.getElementById('formMotorista').classList.remove('was-validated');
+      editId = null;
+      document.querySelector('.page-header h1').innerText = 'Novo Motorista';
+      document.querySelector('.page-header .page-subtitle').innerText = 'Cadastre um motorista habilitado para o transporte escolar';
+      document.getElementById('btnSalvarText').innerText = 'Salvar Motorista';
+      document.getElementById('btnCancelar').style.display = 'none';
+      document.getElementById('btnLimpar').style.display = 'inline-flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   async function loadMotoristas() {
     try {
       const list = await api.get('/motoristas');
       const tbody = document.getElementById('tbodyMotoristas');
-      if (!list.length) { tbody.innerHTML = `<tr><td colspan="8" class="text-center py-3 text-muted">Nenhum motorista cadastrado.</td></tr>`; return; }
+      if (!list.length) { tbody.innerHTML = `<tr><td colspan="9" class="text-center py-3 text-muted">Nenhum motorista cadastrado.</td></tr>`; return; }
       tbody.innerHTML = list.map(m => `
         <tr>
           <td class="fw-600 text-accent">${m.codigo}</td>
@@ -174,9 +201,11 @@
           <td style="font-family:monospace">${m.cnh}</td>
           <td><span class="badge bg-dark bg-opacity-10 fw-600">${m.categoriaCNH}</span></td>
           <td>${fmtDate(m.validadeCNH)}</td>
+          <td><span class="text-muted fw-500">${m.telefones}</span></td>
           <td>${badgeSituacao(m.situacao)}</td>
           <td>
             <div class="action-btns">
+              <button class="btn-icon edit" onclick="editMotorista(${m.codigo}, '${m.nome.replace(/'/g,"\\'")}', '${m.cpf}', '${m.telefones}', '${m.cnh}', '${m.categoriaCNH}', '${m.validadeCNH}', '${m.situacao}')"><i class="bi bi-pencil-fill"></i></button>
               <button class="btn-icon delete" onclick="deleteMotorista(${m.codigo},'${m.nome.replace(/'/g,"\\'")}')"><i class="bi bi-trash-fill"></i></button>
             </div>
           </td>
@@ -190,11 +219,35 @@
     return `${day}/${m}/${y}`;
   }
 
+  window.editMotorista = (id, nome, cpf, telefones, cnh, categoriaCNH, validadeCNH, situacao) => {
+      editId = id;
+      document.getElementById('nome').value = nome;
+      document.getElementById('cpf').value = cpf;
+      document.getElementById('telefones').value = telefones;
+      document.getElementById('cnh').value = cnh;
+      document.getElementById('categoriaCNH').value = categoriaCNH;
+      // Tratar formato da data
+      let dateVal = validadeCNH;
+      if (dateVal && dateVal.includes('T')) {
+          dateVal = dateVal.split('T')[0];
+      }
+      document.getElementById('validadeCNH').value = dateVal;
+      document.getElementById('situacao').value = (situacao || '').toUpperCase();
+      
+      document.querySelector('.page-header h1').innerText = 'Editar Motorista';
+      document.querySelector('.page-header .page-subtitle').innerText = `Editando: ${nome}`;
+      document.getElementById('btnSalvarText').innerText = 'Salvar Alterações';
+      document.getElementById('btnCancelar').style.display = 'inline-flex';
+      document.getElementById('btnLimpar').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   window.deleteMotorista = (id, nome) => {
     confirmDelete(`Excluir o motorista "${nome}"?`, async () => {
       try {
         await api.delete(`/motoristas/${id}`);
         showToast('Motorista excluído!', 'success');
+        if (editId === id) resetForm();
         await loadMotoristas();
       } catch(e) { showToast('Erro: ' + e.message, 'error'); }
     });

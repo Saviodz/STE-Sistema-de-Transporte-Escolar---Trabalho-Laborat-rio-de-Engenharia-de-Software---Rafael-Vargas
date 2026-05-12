@@ -60,12 +60,13 @@
               <th>CPF</th>
               <th>Instituição</th>
               <th>Prefeitura</th>
+              <th>Rota(s)</th>
               <th>Situação</th>
               <th>Ações</th>
             </tr>
           </thead>
           <tbody id="tbodyAlunos">
-            <tr><td colspan="7" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Carregando…</td></tr>
+            <tr><td colspan="8" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Carregando…</td></tr>
           </tbody>
         </table>
       </div>
@@ -73,78 +74,6 @@
   </main>
 </div>
 
-<!-- Edit Modal -->
-<div class="modal fade" id="editModal" tabindex="-1">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header border-0">
-        <h5 class="modal-title fw-600"><i class="bi bi-pencil-square me-2 text-accent"></i>Editar Aluno</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body pt-0">
-        <form id="formEdit" novalidate>
-          <input type="hidden" id="editCodigo">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label">Nome <span class="text-danger">*</span></label>
-              <input type="text" id="editNome" class="form-control" required>
-              <div class="invalid-feedback">Campo obrigatório.</div>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label">CPF <span class="text-danger">*</span></label>
-              <input type="text" id="editCpf" class="form-control" required maxlength="14">
-              <div class="invalid-feedback">Campo obrigatório.</div>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label">Data de Nascimento <span class="text-danger">*</span></label>
-              <input type="date" id="editDataNasc" class="form-control" required>
-              <div class="invalid-feedback">Campo obrigatório.</div>
-            </div>
-            <div class="col-md-8">
-              <label class="form-label">Endereço <span class="text-danger">*</span></label>
-              <input type="text" id="editEndereco" class="form-control" required>
-              <div class="invalid-feedback">Campo obrigatório.</div>
-            </div>
-            <div class="col-md-4">
-              <label class="form-label">Telefones <span class="text-danger">*</span></label>
-              <input type="text" id="editTelefones" class="form-control" required>
-              <div class="invalid-feedback">Campo obrigatório.</div>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Responsável Legal</label>
-              <input type="text" id="editResponsavel" class="form-control">
-            </div>
-            <div class="col-md-3">
-              <label class="form-label">Situação <span class="text-danger">*</span></label>
-              <select id="editSituacao" class="form-select" required>
-                <option value="ATIVO">Ativo</option>
-                <option value="INATIVO">Inativo</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Prefeitura <span class="text-danger">*</span></label>
-              <select id="editPrefeitura" class="form-select" required>
-                <option value="">-- Carregando --</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Instituição de Ensino <span class="text-danger">*</span></label>
-              <select id="editInstituicao" class="form-select" required>
-                <option value="">-- Carregando --</option>
-              </select>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer border-0 pt-0">
-        <button type="button" class="btn-ste-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn-ste-primary" id="btnSalvarEdit">
-          <i class="bi bi-check-lg"></i> Salvar Alterações
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <div id="toast-container"></div>
 <div id="confirm-placeholder"></div>
@@ -158,7 +87,6 @@
   if (!localStorage.getItem('ste-user')) window.location.href = 'login.html';
 
   let allAlunos = [];
-  const editModal = new bootstrap.Modal(document.getElementById('editModal'));
 
   document.addEventListener('DOMContentLoaded', async () => {
     injectSidebar();
@@ -170,20 +98,12 @@
         a.nome?.toLowerCase().includes(q) || a.cpf?.includes(q)
       ));
     });
-
-    document.getElementById('btnSalvarEdit').addEventListener('click', saveEdit);
   });
 
   async function loadAll() {
     try {
       allAlunos = await api.get('/alunos?include=true');
       renderTable(allAlunos);
-      // Pre-load selects for edit modal
-      const [prefeituras, instituicoes] = await Promise.all([
-        api.get('/prefeituras'), api.get('/instituicoes-ensino')
-      ]);
-      populateSelect('editPrefeitura',  prefeituras,  'codigo', p => p.razaoSocial);
-      populateSelect('editInstituicao', instituicoes, 'codigo', i => i.nome);
     } catch (e) {
       showToast('Erro ao carregar alunos: ' + e.message, 'error');
     }
@@ -194,7 +114,7 @@
     document.getElementById('countLabel').textContent = `${list.length} registro(s)`;
 
     if (!list.length) {
-      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="bi bi-people"></i><p>Nenhum aluno encontrado.</p></div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><i class="bi bi-people"></i><p>Nenhum aluno encontrado.</p></div></td></tr>`;
       return;
     }
 
@@ -205,6 +125,7 @@
         <td style="font-family:monospace">${a.cpf}</td>
         <td>${a.instituicaoEnsino?.nome ?? a.instituicaoEnsinoId ?? '—'}</td>
         <td>${a.prefeitura?.razaoSocial ?? a.prefeituraId ?? '—'}</td>
+        <td>${a.matriculas && a.matriculas.length > 0 ? a.matriculas.map(m => `<span class="badge bg-secondary mb-1">${m.rota?.descricao || 'Rota '+m.rotaId}</span>`).join(' ') : '<span class="text-muted small">Sem Rota</span>'}</td>
         <td>${badgeSituacao(a.situacaoAcesso)}</td>
         <td>
           <div class="action-btns">
@@ -215,54 +136,9 @@
       </tr>`).join('');
   }
 
-  window.openEdit = async (id) => {
-    try {
-      const a = await api.get(`/alunos/${id}?include=true`);
-      document.getElementById('editCodigo').value    = a.codigo;
-      document.getElementById('editNome').value      = a.nome;
-      document.getElementById('editCpf').value       = a.cpf;
-      document.getElementById('editDataNasc').value  = a.dataNascimento;
-      document.getElementById('editEndereco').value  = a.endereco;
-      document.getElementById('editTelefones').value = a.telefones;
-      document.getElementById('editResponsavel').value = a.responsavelLegal || '';
-      document.getElementById('editSituacao').value  = a.situacaoAcesso;
-      document.getElementById('editPrefeitura').value  = a.prefeituraId;
-      document.getElementById('editInstituicao').value = a.instituicaoEnsinoId;
-      editModal.show();
-    } catch (e) {
-      showToast('Erro ao carregar aluno: ' + e.message, 'error');
-    }
+  window.openEdit = (id) => {
+      window.location.href = `cadastro-aluno.html?id=${id}`;
   };
-
-  async function saveEdit() {
-    const form = document.getElementById('formEdit');
-    form.classList.add('was-validated');
-    if (!form.checkValidity()) return;
-    const id = document.getElementById('editCodigo').value;
-    const btn = document.getElementById('btnSalvarEdit');
-    btn.disabled = true;
-    try {
-      await api.put(`/alunos/${id}`, {
-        nome: document.getElementById('editNome').value.trim(),
-        cpf: document.getElementById('editCpf').value.trim(),
-        dataNascimento: document.getElementById('editDataNasc').value,
-        endereco: document.getElementById('editEndereco').value.trim(),
-        telefones: document.getElementById('editTelefones').value.trim(),
-        responsavelLegal: document.getElementById('editResponsavel').value.trim() || null,
-        situacaoAcesso: document.getElementById('editSituacao').value,
-        prefeituraId: parseInt(document.getElementById('editPrefeitura').value),
-        instituicaoEnsinoId: parseInt(document.getElementById('editInstituicao').value),
-      });
-      showToast('Aluno atualizado com sucesso!', 'success');
-      editModal.hide();
-      allAlunos = [];
-      await loadAll();
-    } catch (e) {
-      showToast('Erro ao salvar: ' + e.message, 'error');
-    } finally {
-      btn.disabled = false;
-    }
-  }
 
   window.deleteAluno = (id, nome) => {
     confirmDelete(`Deseja excluir o aluno "${nome}"? Esta ação não pode ser desfeita.`, async () => {

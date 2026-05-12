@@ -1,6 +1,5 @@
 import Sequelize from 'sequelize';
 import { databaseConfig } from './database-config.js';
-
 import { Aluno } from '../models/Aluno.js';
 import { Cidade } from '../models/Cidade.js';
 import { Estado } from '../models/Estado.js';
@@ -15,361 +14,584 @@ import { Viagem } from '../models/Viagem.js';
 
 const sequelize = new Sequelize(databaseConfig);
 
-Estado.init(sequelize);
-Cidade.init(sequelize);
-Prefeitura.init(sequelize);
-InstituicaoEnsino.init(sequelize);
-Aluno.init(sequelize);
-Motorista.init(sequelize);
-Onibus.init(sequelize);
-Rota.init(sequelize);
-Viagem.init(sequelize);
-MatriculaTransporte.init(sequelize);
-RegistroAcesso.init(sequelize);
+Estado.init(sequelize); Cidade.init(sequelize); Prefeitura.init(sequelize);
+InstituicaoEnsino.init(sequelize); Aluno.init(sequelize); Motorista.init(sequelize);
+Onibus.init(sequelize); Rota.init(sequelize); Viagem.init(sequelize);
+MatriculaTransporte.init(sequelize); RegistroAcesso.init(sequelize);
 
-Estado.associate(sequelize.models);
-Cidade.associate(sequelize.models);
-Prefeitura.associate(sequelize.models);
-InstituicaoEnsino.associate(sequelize.models);
-Aluno.associate(sequelize.models);
-Motorista.associate(sequelize.models);
-Onibus.associate(sequelize.models);
-Rota.associate(sequelize.models);
-Viagem.associate(sequelize.models);
-MatriculaTransporte.associate(sequelize.models);
+Estado.associate(sequelize.models); Cidade.associate(sequelize.models);
+Prefeitura.associate(sequelize.models); InstituicaoEnsino.associate(sequelize.models);
+Aluno.associate(sequelize.models); Motorista.associate(sequelize.models);
+Onibus.associate(sequelize.models); Rota.associate(sequelize.models);
+Viagem.associate(sequelize.models); MatriculaTransporte.associate(sequelize.models);
 RegistroAcesso.associate(sequelize.models);
 
-databaseInserts(); // comentar quando estiver em ambiente de producao (nao criar tabelas e nao inserir registros de teste)
+databaseInserts();
 
 function databaseInserts() {
   (async () => {
     await sequelize.sync({ force: true });
 
-    const estado1 = await Estado.create({ siglaUF: 'ES', nome: 'Espirito Santo' });
-    const estado2 = await Estado.create({ siglaUF: 'MG', nome: 'Minas Gerais' });
-    const estado3 = await Estado.create({ siglaUF: 'RJ', nome: 'Rio de Janeiro' });
+    const es = await Estado.create({ siglaUF: 'ES', nome: 'Espirito Santo' });
+    const mg = await Estado.create({ siglaUF: 'MG', nome: 'Minas Gerais' });
+    const rj = await Estado.create({ siglaUF: 'RJ', nome: 'Rio de Janeiro' });
+    const sp = await Estado.create({ siglaUF: 'SP', nome: 'Sao Paulo' });
+    const ba = await Estado.create({ siglaUF: 'BA', nome: 'Bahia' });
 
-    const cidade1 = await Cidade.create({ nome: 'Cachoeiro de Itapemirim', estadoId: estado1.codigo });
-    const cidade2 = await Cidade.create({ nome: 'Alegre', estadoId: estado1.codigo });
-    const cidade3 = await Cidade.create({ nome: 'Castelo', estadoId: estado1.codigo });
-    const cidade4 = await Cidade.create({ nome: 'Jeronimo Monteiro', estadoId: estado1.codigo });
-    const cidade5 = await Cidade.create({ nome: 'Carangola', estadoId: estado2.codigo });
-    const cidade6 = await Cidade.create({ nome: 'Itaperuna', estadoId: estado3.codigo });
+    const c_cachoeiro = await Cidade.create({ nome: 'Cachoeiro de Itapemirim', estadoId: es.codigo });
+    const c_alegre = await Cidade.create({ nome: 'Alegre', estadoId: es.codigo });
+    const c_castelo = await Cidade.create({ nome: 'Castelo', estadoId: es.codigo });
+    const c_jeronimo = await Cidade.create({ nome: 'Jeronimo Monteiro', estadoId: es.codigo });
+    const c_vitoria = await Cidade.create({ nome: 'Vitoria', estadoId: es.codigo });
+    const c_guarapari = await Cidade.create({ nome: 'Guarapari', estadoId: es.codigo });
+    const c_colatina = await Cidade.create({ nome: 'Colatina', estadoId: es.codigo });
+    const c_linhares = await Cidade.create({ nome: 'Linhares', estadoId: es.codigo });
+    const c_aracruz = await Cidade.create({ nome: 'Aracruz', estadoId: es.codigo });
+    const c_vargem = await Cidade.create({ nome: 'Vargem Alta', estadoId: es.codigo });
+    const c_muqui = await Cidade.create({ nome: 'Muqui', estadoId: es.codigo });
+    const c_mimoso = await Cidade.create({ nome: 'Mimoso do Sul', estadoId: es.codigo });
 
-    const prefeitura1 = await Prefeitura.create({
-      razaoSocial: 'Prefeitura Municipal de Cachoeiro de Itapemirim',
-      cnpj: '27.165.588/0001-90',
-      endereco: 'Praca Jeronimo Monteiro, 32 - Centro',
-      telefones: '(28) 3155-5000',
-      email: 'transporte@cachoeiro.es.gov.br',
-      cidadeId: cidade1.codigo
-    });
-    const prefeitura2 = await Prefeitura.create({
-      razaoSocial: 'Prefeitura Municipal de Alegre',
-      cnpj: '27.174.101/0001-35',
-      endereco: 'Praca Getulio Vargas, 01 - Centro',
-      telefones: '(28) 3552-4412',
-      email: 'educacao@alegre.es.gov.br',
-      cidadeId: cidade2.codigo
-    });
-    const prefeitura3 = await Prefeitura.create({
-      razaoSocial: 'Prefeitura Municipal de Carangola',
-      cnpj: '19.279.827/0001-04',
-      endereco: 'Praca Coronel Maximiano, 88 - Centro',
-      telefones: '(32) 3741-9600',
-      email: 'transporte@carangola.mg.gov.br',
-      cidadeId: cidade5.codigo
-    });
-    const prefeitura4 = await Prefeitura.create({
-      razaoSocial: 'Prefeitura Municipal de Itaperuna',
-      cnpj: '28.916.716/0001-52',
-      endereco: 'Rua Izabel Vieira Martins, 131 - Cidade Nova',
-      telefones: '(22) 3824-6300',
-      email: 'educacao@itaperuna.rj.gov.br',
-      cidadeId: cidade6.codigo
-    });
-    const prefeitura5 = await Prefeitura.create({
-      razaoSocial: 'Prefeitura Municipal de Castelo',
-      cnpj: '27.165.638/0001-39',
-      endereco: 'Avenida Nossa Senhora da Penha, 103 - Centro',
-      telefones: '(28) 3542-6300',
-      email: 'educacao@castelo.es.gov.br',
-      cidadeId: cidade3.codigo
-    });
-    const prefeitura6 = await Prefeitura.create({
-      razaoSocial: 'Prefeitura Municipal de Jeronimo Monteiro',
-      cnpj: '27.165.653/0001-87',
-      endereco: 'Avenida Lourival Lougon Moulin, 300 - Centro',
-      telefones: '(28) 3558-1120',
-      email: 'transporte@jeronimomonteiro.es.gov.br',
-      cidadeId: cidade4.codigo
-    });
+    const c_carangola = await Cidade.create({ nome: 'Carangola', estadoId: mg.codigo });
+    const c_manhuacu = await Cidade.create({ nome: 'Manhuacu', estadoId: mg.codigo });
+    const c_muriae = await Cidade.create({ nome: 'Muriae', estadoId: mg.codigo });
+    const c_jf = await Cidade.create({ nome: 'Juiz de Fora', estadoId: mg.codigo });
+    const c_uba = await Cidade.create({ nome: 'Uba', estadoId: mg.codigo });
+    const c_vicosa = await Cidade.create({ nome: 'Vicosa', estadoId: mg.codigo });
 
-    const instituicao1 = await InstituicaoEnsino.create({
-      nome: 'IFES Campus Cachoeiro de Itapemirim',
-      endereco: 'Rodovia BR 482, Fazenda Morro Grande',
-      telefones: '(28) 3526-9000',
-      tipoInstituicao: 'Instituto Federal',
-      cidadeId: cidade1.codigo
-    });
-    const instituicao2 = await InstituicaoEnsino.create({
-      nome: 'Centro Universitario Sao Camilo',
-      endereco: 'Rua Sao Camilo de Lellis, 01 - Paraiso',
-      telefones: '(28) 3526-5900',
-      tipoInstituicao: 'Universidade',
-      cidadeId: cidade1.codigo
-    });
-    const instituicao3 = await InstituicaoEnsino.create({
-      nome: 'UFES Campus de Alegre',
-      endereco: 'Alto Universitario, s/n',
-      telefones: '(28) 3552-8600',
-      tipoInstituicao: 'Universidade',
-      cidadeId: cidade2.codigo
-    });
-    const instituicao4 = await InstituicaoEnsino.create({
-      nome: 'IFF Campus Itaperuna',
-      endereco: 'BR 356, Km 3 - Cidade Nova',
-      telefones: '(22) 3811-9200',
-      tipoInstituicao: 'Instituto Federal',
-      cidadeId: cidade6.codigo
-    });
+    const c_itaperuna = await Cidade.create({ nome: 'Itaperuna', estadoId: rj.codigo });
+    const c_campos = await Cidade.create({ nome: 'Campos dos Goytacazes', estadoId: rj.codigo });
+    const c_tres = await Cidade.create({ nome: 'Tres Rios', estadoId: rj.codigo });
+    const c_volta = await Cidade.create({ nome: 'Volta Redonda', estadoId: rj.codigo });
 
-    const aluno1 = await Aluno.create({
-      nome: 'Jose Carlos Ceccon Neto',
-      cpf: '123.456.789-01',
-      dataNascimento: '2005-01-07',
-      endereco: 'Rua Dr. Bricio Mesquita, Cachoeiro de Itapemirim - ES',
-      telefones: '(28) 99902-7087',
-      responsavelLegal: ' ',
-      situacaoAcesso: 'Ativo',
-      prefeituraId: prefeitura1.codigo,
-      instituicaoEnsinoId: instituicao1.codigo
-    });
-    const aluno2 = await Aluno.create({
-      nome: 'Pedro Henrique Costa',
-      cpf: '123.456.789-02',
-      dataNascimento: '2006-08-21',
-      endereco: 'Rua Antonio Machado, Castelo - ES',
-      telefones: '(28) 99911-1002',
-      responsavelLegal: 'Luciana Costa',
-      situacaoAcesso: 'Ativo',
-      prefeituraId: prefeitura5.codigo,
-      instituicaoEnsinoId: instituicao2.codigo
-    });
-    const aluno3 = await Aluno.create({
-      nome: 'Julia Martins Ferreira',
-      cpf: '123.456.789-03',
-      dataNascimento: '2005-11-09',
-      endereco: 'Avenida do Contorno, Carangola - MG',
-      telefones: '(32) 99911-1003',
-      responsavelLegal: 'Carlos Ferreira',
-      situacaoAcesso: 'Ativo',
-      prefeituraId: prefeitura3.codigo,
-      instituicaoEnsinoId: instituicao3.codigo
-    });
-    const aluno4 = await Aluno.create({
-      nome: 'Gabriel Souza Rocha',
-      cpf: '123.456.789-04',
-      dataNascimento: '2007-01-30',
-      endereco: 'Rua Vinhosa, Itaperuna - RJ',
-      telefones: '(22) 99911-1004',
-      responsavelLegal: 'Patricia Rocha',
-      situacaoAcesso: 'Ativo',
-      prefeituraId: prefeitura4.codigo,
-      instituicaoEnsinoId: instituicao1.codigo
-    });
-    const aluno5 = await Aluno.create({
-      nome: 'Beatriz Nascimento Lima',
-      cpf: '123.456.789-05',
-      dataNascimento: '2008-05-12',
-      endereco: 'Rua Capitao Deslandes, Jeronimo Monteiro - ES',
-      telefones: '(28) 99911-1005',
-      responsavelLegal: 'Renato Lima',
-      situacaoAcesso: 'Ativo',
-      prefeituraId: prefeitura6.codigo,
-      instituicaoEnsinoId: instituicao1.codigo
-    });
-    const aluno6 = await Aluno.create({
-      nome: 'Lucas Oliveira Santos',
-      cpf: '123.456.789-06',
-      dataNascimento: '2006-03-25',
-      endereco: 'Rua das Palmeiras, 45 - Alegre - ES',
-      telefones: '(28) 99911-1006',
-      responsavelLegal: 'Ana Santos',
-      situacaoAcesso: 'Bloqueado',
-      prefeituraId: prefeitura2.codigo,
-      instituicaoEnsinoId: instituicao3.codigo
-    });
+    const pref1 = await Prefeitura.create({ razaoSocial: 'Prefeitura de Cachoeiro de Itapemirim', cnpj: '27.165.588/0001-90', endereco: 'Praca Jeronimo Monteiro, 32', telefones: '(28) 3155-5000', email: 'transporte@cachoeiro.es.gov.br', cidadeId: c_cachoeiro.codigo });
+    const pref2 = await Prefeitura.create({ razaoSocial: 'Prefeitura de Alegre', cnpj: '27.174.101/0001-35', endereco: 'Praca Getulio Vargas, 01', telefones: '(28) 3552-4412', email: 'educacao@alegre.es.gov.br', cidadeId: c_alegre.codigo });
+    const pref3 = await Prefeitura.create({ razaoSocial: 'Prefeitura de Carangola', cnpj: '19.279.827/0001-04', endereco: 'Praca Coronel Maximiano, 88', telefones: '(32) 3741-9600', email: 'transporte@carangola.mg.gov.br', cidadeId: c_carangola.codigo });
+    const pref4 = await Prefeitura.create({ razaoSocial: 'Prefeitura de Itaperuna', cnpj: '28.916.716/0001-52', endereco: 'Rua Izabel Vieira Martins, 131', telefones: '(22) 3824-6300', email: 'educacao@itaperuna.rj.gov.br', cidadeId: c_itaperuna.codigo });
+    const pref5 = await Prefeitura.create({ razaoSocial: 'Prefeitura de Castelo', cnpj: '27.165.638/0001-39', endereco: 'Avenida Nossa Senhora da Penha, 103', telefones: '(28) 3542-6300', email: 'educacao@castelo.es.gov.br', cidadeId: c_castelo.codigo });
+    const pref6 = await Prefeitura.create({ razaoSocial: 'Prefeitura de Jeronimo Monteiro', cnpj: '27.165.653/0001-87', endereco: 'Avenida Lourival Lougon Moulin, 300', telefones: '(28) 3558-1120', email: 'transporte@jeronimomonteiro.es.gov.br', cidadeId: c_jeronimo.codigo });
+    const pref7 = await Prefeitura.create({ razaoSocial: 'Prefeitura de Colatina', cnpj: '27.142.461/0001-62', endereco: 'Rua Coronel Frederico Giestas, 07', telefones: '(27) 3177-8000', email: 'transporte@colatina.es.gov.br', cidadeId: c_colatina.codigo });
+    const pref8 = await Prefeitura.create({ razaoSocial: 'Prefeitura de Linhares', cnpj: '27.167.477/0001-01', endereco: 'Rua Ananias Mello, 23 - Centro', telefones: '(27) 3264-8700', email: 'educacao@linhares.es.gov.br', cidadeId: c_linhares.codigo });
+    const pref9 = await Prefeitura.create({ razaoSocial: 'Prefeitura de Vitoria', cnpj: '27.142.222/0001-00', endereco: 'Av. Marechal Mascarenhas de Moraes, 1927', telefones: '(27) 3132-5000', email: 'transporte@vitoria.es.gov.br', cidadeId: c_vitoria.codigo });
+    const pref10 = await Prefeitura.create({ razaoSocial: 'Prefeitura de Muriae', cnpj: '18.422.894/0001-81', endereco: 'Praca Silviano Brandao, s/n', telefones: '(32) 3729-1000', email: 'educacao@muriae.mg.gov.br', cidadeId: c_muriae.codigo });
+    const pref11 = await Prefeitura.create({ razaoSocial: 'Prefeitura de Campos dos Goytacazes', cnpj: '29.116.242/0001-60', endereco: 'Rua Artur de Azevedo, 49', telefones: '(22) 2796-9000', email: 'educacao@campos.rj.gov.br', cidadeId: c_campos.codigo });
+    const prefs = [pref1,pref2,pref3,pref4,pref5,pref6,pref7,pref8,pref9,pref10,pref11];
 
-    const motorista1 = await Motorista.create({
-      nome: 'Marcos Vinicius Pires',
-      cpf: '987.654.321-01',
-      cnh: '05321478901',
-      validadeCNH: '2028-07-15',
-      categoriaCNH: 'D',
-      telefones: '(28) 99988-2001',
-      situacao: 'Ativo'
-    });
-    const motorista2 = await Motorista.create({
-      nome: 'Roberto Carlos Vieira',
-      cpf: '987.654.321-02',
-      cnh: '05321478902',
-      validadeCNH: '2027-11-20',
-      categoriaCNH: 'D',
-      telefones: '(28) 99988-2002',
-      situacao: 'Ativo'
-    });
-    const motorista3 = await Motorista.create({
-      nome: 'Sergio Mendes Lopes',
-      cpf: '987.654.321-03',
-      cnh: '05321478903',
-      validadeCNH: '2029-02-10',
-      categoriaCNH: 'E',
-      telefones: '(22) 99988-2003',
-      situacao: 'Ativo'
-    });
+    const inst1 = await InstituicaoEnsino.create({ nome: 'IFES Campus Cachoeiro de Itapemirim', endereco: 'Rodovia BR 482, Fazenda Morro Grande', telefones: '(28) 3526-9000', tipoInstituicao: 'Instituto Federal', cidadeId: c_cachoeiro.codigo });
+    const inst2 = await InstituicaoEnsino.create({ nome: 'Centro Universitario Sao Camilo', endereco: 'Rua Sao Camilo de Lellis, 01 - Paraiso', telefones: '(28) 3526-5900', tipoInstituicao: 'Universidade', cidadeId: c_cachoeiro.codigo });
+    const inst3 = await InstituicaoEnsino.create({ nome: 'UFES Campus de Alegre', endereco: 'Alto Universitario, s/n', telefones: '(28) 3552-8600', tipoInstituicao: 'Universidade', cidadeId: c_alegre.codigo });
+    const inst4 = await InstituicaoEnsino.create({ nome: 'IFF Campus Itaperuna', endereco: 'BR 356, Km 3 - Cidade Nova', telefones: '(22) 3811-9200', tipoInstituicao: 'Instituto Federal', cidadeId: c_itaperuna.codigo });
+    const inst5 = await InstituicaoEnsino.create({ nome: 'UFES Campus Vitoria', endereco: 'Av. Fernando Ferrari, 514 - Goiabeiras', telefones: '(27) 4009-2200', tipoInstituicao: 'Universidade', cidadeId: c_vitoria.codigo });
+    const inst6 = await InstituicaoEnsino.create({ nome: 'Faculdade de Manhuacu FACIG', endereco: 'Rodovia BR-262, Km 39 - Santo Antonio', telefones: '(33) 3331-1214', tipoInstituicao: 'Faculdade', cidadeId: c_manhuacu.codigo });
+    const inst7 = await InstituicaoEnsino.create({ nome: 'IFES Campus Colatina', endereco: 'Rua Acaices do Tumiaru, 143', telefones: '(27) 3177-8700', tipoInstituicao: 'Instituto Federal', cidadeId: c_colatina.codigo });
+    const inst8 = await InstituicaoEnsino.create({ nome: 'UENF Campus Campos', endereco: 'Av. Alberto Lamego, 2000 - Parque California', telefones: '(22) 2748-6000', tipoInstituicao: 'Universidade', cidadeId: c_campos.codigo });
+    const inst9 = await InstituicaoEnsino.create({ nome: 'Facev Cachoeiro', endereco: 'Rua Rodrigues da Costa, 470 - Independencia', telefones: '(28) 3521-1900', tipoInstituicao: 'Faculdade', cidadeId: c_cachoeiro.codigo });
+    const inst10 = await InstituicaoEnsino.create({ nome: 'UNIPAC Carangola', endereco: 'Praca dos Estudantes, 23 - Centro', telefones: '(32) 3741-2200', tipoInstituicao: 'Faculdade', cidadeId: c_carangola.codigo });
+    const insts = [inst1,inst2,inst3,inst4,inst5,inst6,inst7,inst8,inst9,inst10];
 
-    const onibus1 = await Onibus.create({
-      placa: 'RTA-1A23',
-      modelo: 'Marcopolo Volare V8L',
-      capacidade: 32,
-      ano: 2022,
-      situacao: 'Ativo'
-    });
-    const onibus2 = await Onibus.create({
-      placa: 'ESC-4B56',
-      modelo: 'Mercedes-Benz OF 1519',
-      capacidade: 44,
-      ano: 2021,
-      situacao: 'Ativo'
-    });
-    const onibus3 = await Onibus.create({
-      placa: 'STE-7C89',
-      modelo: 'Volksbus 15.190 ODR',
-      capacidade: 48,
-      ano: 2023,
-      situacao: 'Ativo'
-    });
+    const motoristas = [];
+    motoristas.push(await Motorista.create({ nome: 'Marcos Vinicius Pires', cpf: '265.326.460-91', cnh: '05321478901', validadeCNH: '2028-07-15', categoriaCNH: 'D', telefones: '(28) 99988-2001', situacao: 'ATIVO' }));
+    motoristas.push(await Motorista.create({ nome: 'Roberto Carlos Vieira', cpf: '550.158.705-07', cnh: '05321478902', validadeCNH: '2027-11-20', categoriaCNH: 'D', telefones: '(28) 99988-2002', situacao: 'ATIVO' }));
+    motoristas.push(await Motorista.create({ nome: 'Sergio Mendes Lopes', cpf: '851.375.913-94', cnh: '05321478903', validadeCNH: '2029-02-10', categoriaCNH: 'E', telefones: '(22) 99988-2003', situacao: 'ATIVO' }));
+    motoristas.push(await Motorista.create({ nome: 'Carlos Eduardo Peixoto', cpf: '599.429.864-64', cnh: '05321478904', validadeCNH: '2030-05-12', categoriaCNH: 'D', telefones: '(27) 99955-4433', situacao: 'ATIVO' }));
+    motoristas.push(await Motorista.create({ nome: 'Antonio da Silva', cpf: '121.136.112-87', cnh: '05321478905', validadeCNH: '2025-08-30', categoriaCNH: 'D', telefones: '(33) 98844-3322', situacao: 'INATIVO' }));
+    motoristas.push(await Motorista.create({ nome: 'Jose Pereira Lima', cpf: '484.850.803-78', cnh: '05321478906', validadeCNH: '2031-03-01', categoriaCNH: 'D', telefones: '(28) 99977-1001', situacao: 'ATIVO' }));
+    motoristas.push(await Motorista.create({ nome: 'Francisco Alves Costa', cpf: '355.956.709-24', cnh: '05321478907', validadeCNH: '2029-07-22', categoriaCNH: 'E', telefones: '(27) 99977-1002', situacao: 'ATIVO' }));
+    motoristas.push(await Motorista.create({ nome: 'Raimundo Sousa Neto', cpf: '082.228.986-55', cnh: '05321478908', validadeCNH: '2028-12-15', categoriaCNH: 'D', telefones: '(32) 99977-1003', situacao: 'ATIVO' }));
+    motoristas.push(await Motorista.create({ nome: 'Sebastiao Ferreira Junior', cpf: '797.200.809-49', cnh: '05321478909', validadeCNH: '2030-09-08', categoriaCNH: 'D', telefones: '(22) 99977-1004', situacao: 'ATIVO' }));
+    motoristas.push(await Motorista.create({ nome: 'Benedito Santos Cruz', cpf: '680.175.553-69', cnh: '053214789010', validadeCNH: '2027-04-18', categoriaCNH: 'D', telefones: '(28) 99966-5001', situacao: 'ATIVO' }));
+    motoristas.push(await Motorista.create({ nome: 'Manoel Araujo Filho', cpf: '438.409.553-86', cnh: '053214789011', validadeCNH: '2032-01-25', categoriaCNH: 'E', telefones: '(27) 99966-5002', situacao: 'ATIVO' }));
+    motoristas.push(await Motorista.create({ nome: 'Joaquim Ribeiro Neto', cpf: '128.484.742-03', cnh: '053214789012', validadeCNH: '2028-06-30', categoriaCNH: 'D', telefones: '(33) 99966-5003', situacao: 'ATIVO' }));
+    motoristas.push(await Motorista.create({ nome: 'Valter Lima Mendes', cpf: '793.352.489-32', cnh: '053214789013', validadeCNH: '2029-11-05', categoriaCNH: 'D', telefones: '(28) 99955-6001', situacao: 'ATIVO' }));
+    motoristas.push(await Motorista.create({ nome: 'Edson Carvalho Rosa', cpf: '309.219.466-78', cnh: '053214789014', validadeCNH: '2026-02-14', categoriaCNH: 'D', telefones: '(22) 99955-6002', situacao: 'INATIVO' }));
+    motoristas.push(await Motorista.create({ nome: 'Nelson Gomes Teixeira', cpf: '175.530.390-47', cnh: '053214789015', validadeCNH: '2031-08-20', categoriaCNH: 'D', telefones: '(27) 99944-7001', situacao: 'ATIVO' }));
 
-    const rota1 = await Rota.create({
-      turno: 'Matutino',
-      descricao: 'Linha Alegre x Cachoeiro para estudantes do IFES',
-      observacao: 'Atende tambem alunos de Jeronimo Monteiro',
-      origemId: cidade2.codigo,
-      destinoId: cidade1.codigo
-    });
-    const rota2 = await Rota.create({
-      turno: 'Noturno',
-      descricao: 'Linha Castelo x Cachoeiro para ensino superior',
-      observacao: 'Retorno apos termino das aulas noturnas',
-      origemId: cidade3.codigo,
-      destinoId: cidade1.codigo
-    });
-    const rota3 = await Rota.create({
-      turno: 'Matutino',
-      descricao: 'Linha Carangola x Alegre para campus universitario',
-      observacao: 'Integra estudantes do interior de MG',
-      origemId: cidade5.codigo,
-      destinoId: cidade2.codigo
-    });
-    const rota4 = await Rota.create({
-      turno: 'Matutino',
-      descricao: 'Linha Itaperuna x Cachoeiro para cursos tecnicos',
-      observacao: 'Atende municipios do noroeste fluminense',
-      origemId: cidade6.codigo,
-      destinoId: cidade1.codigo
-    });
+    const onibus = [];
+    onibus.push(await Onibus.create({ placa: 'RTA-1A23', modelo: 'Marcopolo Volare V8L', capacidade: 32, ano: 2022, situacao: 'ATIVO' }));
+    onibus.push(await Onibus.create({ placa: 'ESC-4B56', modelo: 'Mercedes-Benz OF 1519', capacidade: 44, ano: 2021, situacao: 'ATIVO' }));
+    onibus.push(await Onibus.create({ placa: 'STE-7C89', modelo: 'Volksbus 15.190 ODR', capacidade: 48, ano: 2023, situacao: 'ATIVO' }));
+    onibus.push(await Onibus.create({ placa: 'BUS-9D12', modelo: 'Marcopolo Paradiso 1200', capacidade: 50, ano: 2020, situacao: 'ATIVO' }));
+    onibus.push(await Onibus.create({ placa: 'VIX-1X22', modelo: 'Scania K310', capacidade: 42, ano: 2018, situacao: 'MANUTENÇÃO' }));
+    onibus.push(await Onibus.create({ placa: 'TRN-2B33', modelo: 'Marcopolo Volare W9', capacidade: 36, ano: 2022, situacao: 'ATIVO' }));
+    onibus.push(await Onibus.create({ placa: 'COL-3C44', modelo: 'Caio Apache Vip IV', capacidade: 46, ano: 2021, situacao: 'ATIVO' }));
+    onibus.push(await Onibus.create({ placa: 'LNH-4D55', modelo: 'Mascarello Roma 350', capacidade: 44, ano: 2019, situacao: 'ATIVO' }));
+    onibus.push(await Onibus.create({ placa: 'ARC-5E66', modelo: 'Busscar Vissta Buss Hi', capacidade: 50, ano: 2023, situacao: 'ATIVO' }));
+    onibus.push(await Onibus.create({ placa: 'CAC-6F77', modelo: 'Comil Versatile I', capacidade: 40, ano: 2020, situacao: 'ATIVO' }));
+    onibus.push(await Onibus.create({ placa: 'ALG-7G88', modelo: 'Neobus Thunder Plus', capacidade: 38, ano: 2022, situacao: 'ATIVO' }));
+    onibus.push(await Onibus.create({ placa: 'CAS-8H99', modelo: 'Volvo B270F', capacidade: 48, ano: 2021, situacao: 'MANUTENÇÃO' }));
 
-    const viagem1 = await Viagem.create({
-      data: '2026-04-01',
-      horarioSaida: '05:40',
-      horarioChegada: '07:10',
-      rotaId: rota1.codigo,
-      motoristaId: motorista1.codigo,
-      onibusId: onibus1.codigo
-    });
-    const viagem2 = await Viagem.create({
-      data: '2026-04-01',
-      horarioSaida: '18:00',
-      horarioChegada: '19:00',
-      rotaId: rota2.codigo,
-      motoristaId: motorista2.codigo,
-      onibusId: onibus2.codigo
-    });
-    const viagem3 = await Viagem.create({
-      data: '2026-04-02',
-      horarioSaida: '05:20',
-      horarioChegada: '06:50',
-      rotaId: rota3.codigo,
-      motoristaId: motorista1.codigo,
-      onibusId: onibus2.codigo
-    });
-    const viagem4 = await Viagem.create({
-      data: '2026-04-02',
-      horarioSaida: '04:50',
-      horarioChegada: '07:30',
-      rotaId: rota4.codigo,
-      motoristaId: motorista3.codigo,
-      onibusId: onibus3.codigo
-    });
+    const rotas = [];
+    rotas.push(await Rota.create({ turno: 'MATUTINO', descricao: 'Linha Alegre x Cachoeiro para estudantes do IFES', observacao: 'Atende tambem Jeronimo Monteiro', origemId: c_alegre.codigo, destinoId: c_cachoeiro.codigo }));
+    rotas.push(await Rota.create({ turno: 'NOTURNO', descricao: 'Linha Castelo x Cachoeiro para ensino superior', observacao: 'Retorno apos aulas noturnas', origemId: c_castelo.codigo, destinoId: c_cachoeiro.codigo }));
+    rotas.push(await Rota.create({ turno: 'MATUTINO', descricao: 'Linha Carangola x Alegre para campus universitario', observacao: 'Integra estudantes do interior de MG', origemId: c_carangola.codigo, destinoId: c_alegre.codigo }));
+    rotas.push(await Rota.create({ turno: 'MATUTINO', descricao: 'Linha Itaperuna x Cachoeiro para cursos tecnicos', observacao: 'Atende municipios do noroeste fluminense', origemId: c_itaperuna.codigo, destinoId: c_cachoeiro.codigo }));
+    rotas.push(await Rota.create({ turno: 'NOTURNO', descricao: 'Linha Guarapari x Vitoria para UFES', observacao: 'Saida as 17h retorno as 22h', origemId: c_guarapari.codigo, destinoId: c_vitoria.codigo }));
+    rotas.push(await Rota.create({ turno: 'MATUTINO', descricao: 'Linha Carangola x Manhuacu FACIG', observacao: 'Exclusiva para universitarios da FACIG', origemId: c_carangola.codigo, destinoId: c_manhuacu.codigo }));
+    rotas.push(await Rota.create({ turno: 'MATUTINO', descricao: 'Linha Cachoeiro x Alegre para UFES', observacao: 'Atende universitarios da UFES Alegre', origemId: c_cachoeiro.codigo, destinoId: c_alegre.codigo }));
+    rotas.push(await Rota.create({ turno: 'MATUTINO', descricao: 'Linha Campos x Itaperuna IFF', observacao: 'Transporte intermunicipal fluminense', origemId: c_campos.codigo, destinoId: c_itaperuna.codigo }));
+    rotas.push(await Rota.create({ turno: 'MATUTINO', descricao: 'Linha Colatina x Vitoria para UFES', observacao: 'Conecta Colatina ao campus universitario', origemId: c_colatina.codigo, destinoId: c_vitoria.codigo }));
+    rotas.push(await Rota.create({ turno: 'NOTURNO', descricao: 'Linha Muqui x Cachoeiro noturna', observacao: 'Atende trabalhadores estudantes', origemId: c_muqui.codigo, destinoId: c_cachoeiro.codigo }));
+    rotas.push(await Rota.create({ turno: 'MATUTINO', descricao: 'Linha Muriae x Carangola universitarios', observacao: 'Conexao entre municipios de MG', origemId: c_muriae.codigo, destinoId: c_carangola.codigo }));
+    rotas.push(await Rota.create({ turno: 'MATUTINO', descricao: 'Linha Linhares x Colatina IFES', observacao: 'Linha norte do estado', origemId: c_linhares.codigo, destinoId: c_colatina.codigo }));
+    rotas.push(await Rota.create({ turno: 'NOTURNO', descricao: 'Linha Tres Rios x Campos RJ noturna', observacao: 'Transporte intermunicipal noturno RJ', origemId: c_tres.codigo, destinoId: c_campos.codigo }));
+    rotas.push(await Rota.create({ turno: 'MATUTINO', descricao: 'Linha Vargem Alta x Cachoeiro matutina', observacao: 'Linha sul do estado ES', origemId: c_vargem.codigo, destinoId: c_cachoeiro.codigo }));
+    rotas.push(await Rota.create({ turno: 'MATUTINO', descricao: 'Linha Aracruz x Vitoria para UFES', observacao: 'Linha litoral norte ES', origemId: c_aracruz.codigo, destinoId: c_vitoria.codigo }));
+    rotas.push(await Rota.create({ turno: 'NOTURNO', descricao: 'Linha Vicosa x Muriae universitarios', observacao: 'Conexao UFV e UNIPAC', origemId: c_vicosa.codigo, destinoId: c_muriae.codigo }));
+    rotas.push(await Rota.create({ turno: 'MATUTINO', descricao: 'Linha Mimoso do Sul x Jeronimo Monteiro', observacao: 'Linha rural sul ES', origemId: c_mimoso.codigo, destinoId: c_jeronimo.codigo }));
+    rotas.push(await Rota.create({ turno: 'MATUTINO', descricao: 'Linha Castelo x Alegre para UFES', observacao: 'Rota alternativa para UFES', origemId: c_castelo.codigo, destinoId: c_alegre.codigo }));
+    rotas.push(await Rota.create({ turno: 'NOTURNO', descricao: 'Linha Guarapari x Cachoeiro noturna', observacao: 'Linha litoral ES noturna', origemId: c_guarapari.codigo, destinoId: c_cachoeiro.codigo }));
+    rotas.push(await Rota.create({ turno: 'MATUTINO', descricao: 'Linha Volta Redonda x Tres Rios RJ', observacao: 'Conexao interior fluminense', origemId: c_volta.codigo, destinoId: c_tres.codigo }));
 
-    await MatriculaTransporte.create({ alunoId: aluno1.codigo, rotaId: rota1.codigo });
-    await MatriculaTransporte.create({ alunoId: aluno2.codigo, rotaId: rota2.codigo });
-    await MatriculaTransporte.create({ alunoId: aluno3.codigo, rotaId: rota3.codigo });
-    await MatriculaTransporte.create({ alunoId: aluno4.codigo, rotaId: rota4.codigo });
-    await MatriculaTransporte.create({ alunoId: aluno5.codigo, rotaId: rota1.codigo });
+    const viagens = [];
+    viagens.push(await Viagem.create({ data: '2026-04-01', horarioSaida: '05:40', horarioChegada: '07:10', rotaId: rotas[0].codigo, motoristaId: motoristas[0].codigo, onibusId: onibus[0].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-01', horarioSaida: '18:00', horarioChegada: '19:00', rotaId: rotas[1].codigo, motoristaId: motoristas[1].codigo, onibusId: onibus[1].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-02', horarioSaida: '05:20', horarioChegada: '06:50', rotaId: rotas[2].codigo, motoristaId: motoristas[2].codigo, onibusId: onibus[2].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-02', horarioSaida: '04:50', horarioChegada: '07:30', rotaId: rotas[3].codigo, motoristaId: motoristas[3].codigo, onibusId: onibus[3].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-03', horarioSaida: '17:00', horarioChegada: '18:30', rotaId: rotas[4].codigo, motoristaId: motoristas[5].codigo, onibusId: onibus[5].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-03', horarioSaida: '06:00', horarioChegada: '07:20', rotaId: rotas[5].codigo, motoristaId: motoristas[6].codigo, onibusId: onibus[6].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-03', horarioSaida: '06:10', horarioChegada: '07:30', rotaId: rotas[6].codigo, motoristaId: motoristas[7].codigo, onibusId: onibus[7].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-03', horarioSaida: '05:30', horarioChegada: '07:00', rotaId: rotas[7].codigo, motoristaId: motoristas[8].codigo, onibusId: onibus[8].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-07', horarioSaida: '05:40', horarioChegada: '07:10', rotaId: rotas[8].codigo, motoristaId: motoristas[9].codigo, onibusId: onibus[9].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-07', horarioSaida: '17:00', horarioChegada: '18:30', rotaId: rotas[9].codigo, motoristaId: motoristas[10].codigo, onibusId: onibus[10].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-08', horarioSaida: '05:20', horarioChegada: '06:50', rotaId: rotas[10].codigo, motoristaId: motoristas[11].codigo, onibusId: onibus[0].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-08', horarioSaida: '06:00', horarioChegada: '07:20', rotaId: rotas[11].codigo, motoristaId: motoristas[12].codigo, onibusId: onibus[1].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-09', horarioSaida: '04:50', horarioChegada: '07:30', rotaId: rotas[12].codigo, motoristaId: motoristas[14].codigo, onibusId: onibus[2].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-09', horarioSaida: '18:00', horarioChegada: '19:00', rotaId: rotas[13].codigo, motoristaId: motoristas[0].codigo, onibusId: onibus[3].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-10', horarioSaida: '05:40', horarioChegada: '07:10', rotaId: rotas[14].codigo, motoristaId: motoristas[1].codigo, onibusId: onibus[5].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-10', horarioSaida: '06:10', horarioChegada: '07:30', rotaId: rotas[15].codigo, motoristaId: motoristas[2].codigo, onibusId: onibus[6].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-11', horarioSaida: '17:00', horarioChegada: '18:30', rotaId: rotas[16].codigo, motoristaId: motoristas[3].codigo, onibusId: onibus[7].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-11', horarioSaida: '05:30', horarioChegada: '07:00', rotaId: rotas[17].codigo, motoristaId: motoristas[5].codigo, onibusId: onibus[8].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-14', horarioSaida: '05:40', horarioChegada: '07:10', rotaId: rotas[18].codigo, motoristaId: motoristas[6].codigo, onibusId: onibus[9].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-14', horarioSaida: '18:00', horarioChegada: '19:00', rotaId: rotas[19].codigo, motoristaId: motoristas[7].codigo, onibusId: onibus[10].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-15', horarioSaida: '05:20', horarioChegada: '06:50', rotaId: rotas[0].codigo, motoristaId: motoristas[8].codigo, onibusId: onibus[0].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-15', horarioSaida: '06:00', horarioChegada: '07:20', rotaId: rotas[1].codigo, motoristaId: motoristas[9].codigo, onibusId: onibus[1].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-16', horarioSaida: '04:50', horarioChegada: '07:30', rotaId: rotas[2].codigo, motoristaId: motoristas[10].codigo, onibusId: onibus[2].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-16', horarioSaida: '05:30', horarioChegada: '07:00', rotaId: rotas[3].codigo, motoristaId: motoristas[11].codigo, onibusId: onibus[3].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-17', horarioSaida: '06:10', horarioChegada: '07:30', rotaId: rotas[4].codigo, motoristaId: motoristas[12].codigo, onibusId: onibus[5].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-17', horarioSaida: '17:00', horarioChegada: '18:30', rotaId: rotas[5].codigo, motoristaId: motoristas[14].codigo, onibusId: onibus[6].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-22', horarioSaida: '05:40', horarioChegada: '07:10', rotaId: rotas[6].codigo, motoristaId: motoristas[0].codigo, onibusId: onibus[7].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-22', horarioSaida: '06:00', horarioChegada: '07:20', rotaId: rotas[7].codigo, motoristaId: motoristas[1].codigo, onibusId: onibus[8].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-23', horarioSaida: '05:20', horarioChegada: '06:50', rotaId: rotas[8].codigo, motoristaId: motoristas[2].codigo, onibusId: onibus[9].codigo }));
+    viagens.push(await Viagem.create({ data: '2026-04-24', horarioSaida: '04:50', horarioChegada: '07:30', rotaId: rotas[9].codigo, motoristaId: motoristas[3].codigo, onibusId: onibus[10].codigo }));
 
-    await RegistroAcesso.create({
-      tipo: 'EMBARQUE',
-      dataHora: '2026-04-01T05:42:00',
-      alunoId: aluno1.codigo,
-      viagemId: viagem1.codigo
-    });
-    await RegistroAcesso.create({
-      tipo: 'DESEMBARQUE',
-      dataHora: '2026-04-01T07:08:00',
-      alunoId: aluno1.codigo,
-      viagemId: viagem1.codigo
-    });
-    await RegistroAcesso.create({
-      tipo: 'EMBARQUE',
-      dataHora: '2026-04-01T18:03:00',
-      alunoId: aluno2.codigo,
-      viagemId: viagem2.codigo
-    });
-    await RegistroAcesso.create({
-      tipo: 'EMBARQUE',
-      dataHora: '2026-04-02T05:23:00',
-      alunoId: aluno3.codigo,
-      viagemId: viagem3.codigo
-    });
-    await RegistroAcesso.create({
-      tipo: 'EMBARQUE',
-      dataHora: '2026-04-02T04:55:00',
-      alunoId: aluno4.codigo,
-      viagemId: viagem4.codigo
-    });
-    await RegistroAcesso.create({
-      tipo: 'EMBARQUE',
-      dataHora: '2026-04-01T05:44:00',
-      alunoId: aluno5.codigo,
-      viagemId: viagem1.codigo
-    });
+    const alunos = [];
+    alunos.push(await Aluno.create({ nome: 'Ana Silva Ferreira', cpf: '484.850.803-78', dataNascimento: '2004-01-01', endereco: 'Rua das Flores, 100 - Cachoeiro de Itapemirim', telefones: '(28) 999900-1000', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Bruno Silva Costa', cpf: '355.956.709-24', dataNascimento: '2005-02-02', endereco: 'Avenida Brasil, 107 - Alegre', telefones: '(28) 999907-1013', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Carlos Santos Rodrigues', cpf: '082.228.986-55', dataNascimento: '2006-03-03', endereco: 'Rua 7 de Setembro, 114 - Castelo', telefones: '(32) 999914-1026', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Daniela Santos Almeida', cpf: '797.200.809-49', dataNascimento: '2007-04-04', endereco: 'Alameda dos Anjos, 121 - Jeronimo Monteiro', telefones: '(22) 999921-1039', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Eduardo Oliveira Nascimento', cpf: '680.175.553-69', dataNascimento: '2008-05-05', endereco: 'Travessa da Paz, 128 - Vitoria', telefones: '(27) 999928-1052', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Fernanda Oliveira Carvalho', cpf: '438.409.553-86', dataNascimento: '2003-06-06', endereco: 'Rua Coronel Borges, 135 - Guarapari', telefones: '(33) 999935-1065', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Gabriel Souza Pereira', cpf: '128.484.742-03', dataNascimento: '2002-07-07', endereco: 'Avenida Getulio Vargas, 142 - Carangola', telefones: '(21) 999942-1078', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Helena Souza Araujo', cpf: '793.352.489-32', dataNascimento: '2001-08-08', endereco: 'Rua Sete de Junho, 149 - Manhuacu', telefones: '(11) 999949-1091', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Igor Lima Gomes', cpf: '309.219.466-78', dataNascimento: '2000-09-09', endereco: 'Praca Central, 156 - Muriae', telefones: '(31) 999956-1104', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Juliana Lima Martins', cpf: '175.530.390-47', dataNascimento: '1999-10-10', endereco: 'Rua das Acaias, 163 - Juiz de Fora', telefones: '(19) 999963-1117', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Leonardo Ferreira Rocha', cpf: '323.901.729-62', dataNascimento: '1998-11-11', endereco: 'Avenida dos Trabalhadores, 170 - Itaperuna', telefones: '(28) 999970-1130', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Mariana Ferreira Ribeiro', cpf: '914.463.614-89', dataNascimento: '2009-12-12', endereco: 'Rua Dom Pedro II, 177 - Campos dos Goytacazes', telefones: '(28) 999977-1143', responsavelLegal: 'Jose Santos', situacaoAcesso: 'ATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Nicolas Costa Moreira', cpf: '336.742.856-65', dataNascimento: '2004-01-13', endereco: 'Rua das Palmeiras, 184 - Niteroi', telefones: '(32) 999984-1156', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Olivia Costa Cunha', cpf: '815.357.999-19', dataNascimento: '2005-02-14', endereco: 'Avenida Litoranea, 191 - Volta Redonda', telefones: '(22) 999991-1169', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Pedro Rodrigues Barros', cpf: '080.445.517-19', dataNascimento: '2006-03-15', endereco: 'Rua dos Ipês, 198 - Petropolis', telefones: '(27) 999998-1182', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Rafaela Rodrigues Freitas', cpf: '404.531.602-71', dataNascimento: '2007-04-16', endereco: 'Rua das Flores, 205 - Cachoeiro de Itapemirim', telefones: '(33) 9100005-1195', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Samuel Almeida Cavalcante', cpf: '098.667.842-23', dataNascimento: '2008-05-17', endereco: 'Avenida Brasil, 212 - Alegre', telefones: '(21) 9100012-1208', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Tatiana Almeida Pinto', cpf: '173.032.371-51', dataNascimento: '2003-06-18', endereco: 'Rua 7 de Setembro, 219 - Castelo', telefones: '(11) 9100019-1221', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Victor Nascimento Monteiro', cpf: '948.146.804-65', dataNascimento: '2002-07-19', endereco: 'Alameda dos Anjos, 226 - Jeronimo Monteiro', telefones: '(31) 9100026-1234', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Yasmin Nascimento Vieira', cpf: '941.134.661-81', dataNascimento: '2001-08-20', endereco: 'Travessa da Paz, 233 - Vitoria', telefones: '(19) 9100033-1247', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Adriana Carvalho Lopes', cpf: '325.839.614-03', dataNascimento: '2000-09-21', endereco: 'Rua Coronel Borges, 240 - Guarapari', telefones: '(28) 9100040-1260', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Bernardo Carvalho Cardoso', cpf: '562.541.102-61', dataNascimento: '1999-10-22', endereco: 'Avenida Getulio Vargas, 247 - Carangola', telefones: '(28) 9100047-1273', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Camila Pereira Correia', cpf: '115.370.552-40', dataNascimento: '1998-11-23', endereco: 'Rua Sete de Junho, 254 - Manhuacu', telefones: '(32) 9100054-1286', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Diego Pereira Teixeira', cpf: '330.654.800-69', dataNascimento: '2009-12-24', endereco: 'Praca Central, 261 - Muriae', telefones: '(22) 9100061-1299', responsavelLegal: 'Ana Souza', situacaoAcesso: 'ATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Elisa Araujo Magalhaes', cpf: '914.580.610-19', dataNascimento: '2004-01-25', endereco: 'Rua das Acaias, 268 - Juiz de Fora', telefones: '(27) 9100068-1312', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Felipe Araujo Medeiros', cpf: '461.574.096-49', dataNascimento: '2005-02-26', endereco: 'Avenida dos Trabalhadores, 275 - Itaperuna', telefones: '(33) 9100075-1325', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Giovanna Gomes Rezende', cpf: '150.027.516-60', dataNascimento: '2006-03-27', endereco: 'Rua Dom Pedro II, 282 - Campos dos Goytacazes', telefones: '(21) 9100082-1338', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Henrique Gomes Assis', cpf: '017.812.523-78', dataNascimento: '2007-04-28', endereco: 'Rua das Palmeiras, 289 - Niteroi', telefones: '(11) 9100089-1351', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Isabela Martins Borges', cpf: '798.261.698-46', dataNascimento: '2008-05-01', endereco: 'Avenida Litoranea, 296 - Volta Redonda', telefones: '(31) 9100096-1364', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'João Martins Castro', cpf: '357.768.304-00', dataNascimento: '2003-06-02', endereco: 'Rua dos Ipês, 303 - Petropolis', telefones: '(19) 9100103-1377', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Karen Rocha Dias', cpf: '422.135.824-67', dataNascimento: '2002-07-03', endereco: 'Rua das Flores, 310 - Cachoeiro de Itapemirim', telefones: '(28) 9100110-1390', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Lucas Rocha Esteves', cpf: '339.733.747-08', dataNascimento: '2001-08-04', endereco: 'Avenida Brasil, 317 - Alegre', telefones: '(28) 9100117-1403', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Melissa Ribeiro Fonseca', cpf: '371.748.702-79', dataNascimento: '2000-09-05', endereco: 'Rua 7 de Setembro, 324 - Castelo', telefones: '(32) 9100124-1416', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Nathan Ribeiro Guimaraes', cpf: '406.170.453-21', dataNascimento: '1999-10-06', endereco: 'Alameda dos Anjos, 331 - Jeronimo Monteiro', telefones: '(22) 9100131-1429', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Patricia Moreira Henrique', cpf: '406.931.251-01', dataNascimento: '1998-11-07', endereco: 'Travessa da Paz, 338 - Vitoria', telefones: '(27) 9100138-1442', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Rafael Moreira Junqueira', cpf: '509.221.939-40', dataNascimento: '2009-12-08', endereco: 'Rua Coronel Borges, 345 - Guarapari', telefones: '(33) 9100145-1455', responsavelLegal: 'Lucia Ferreira', situacaoAcesso: 'ATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Silvana Cunha Krause', cpf: '645.817.774-70', dataNascimento: '2004-01-09', endereco: 'Avenida Getulio Vargas, 352 - Carangola', telefones: '(21) 9100152-1468', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Thiago Cunha Lacerda', cpf: '793.208.326-50', dataNascimento: '2005-02-10', endereco: 'Rua Sete de Junho, 359 - Manhuacu', telefones: '(11) 9100159-1481', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Ursula Barros Machado', cpf: '251.076.846-88', dataNascimento: '2006-03-11', endereco: 'Praca Central, 366 - Muriae', telefones: '(31) 9100166-1494', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Vanessa Barros Nunes', cpf: '616.547.360-15', dataNascimento: '2007-04-12', endereco: 'Rua das Acaias, 373 - Juiz de Fora', telefones: '(19) 9100173-1507', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Wallace Freitas Paiva', cpf: '154.547.846-56', dataNascimento: '2008-05-13', endereco: 'Avenida dos Trabalhadores, 380 - Itaperuna', telefones: '(28) 9100180-1520', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Xuxa Freitas Quintela', cpf: '984.237.042-97', dataNascimento: '2003-06-14', endereco: 'Rua Dom Pedro II, 387 - Campos dos Goytacazes', telefones: '(28) 9100187-1533', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Yuri Cavalcante Ramos', cpf: '808.670.210-39', dataNascimento: '2002-07-15', endereco: 'Rua das Palmeiras, 394 - Niteroi', telefones: '(32) 9100194-1546', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Zara Cavalcante Serrano', cpf: '866.906.044-20', dataNascimento: '2001-08-16', endereco: 'Avenida Litoranea, 401 - Volta Redonda', telefones: '(22) 9100201-1559', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Amanda Pinto Torres', cpf: '362.514.739-40', dataNascimento: '2000-09-17', endereco: 'Rua dos Ipês, 408 - Petropolis', telefones: '(27) 9100208-1572', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Breno Pinto Silva', cpf: '325.568.476-54', dataNascimento: '1999-10-18', endereco: 'Rua das Flores, 415 - Cachoeiro de Itapemirim', telefones: '(33) 9100215-1585', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Carla Monteiro Santos', cpf: '011.187.512-99', dataNascimento: '1998-11-19', endereco: 'Avenida Brasil, 422 - Alegre', telefones: '(21) 9100222-1598', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Davi Monteiro Oliveira', cpf: '326.199.319-75', dataNascimento: '2009-12-20', endereco: 'Rua 7 de Setembro, 429 - Castelo', telefones: '(11) 9100229-1611', responsavelLegal: 'Rosa Rodrigues', situacaoAcesso: 'ATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Erica Vieira Souza', cpf: '864.310.790-51', dataNascimento: '2004-01-21', endereco: 'Alameda dos Anjos, 436 - Jeronimo Monteiro', telefones: '(31) 9100236-1624', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Fabricio Vieira Lima', cpf: '944.574.507-82', dataNascimento: '2005-02-22', endereco: 'Travessa da Paz, 443 - Vitoria', telefones: '(19) 9100243-1637', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Gabriela Lopes Ferreira', cpf: '007.475.358-41', dataNascimento: '2006-03-23', endereco: 'Rua Coronel Borges, 450 - Guarapari', telefones: '(28) 9100250-1650', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Hugo Lopes Costa', cpf: '466.641.693-55', dataNascimento: '2007-04-24', endereco: 'Avenida Getulio Vargas, 457 - Carangola', telefones: '(28) 9100257-1663', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Ines Cardoso Rodrigues', cpf: '807.288.234-11', dataNascimento: '2008-05-25', endereco: 'Rua Sete de Junho, 464 - Manhuacu', telefones: '(32) 9100264-1676', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Joao Cardoso Almeida', cpf: '456.326.866-63', dataNascimento: '2003-06-26', endereco: 'Praca Central, 471 - Muriae', telefones: '(22) 9100271-1689', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Keila Correia Nascimento', cpf: '456.540.574-13', dataNascimento: '2002-07-27', endereco: 'Rua das Acaias, 478 - Juiz de Fora', telefones: '(27) 9100278-1702', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Luiz Correia Carvalho', cpf: '346.960.646-38', dataNascimento: '2001-08-28', endereco: 'Avenida dos Trabalhadores, 485 - Itaperuna', telefones: '(33) 9100285-1715', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Monica Teixeira Pereira', cpf: '372.718.208-33', dataNascimento: '2000-09-01', endereco: 'Rua Dom Pedro II, 492 - Campos dos Goytacazes', telefones: '(21) 9100292-1728', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Nelson Teixeira Araujo', cpf: '949.609.372-89', dataNascimento: '1999-10-02', endereco: 'Rua das Palmeiras, 499 - Niteroi', telefones: '(11) 9100299-1741', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Odete Magalhaes Gomes', cpf: '577.130.886-28', dataNascimento: '1998-11-03', endereco: 'Avenida Litoranea, 506 - Volta Redonda', telefones: '(31) 9100306-1754', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Paulo Magalhaes Martins', cpf: '359.091.918-37', dataNascimento: '2009-12-04', endereco: 'Rua dos Ipês, 513 - Petropolis', telefones: '(19) 9100313-1767', responsavelLegal: 'Paula Nascimento', situacaoAcesso: 'ATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Quezia Medeiros Rocha', cpf: '928.258.237-08', dataNascimento: '2004-01-05', endereco: 'Rua das Flores, 520 - Cachoeiro de Itapemirim', telefones: '(28) 9100320-1780', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Ricardo Medeiros Ribeiro', cpf: '652.607.599-15', dataNascimento: '2005-02-06', endereco: 'Avenida Brasil, 527 - Alegre', telefones: '(28) 9100327-1793', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Sabrina Rezende Moreira', cpf: '001.500.654-93', dataNascimento: '2006-03-07', endereco: 'Rua 7 de Setembro, 534 - Castelo', telefones: '(32) 9100334-1806', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Tiago Rezende Cunha', cpf: '988.340.469-78', dataNascimento: '2007-04-08', endereco: 'Alameda dos Anjos, 541 - Jeronimo Monteiro', telefones: '(22) 9100341-1819', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Uma Assis Barros', cpf: '418.702.822-64', dataNascimento: '2008-05-09', endereco: 'Travessa da Paz, 548 - Vitoria', telefones: '(27) 9100348-1832', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Vitor Assis Freitas', cpf: '643.720.011-18', dataNascimento: '2003-06-10', endereco: 'Rua Coronel Borges, 555 - Guarapari', telefones: '(33) 9100355-1845', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'William Borges Cavalcante', cpf: '809.516.242-61', dataNascimento: '2002-07-11', endereco: 'Avenida Getulio Vargas, 562 - Carangola', telefones: '(21) 9100362-1858', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Xenia Borges Pinto', cpf: '914.913.138-97', dataNascimento: '2001-08-12', endereco: 'Rua Sete de Junho, 569 - Manhuacu', telefones: '(11) 9100369-1871', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Yara Castro Monteiro', cpf: '854.304.730-73', dataNascimento: '2000-09-13', endereco: 'Praca Central, 576 - Muriae', telefones: '(31) 9100376-1884', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Zenaide Castro Vieira', cpf: '848.282.954-88', dataNascimento: '1999-10-14', endereco: 'Rua das Acaias, 583 - Juiz de Fora', telefones: '(19) 9100383-1897', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Ana Dias Lopes', cpf: '916.659.381-61', dataNascimento: '1998-11-15', endereco: 'Avenida dos Trabalhadores, 590 - Itaperuna', telefones: '(28) 9100390-1910', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Bruno Dias Cardoso', cpf: '624.514.580-54', dataNascimento: '2009-12-16', endereco: 'Rua Dom Pedro II, 597 - Campos dos Goytacazes', telefones: '(28) 9100397-1923', responsavelLegal: 'Jose Santos', situacaoAcesso: 'ATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Carlos Esteves Correia', cpf: '976.629.924-20', dataNascimento: '2004-01-17', endereco: 'Rua das Palmeiras, 604 - Niteroi', telefones: '(32) 9100404-1936', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Daniela Esteves Teixeira', cpf: '176.525.476-01', dataNascimento: '2005-02-18', endereco: 'Avenida Litoranea, 611 - Volta Redonda', telefones: '(22) 9100411-1949', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Eduardo Fonseca Magalhaes', cpf: '961.747.155-82', dataNascimento: '2006-03-19', endereco: 'Rua dos Ipês, 618 - Petropolis', telefones: '(27) 9100418-1962', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Fernanda Fonseca Medeiros', cpf: '648.904.338-64', dataNascimento: '2007-04-20', endereco: 'Rua das Flores, 625 - Cachoeiro de Itapemirim', telefones: '(33) 9100425-1975', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Gabriel Guimaraes Rezende', cpf: '638.666.769-72', dataNascimento: '2008-05-21', endereco: 'Avenida Brasil, 632 - Alegre', telefones: '(21) 9100432-1988', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Helena Guimaraes Assis', cpf: '785.039.354-65', dataNascimento: '2003-06-22', endereco: 'Rua 7 de Setembro, 639 - Castelo', telefones: '(11) 9100439-2001', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Igor Henrique Borges', cpf: '153.922.620-40', dataNascimento: '2002-07-23', endereco: 'Alameda dos Anjos, 646 - Jeronimo Monteiro', telefones: '(31) 9100446-2014', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Juliana Henrique Castro', cpf: '291.005.825-57', dataNascimento: '2001-08-24', endereco: 'Travessa da Paz, 653 - Vitoria', telefones: '(19) 9100453-2027', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Leonardo Junqueira Dias', cpf: '510.267.188-05', dataNascimento: '2000-09-25', endereco: 'Rua Coronel Borges, 660 - Guarapari', telefones: '(28) 9100460-2040', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Mariana Junqueira Esteves', cpf: '045.074.078-18', dataNascimento: '1999-10-26', endereco: 'Avenida Getulio Vargas, 667 - Carangola', telefones: '(28) 9100467-2053', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Nicolas Krause Fonseca', cpf: '294.388.159-70', dataNascimento: '1998-11-27', endereco: 'Rua Sete de Junho, 674 - Manhuacu', telefones: '(32) 9100474-2066', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Olivia Krause Guimaraes', cpf: '052.772.409-26', dataNascimento: '2009-12-28', endereco: 'Praca Central, 681 - Muriae', telefones: '(22) 9100481-2079', responsavelLegal: 'Ana Souza', situacaoAcesso: 'ATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Pedro Lacerda Henrique', cpf: '751.655.998-92', dataNascimento: '2004-01-01', endereco: 'Rua das Acaias, 688 - Juiz de Fora', telefones: '(27) 9100488-2092', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Rafaela Lacerda Junqueira', cpf: '691.610.906-89', dataNascimento: '2005-02-02', endereco: 'Avenida dos Trabalhadores, 695 - Itaperuna', telefones: '(33) 9100495-2105', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Samuel Machado Krause', cpf: '924.133.650-10', dataNascimento: '2006-03-03', endereco: 'Rua Dom Pedro II, 702 - Campos dos Goytacazes', telefones: '(21) 9100502-2118', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Tatiana Machado Lacerda', cpf: '558.584.000-27', dataNascimento: '2007-04-04', endereco: 'Rua das Palmeiras, 709 - Niteroi', telefones: '(11) 9100509-2131', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Victor Nunes Machado', cpf: '093.144.895-66', dataNascimento: '2008-05-05', endereco: 'Avenida Litoranea, 716 - Volta Redonda', telefones: '(31) 9100516-2144', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Yasmin Nunes Nunes', cpf: '337.172.866-84', dataNascimento: '2003-06-06', endereco: 'Rua dos Ipês, 723 - Petropolis', telefones: '(19) 9100523-2157', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Adriana Paiva Paiva', cpf: '190.851.002-16', dataNascimento: '2002-07-07', endereco: 'Rua das Flores, 730 - Cachoeiro de Itapemirim', telefones: '(28) 9100530-2170', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Bernardo Paiva Quintela', cpf: '066.181.962-05', dataNascimento: '2001-08-08', endereco: 'Avenida Brasil, 737 - Alegre', telefones: '(28) 9100537-2183', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Camila Quintela Ramos', cpf: '352.979.403-11', dataNascimento: '2000-09-09', endereco: 'Rua 7 de Setembro, 744 - Castelo', telefones: '(32) 9100544-2196', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Diego Quintela Serrano', cpf: '567.708.385-24', dataNascimento: '1999-10-10', endereco: 'Alameda dos Anjos, 751 - Jeronimo Monteiro', telefones: '(22) 9100551-2209', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Elisa Ramos Torres', cpf: '546.365.097-73', dataNascimento: '1998-11-11', endereco: 'Travessa da Paz, 758 - Vitoria', telefones: '(27) 9100558-2222', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Felipe Ramos Silva', cpf: '051.554.955-04', dataNascimento: '2009-12-12', endereco: 'Rua Coronel Borges, 765 - Guarapari', telefones: '(33) 9100565-2235', responsavelLegal: 'Lucia Ferreira', situacaoAcesso: 'ATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Giovanna Serrano Santos', cpf: '556.325.328-79', dataNascimento: '2004-01-13', endereco: 'Avenida Getulio Vargas, 772 - Carangola', telefones: '(21) 9100572-2248', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Henrique Serrano Oliveira', cpf: '395.792.522-38', dataNascimento: '2005-02-14', endereco: 'Rua Sete de Junho, 779 - Manhuacu', telefones: '(11) 9100579-2261', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Isabela Torres Souza', cpf: '383.973.336-73', dataNascimento: '2006-03-15', endereco: 'Praca Central, 786 - Muriae', telefones: '(31) 9100586-2274', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'João Torres Lima', cpf: '968.409.699-24', dataNascimento: '2007-04-16', endereco: 'Rua das Acaias, 793 - Juiz de Fora', telefones: '(19) 9100593-2287', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Karen Silva Ferreira', cpf: '506.057.486-59', dataNascimento: '2008-05-17', endereco: 'Avenida dos Trabalhadores, 800 - Itaperuna', telefones: '(28) 9100600-2300', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Lucas Silva Costa', cpf: '900.710.101-30', dataNascimento: '2003-06-18', endereco: 'Rua Dom Pedro II, 807 - Campos dos Goytacazes', telefones: '(28) 9100607-2313', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Melissa Santos Rodrigues', cpf: '768.946.731-87', dataNascimento: '2002-07-19', endereco: 'Rua das Palmeiras, 814 - Niteroi', telefones: '(32) 9100614-2326', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Nathan Santos Almeida', cpf: '929.972.911-51', dataNascimento: '2001-08-20', endereco: 'Avenida Litoranea, 821 - Volta Redonda', telefones: '(22) 9100621-2339', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Patricia Oliveira Nascimento', cpf: '347.489.775-66', dataNascimento: '2000-09-21', endereco: 'Rua dos Ipês, 828 - Petropolis', telefones: '(27) 9100628-2352', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Rafael Oliveira Carvalho', cpf: '663.401.066-84', dataNascimento: '1999-10-22', endereco: 'Rua das Flores, 835 - Cachoeiro de Itapemirim', telefones: '(33) 9100635-2365', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Silvana Souza Pereira', cpf: '129.477.004-73', dataNascimento: '1998-11-23', endereco: 'Avenida Brasil, 842 - Alegre', telefones: '(21) 9100642-2378', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Thiago Souza Araujo', cpf: '290.247.098-30', dataNascimento: '2009-12-24', endereco: 'Rua 7 de Setembro, 849 - Castelo', telefones: '(11) 9100649-2391', responsavelLegal: 'Rosa Rodrigues', situacaoAcesso: 'ATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Ursula Lima Gomes', cpf: '200.526.649-37', dataNascimento: '2004-01-25', endereco: 'Alameda dos Anjos, 856 - Jeronimo Monteiro', telefones: '(31) 9100656-2404', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Vanessa Lima Martins', cpf: '551.144.349-26', dataNascimento: '2005-02-26', endereco: 'Travessa da Paz, 863 - Vitoria', telefones: '(19) 9100663-2417', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Wallace Ferreira Rocha', cpf: '734.397.970-15', dataNascimento: '2006-03-27', endereco: 'Rua Coronel Borges, 870 - Guarapari', telefones: '(28) 9100670-2430', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Xuxa Ferreira Ribeiro', cpf: '009.035.405-25', dataNascimento: '2007-04-28', endereco: 'Avenida Getulio Vargas, 877 - Carangola', telefones: '(28) 9100677-2443', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Yuri Costa Moreira', cpf: '691.165.126-34', dataNascimento: '2008-05-01', endereco: 'Rua Sete de Junho, 884 - Manhuacu', telefones: '(32) 9100684-2456', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Zara Costa Cunha', cpf: '892.128.735-37', dataNascimento: '2003-06-02', endereco: 'Praca Central, 891 - Muriae', telefones: '(22) 9100691-2469', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Amanda Rodrigues Barros', cpf: '611.609.687-56', dataNascimento: '2002-07-03', endereco: 'Rua das Acaias, 898 - Juiz de Fora', telefones: '(27) 9100698-2482', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Breno Rodrigues Freitas', cpf: '872.418.088-27', dataNascimento: '2001-08-04', endereco: 'Avenida dos Trabalhadores, 905 - Itaperuna', telefones: '(33) 9100705-2495', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Carla Almeida Cavalcante', cpf: '215.887.255-10', dataNascimento: '2000-09-05', endereco: 'Rua Dom Pedro II, 912 - Campos dos Goytacazes', telefones: '(21) 9100712-2508', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Davi Almeida Pinto', cpf: '002.890.431-15', dataNascimento: '1999-10-06', endereco: 'Rua das Palmeiras, 919 - Niteroi', telefones: '(11) 9100719-2521', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Erica Nascimento Monteiro', cpf: '933.286.354-75', dataNascimento: '1998-11-07', endereco: 'Avenida Litoranea, 926 - Volta Redonda', telefones: '(31) 9100726-2534', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Fabricio Nascimento Vieira', cpf: '285.089.455-90', dataNascimento: '2009-12-08', endereco: 'Rua dos Ipês, 933 - Petropolis', telefones: '(19) 9100733-2547', responsavelLegal: 'Paula Nascimento', situacaoAcesso: 'ATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Gabriela Carvalho Lopes', cpf: '667.892.710-90', dataNascimento: '2004-01-09', endereco: 'Rua das Flores, 940 - Cachoeiro de Itapemirim', telefones: '(28) 9100740-2560', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Hugo Carvalho Cardoso', cpf: '709.373.991-16', dataNascimento: '2005-02-10', endereco: 'Avenida Brasil, 947 - Alegre', telefones: '(28) 9100747-2573', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Ines Pereira Correia', cpf: '759.767.458-90', dataNascimento: '2006-03-11', endereco: 'Rua 7 de Setembro, 954 - Castelo', telefones: '(32) 9100754-2586', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Joao Pereira Teixeira', cpf: '115.801.069-94', dataNascimento: '2007-04-12', endereco: 'Alameda dos Anjos, 961 - Jeronimo Monteiro', telefones: '(22) 9100761-2599', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Keila Araujo Magalhaes', cpf: '344.545.599-61', dataNascimento: '2008-05-13', endereco: 'Travessa da Paz, 968 - Vitoria', telefones: '(27) 9100768-2612', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Luiz Araujo Medeiros', cpf: '280.249.130-03', dataNascimento: '2003-06-14', endereco: 'Rua Coronel Borges, 975 - Guarapari', telefones: '(33) 9100775-2625', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Monica Gomes Rezende', cpf: '454.531.059-17', dataNascimento: '2002-07-15', endereco: 'Avenida Getulio Vargas, 982 - Carangola', telefones: '(21) 9100782-2638', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Nelson Gomes Assis', cpf: '390.020.212-59', dataNascimento: '2001-08-16', endereco: 'Rua Sete de Junho, 989 - Manhuacu', telefones: '(11) 9100789-2651', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Odete Martins Borges', cpf: '588.258.951-78', dataNascimento: '2000-09-17', endereco: 'Praca Central, 996 - Muriae', telefones: '(31) 9100796-2664', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Paulo Martins Castro', cpf: '955.696.111-93', dataNascimento: '1999-10-18', endereco: 'Rua das Acaias, 103 - Juiz de Fora', telefones: '(19) 9100803-2677', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Quezia Rocha Dias', cpf: '988.815.979-85', dataNascimento: '1998-11-19', endereco: 'Avenida dos Trabalhadores, 110 - Itaperuna', telefones: '(28) 9100810-2690', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Ricardo Rocha Esteves', cpf: '929.308.269-16', dataNascimento: '2009-12-20', endereco: 'Rua Dom Pedro II, 117 - Campos dos Goytacazes', telefones: '(28) 9100817-2703', responsavelLegal: 'Jose Santos', situacaoAcesso: 'ATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Sabrina Ribeiro Fonseca', cpf: '451.252.029-59', dataNascimento: '2004-01-21', endereco: 'Rua das Palmeiras, 124 - Niteroi', telefones: '(32) 9100824-2716', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Tiago Ribeiro Guimaraes', cpf: '497.808.526-89', dataNascimento: '2005-02-22', endereco: 'Avenida Litoranea, 131 - Volta Redonda', telefones: '(22) 9100831-2729', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Uma Moreira Henrique', cpf: '982.424.461-13', dataNascimento: '2006-03-23', endereco: 'Rua dos Ipês, 138 - Petropolis', telefones: '(27) 9100838-2742', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Vitor Moreira Junqueira', cpf: '924.430.670-09', dataNascimento: '2007-04-24', endereco: 'Rua das Flores, 145 - Cachoeiro de Itapemirim', telefones: '(33) 9100845-2755', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'William Cunha Krause', cpf: '134.282.045-22', dataNascimento: '2008-05-25', endereco: 'Avenida Brasil, 152 - Alegre', telefones: '(21) 9100852-2768', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Xenia Cunha Lacerda', cpf: '681.110.226-89', dataNascimento: '2003-06-26', endereco: 'Rua 7 de Setembro, 159 - Castelo', telefones: '(11) 9100859-2781', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Yara Barros Machado', cpf: '719.281.587-06', dataNascimento: '2002-07-27', endereco: 'Alameda dos Anjos, 166 - Jeronimo Monteiro', telefones: '(31) 9100866-2794', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Zenaide Barros Nunes', cpf: '282.631.630-30', dataNascimento: '2001-08-28', endereco: 'Travessa da Paz, 173 - Vitoria', telefones: '(19) 9100873-2807', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Ana Freitas Paiva', cpf: '839.743.176-43', dataNascimento: '2000-09-01', endereco: 'Rua Coronel Borges, 180 - Guarapari', telefones: '(28) 9100880-2820', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Bruno Freitas Quintela', cpf: '593.309.041-73', dataNascimento: '1999-10-02', endereco: 'Avenida Getulio Vargas, 187 - Carangola', telefones: '(28) 9100887-2833', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Carlos Cavalcante Ramos', cpf: '046.131.507-60', dataNascimento: '1998-11-03', endereco: 'Rua Sete de Junho, 194 - Manhuacu', telefones: '(32) 9100894-2846', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Daniela Cavalcante Serrano', cpf: '159.534.327-04', dataNascimento: '2009-12-04', endereco: 'Praca Central, 201 - Muriae', telefones: '(22) 9100901-2859', responsavelLegal: 'Ana Souza', situacaoAcesso: 'ATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Eduardo Pinto Torres', cpf: '752.528.041-09', dataNascimento: '2004-01-05', endereco: 'Rua das Acaias, 208 - Juiz de Fora', telefones: '(27) 9100908-2872', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Fernanda Pinto Silva', cpf: '328.520.601-24', dataNascimento: '2005-02-06', endereco: 'Avenida dos Trabalhadores, 215 - Itaperuna', telefones: '(33) 9100915-2885', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Gabriel Monteiro Santos', cpf: '304.966.615-31', dataNascimento: '2006-03-07', endereco: 'Rua Dom Pedro II, 222 - Campos dos Goytacazes', telefones: '(21) 9100922-2898', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Helena Monteiro Oliveira', cpf: '014.933.300-55', dataNascimento: '2007-04-08', endereco: 'Rua das Palmeiras, 229 - Niteroi', telefones: '(11) 9100929-2911', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Igor Vieira Souza', cpf: '218.010.744-70', dataNascimento: '2008-05-09', endereco: 'Avenida Litoranea, 236 - Volta Redonda', telefones: '(31) 9100936-2924', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Juliana Vieira Lima', cpf: '339.695.887-07', dataNascimento: '2003-06-10', endereco: 'Rua dos Ipês, 243 - Petropolis', telefones: '(19) 9100943-2937', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Leonardo Lopes Ferreira', cpf: '499.896.665-04', dataNascimento: '2002-07-11', endereco: 'Rua das Flores, 250 - Cachoeiro de Itapemirim', telefones: '(28) 9100950-2950', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Mariana Lopes Costa', cpf: '293.605.610-10', dataNascimento: '2001-08-12', endereco: 'Avenida Brasil, 257 - Alegre', telefones: '(28) 9100957-2963', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Nicolas Cardoso Rodrigues', cpf: '430.770.603-02', dataNascimento: '2000-09-13', endereco: 'Rua 7 de Setembro, 264 - Castelo', telefones: '(32) 9100964-2976', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Olivia Cardoso Almeida', cpf: '372.783.489-78', dataNascimento: '1999-10-14', endereco: 'Alameda dos Anjos, 271 - Jeronimo Monteiro', telefones: '(22) 9100971-2989', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Pedro Correia Nascimento', cpf: '330.742.180-88', dataNascimento: '1998-11-15', endereco: 'Travessa da Paz, 278 - Vitoria', telefones: '(27) 9100978-3002', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Rafaela Correia Carvalho', cpf: '810.284.281-46', dataNascimento: '2009-12-16', endereco: 'Rua Coronel Borges, 285 - Guarapari', telefones: '(33) 9100985-3015', responsavelLegal: 'Lucia Ferreira', situacaoAcesso: 'ATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Samuel Teixeira Pereira', cpf: '592.458.644-80', dataNascimento: '2004-01-17', endereco: 'Avenida Getulio Vargas, 292 - Carangola', telefones: '(21) 9100992-3028', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Tatiana Teixeira Araujo', cpf: '582.353.686-09', dataNascimento: '2005-02-18', endereco: 'Rua Sete de Junho, 299 - Manhuacu', telefones: '(11) 9100999-3041', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Victor Magalhaes Gomes', cpf: '168.612.551-81', dataNascimento: '2006-03-19', endereco: 'Praca Central, 306 - Muriae', telefones: '(31) 9101006-3054', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Yasmin Magalhaes Martins', cpf: '926.861.160-05', dataNascimento: '2007-04-20', endereco: 'Rua das Acaias, 313 - Juiz de Fora', telefones: '(19) 9101013-3067', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Adriana Medeiros Rocha', cpf: '616.353.065-90', dataNascimento: '2008-05-21', endereco: 'Avenida dos Trabalhadores, 320 - Itaperuna', telefones: '(28) 9101020-3080', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Bernardo Medeiros Ribeiro', cpf: '931.540.720-20', dataNascimento: '2003-06-22', endereco: 'Rua Dom Pedro II, 327 - Campos dos Goytacazes', telefones: '(28) 9101027-3093', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Camila Rezende Moreira', cpf: '709.276.048-84', dataNascimento: '2002-07-23', endereco: 'Rua das Palmeiras, 334 - Niteroi', telefones: '(32) 9101034-3106', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Diego Rezende Cunha', cpf: '168.412.660-64', dataNascimento: '2001-08-24', endereco: 'Avenida Litoranea, 341 - Volta Redonda', telefones: '(22) 9101041-3119', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Elisa Assis Barros', cpf: '771.264.699-69', dataNascimento: '2000-09-25', endereco: 'Rua dos Ipês, 348 - Petropolis', telefones: '(27) 9101048-3132', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Felipe Assis Freitas', cpf: '123.508.357-82', dataNascimento: '1999-10-26', endereco: 'Rua das Flores, 355 - Cachoeiro de Itapemirim', telefones: '(33) 9101055-3145', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Giovanna Borges Cavalcante', cpf: '169.833.252-14', dataNascimento: '1998-11-27', endereco: 'Avenida Brasil, 362 - Alegre', telefones: '(21) 9101062-3158', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Henrique Borges Pinto', cpf: '689.327.981-76', dataNascimento: '2009-12-28', endereco: 'Rua 7 de Setembro, 369 - Castelo', telefones: '(11) 9101069-3171', responsavelLegal: 'Rosa Rodrigues', situacaoAcesso: 'ATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Isabela Castro Monteiro', cpf: '336.372.505-19', dataNascimento: '2004-01-01', endereco: 'Alameda dos Anjos, 376 - Jeronimo Monteiro', telefones: '(31) 9101076-3184', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'João Castro Vieira', cpf: '889.759.261-92', dataNascimento: '2005-02-02', endereco: 'Travessa da Paz, 383 - Vitoria', telefones: '(19) 9101083-3197', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Karen Dias Lopes', cpf: '840.974.068-09', dataNascimento: '2006-03-03', endereco: 'Rua Coronel Borges, 390 - Guarapari', telefones: '(28) 9101090-3210', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Lucas Dias Cardoso', cpf: '378.763.547-50', dataNascimento: '2007-04-04', endereco: 'Avenida Getulio Vargas, 397 - Carangola', telefones: '(28) 9101097-3223', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Melissa Esteves Correia', cpf: '180.608.750-27', dataNascimento: '2008-05-05', endereco: 'Rua Sete de Junho, 404 - Manhuacu', telefones: '(32) 9101104-3236', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Nathan Esteves Teixeira', cpf: '610.438.925-24', dataNascimento: '2003-06-06', endereco: 'Praca Central, 411 - Muriae', telefones: '(22) 9101111-3249', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Patricia Fonseca Magalhaes', cpf: '185.184.276-49', dataNascimento: '2002-07-07', endereco: 'Rua das Acaias, 418 - Juiz de Fora', telefones: '(27) 9101118-3262', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Rafael Fonseca Medeiros', cpf: '690.901.754-40', dataNascimento: '2001-08-08', endereco: 'Avenida dos Trabalhadores, 425 - Itaperuna', telefones: '(33) 9101125-3275', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Silvana Guimaraes Rezende', cpf: '621.604.070-70', dataNascimento: '2000-09-09', endereco: 'Rua Dom Pedro II, 432 - Campos dos Goytacazes', telefones: '(21) 9101132-3288', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Thiago Guimaraes Assis', cpf: '622.195.747-84', dataNascimento: '1999-10-10', endereco: 'Rua das Palmeiras, 439 - Niteroi', telefones: '(11) 9101139-3301', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Ursula Henrique Borges', cpf: '171.475.130-96', dataNascimento: '1998-11-11', endereco: 'Avenida Litoranea, 446 - Volta Redonda', telefones: '(31) 9101146-3314', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Vanessa Henrique Castro', cpf: '800.097.100-35', dataNascimento: '2009-12-12', endereco: 'Rua dos Ipês, 453 - Petropolis', telefones: '(19) 9101153-3327', responsavelLegal: 'Paula Nascimento', situacaoAcesso: 'ATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Wallace Junqueira Dias', cpf: '207.610.701-09', dataNascimento: '2004-01-13', endereco: 'Rua das Flores, 460 - Cachoeiro de Itapemirim', telefones: '(28) 9101160-3340', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Xuxa Junqueira Esteves', cpf: '829.004.616-26', dataNascimento: '2005-02-14', endereco: 'Avenida Brasil, 467 - Alegre', telefones: '(28) 9101167-3353', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Yuri Krause Fonseca', cpf: '005.644.716-74', dataNascimento: '2006-03-15', endereco: 'Rua 7 de Setembro, 474 - Castelo', telefones: '(32) 9101174-3366', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Zara Krause Guimaraes', cpf: '298.265.975-11', dataNascimento: '2007-04-16', endereco: 'Alameda dos Anjos, 481 - Jeronimo Monteiro', telefones: '(22) 9101181-3379', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Amanda Lacerda Henrique', cpf: '266.299.783-40', dataNascimento: '2008-05-17', endereco: 'Travessa da Paz, 488 - Vitoria', telefones: '(27) 9101188-3392', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Breno Lacerda Junqueira', cpf: '665.462.355-01', dataNascimento: '2003-06-18', endereco: 'Rua Coronel Borges, 495 - Guarapari', telefones: '(33) 9101195-3405', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Carla Machado Krause', cpf: '069.218.573-95', dataNascimento: '2002-07-19', endereco: 'Avenida Getulio Vargas, 502 - Carangola', telefones: '(21) 9101202-3418', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Davi Machado Lacerda', cpf: '124.389.485-74', dataNascimento: '2001-08-20', endereco: 'Rua Sete de Junho, 509 - Manhuacu', telefones: '(11) 9101209-3431', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Erica Nunes Machado', cpf: '093.836.189-90', dataNascimento: '2000-09-21', endereco: 'Praca Central, 516 - Muriae', telefones: '(31) 9101216-3444', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Fabricio Nunes Nunes', cpf: '349.126.620-38', dataNascimento: '1999-10-22', endereco: 'Rua das Acaias, 523 - Juiz de Fora', telefones: '(19) 9101223-3457', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Gabriela Paiva Paiva', cpf: '684.736.676-11', dataNascimento: '1998-11-23', endereco: 'Avenida dos Trabalhadores, 530 - Itaperuna', telefones: '(28) 9101230-3470', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Hugo Paiva Quintela', cpf: '872.834.007-88', dataNascimento: '2009-12-24', endereco: 'Rua Dom Pedro II, 537 - Campos dos Goytacazes', telefones: '(28) 9101237-3483', responsavelLegal: 'Jose Santos', situacaoAcesso: 'ATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Ines Quintela Ramos', cpf: '004.375.484-81', dataNascimento: '2004-01-25', endereco: 'Rua das Palmeiras, 544 - Niteroi', telefones: '(32) 9101244-3496', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Joao Quintela Serrano', cpf: '589.682.384-30', dataNascimento: '2005-02-26', endereco: 'Avenida Litoranea, 551 - Volta Redonda', telefones: '(22) 9101251-3509', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Keila Ramos Torres', cpf: '610.500.429-05', dataNascimento: '2006-03-27', endereco: 'Rua dos Ipês, 558 - Petropolis', telefones: '(27) 9101258-3522', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Luiz Ramos Silva', cpf: '149.714.961-49', dataNascimento: '2007-04-28', endereco: 'Rua das Flores, 565 - Cachoeiro de Itapemirim', telefones: '(33) 9101265-3535', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Monica Serrano Santos', cpf: '609.617.194-00', dataNascimento: '2008-05-01', endereco: 'Avenida Brasil, 572 - Alegre', telefones: '(21) 9101272-3548', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Nelson Serrano Oliveira', cpf: '737.955.429-87', dataNascimento: '2003-06-02', endereco: 'Rua 7 de Setembro, 579 - Castelo', telefones: '(11) 9101279-3561', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Odete Torres Souza', cpf: '858.944.027-35', dataNascimento: '2002-07-03', endereco: 'Alameda dos Anjos, 586 - Jeronimo Monteiro', telefones: '(31) 9101286-3574', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Paulo Torres Lima', cpf: '787.169.308-51', dataNascimento: '2001-08-04', endereco: 'Travessa da Paz, 593 - Vitoria', telefones: '(19) 9101293-3587', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[1].codigo, instituicaoEnsinoId: insts[9].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Quezia Silva Ferreira', cpf: '309.702.517-00', dataNascimento: '2000-09-05', endereco: 'Rua Coronel Borges, 600 - Guarapari', telefones: '(28) 9101300-3600', responsavelLegal: '', situacaoAcesso: 'INATIVO', prefeituraId: prefs[2].codigo, instituicaoEnsinoId: insts[0].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Ricardo Silva Costa', cpf: '475.637.792-05', dataNascimento: '1999-10-06', endereco: 'Avenida Getulio Vargas, 607 - Carangola', telefones: '(28) 9101307-3613', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[3].codigo, instituicaoEnsinoId: insts[1].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Sabrina Santos Rodrigues', cpf: '494.699.984-13', dataNascimento: '1998-11-07', endereco: 'Rua Sete de Junho, 614 - Manhuacu', telefones: '(32) 9101314-3626', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[4].codigo, instituicaoEnsinoId: insts[2].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Tiago Santos Almeida', cpf: '670.243.905-90', dataNascimento: '2009-12-08', endereco: 'Praca Central, 621 - Muriae', telefones: '(22) 9101321-3639', responsavelLegal: 'Ana Souza', situacaoAcesso: 'ATIVO', prefeituraId: prefs[5].codigo, instituicaoEnsinoId: insts[3].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Uma Oliveira Nascimento', cpf: '925.827.067-36', dataNascimento: '2004-01-09', endereco: 'Rua das Acaias, 628 - Juiz de Fora', telefones: '(27) 9101328-3652', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[6].codigo, instituicaoEnsinoId: insts[4].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Vitor Oliveira Carvalho', cpf: '511.879.178-26', dataNascimento: '2005-02-10', endereco: 'Avenida dos Trabalhadores, 635 - Itaperuna', telefones: '(33) 9101335-3665', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[7].codigo, instituicaoEnsinoId: insts[5].codigo }));
+    alunos.push(await Aluno.create({ nome: 'William Souza Pereira', cpf: '806.393.940-94', dataNascimento: '2006-03-11', endereco: 'Rua Dom Pedro II, 642 - Campos dos Goytacazes', telefones: '(21) 9101342-3678', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[8].codigo, instituicaoEnsinoId: insts[6].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Xenia Souza Araujo', cpf: '836.962.870-24', dataNascimento: '2007-04-12', endereco: 'Rua das Palmeiras, 649 - Niteroi', telefones: '(11) 9101349-3691', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[9].codigo, instituicaoEnsinoId: insts[7].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Yara Lima Gomes', cpf: '657.388.796-43', dataNascimento: '2008-05-13', endereco: 'Avenida Litoranea, 656 - Volta Redonda', telefones: '(31) 9101356-3704', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[10].codigo, instituicaoEnsinoId: insts[8].codigo }));
+    alunos.push(await Aluno.create({ nome: 'Zenaide Lima Martins', cpf: '053.923.996-81', dataNascimento: '2003-06-14', endereco: 'Rua dos Ipês, 663 - Petropolis', telefones: '(19) 9101363-3717', responsavelLegal: '', situacaoAcesso: 'ATIVO', prefeituraId: prefs[0].codigo, instituicaoEnsinoId: insts[9].codigo }));
 
-    // Segundo embarque do aluno 1 em 2026-04-01 (para teste RN01 de RegistroAcesso)
-    await RegistroAcesso.create({
-      tipo: 'EMBARQUE',
-      dataHora: '2026-04-01T17:50:00',
-      alunoId: aluno1.codigo,
-      viagemId: viagem2.codigo
-    });
-    // Segundo desembarque do aluno 1 em 2026-04-01 (para teste RN02 de RegistroAcesso)
-    await RegistroAcesso.create({
-      tipo: 'DESEMBARQUE',
-      dataHora: '2026-04-01T19:00:00',
-      alunoId: aluno1.codigo,
-      viagemId: viagem2.codigo
-    });
+    await MatriculaTransporte.create({ alunoId: alunos[1].codigo, rotaId: rotas[1].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[2].codigo, rotaId: rotas[2].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[3].codigo, rotaId: rotas[3].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[4].codigo, rotaId: rotas[4].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[5].codigo, rotaId: rotas[5].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[6].codigo, rotaId: rotas[6].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[7].codigo, rotaId: rotas[7].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[8].codigo, rotaId: rotas[8].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[9].codigo, rotaId: rotas[9].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[11].codigo, rotaId: rotas[11].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[12].codigo, rotaId: rotas[12].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[13].codigo, rotaId: rotas[13].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[14].codigo, rotaId: rotas[14].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[15].codigo, rotaId: rotas[15].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[16].codigo, rotaId: rotas[16].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[17].codigo, rotaId: rotas[17].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[18].codigo, rotaId: rotas[18].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[19].codigo, rotaId: rotas[19].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[21].codigo, rotaId: rotas[1].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[22].codigo, rotaId: rotas[2].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[23].codigo, rotaId: rotas[3].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[24].codigo, rotaId: rotas[4].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[25].codigo, rotaId: rotas[5].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[26].codigo, rotaId: rotas[6].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[27].codigo, rotaId: rotas[7].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[28].codigo, rotaId: rotas[8].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[29].codigo, rotaId: rotas[9].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[31].codigo, rotaId: rotas[11].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[32].codigo, rotaId: rotas[12].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[33].codigo, rotaId: rotas[13].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[34].codigo, rotaId: rotas[14].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[35].codigo, rotaId: rotas[15].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[36].codigo, rotaId: rotas[16].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[37].codigo, rotaId: rotas[17].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[38].codigo, rotaId: rotas[18].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[39].codigo, rotaId: rotas[19].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[41].codigo, rotaId: rotas[1].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[42].codigo, rotaId: rotas[2].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[43].codigo, rotaId: rotas[3].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[44].codigo, rotaId: rotas[4].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[45].codigo, rotaId: rotas[5].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[46].codigo, rotaId: rotas[6].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[47].codigo, rotaId: rotas[7].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[48].codigo, rotaId: rotas[8].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[49].codigo, rotaId: rotas[9].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[51].codigo, rotaId: rotas[11].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[52].codigo, rotaId: rotas[12].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[53].codigo, rotaId: rotas[13].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[54].codigo, rotaId: rotas[14].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[55].codigo, rotaId: rotas[15].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[56].codigo, rotaId: rotas[16].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[57].codigo, rotaId: rotas[17].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[58].codigo, rotaId: rotas[18].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[59].codigo, rotaId: rotas[19].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[61].codigo, rotaId: rotas[1].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[62].codigo, rotaId: rotas[2].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[63].codigo, rotaId: rotas[3].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[64].codigo, rotaId: rotas[4].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[65].codigo, rotaId: rotas[5].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[66].codigo, rotaId: rotas[6].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[67].codigo, rotaId: rotas[7].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[68].codigo, rotaId: rotas[8].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[69].codigo, rotaId: rotas[9].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[71].codigo, rotaId: rotas[11].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[72].codigo, rotaId: rotas[12].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[73].codigo, rotaId: rotas[13].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[74].codigo, rotaId: rotas[14].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[75].codigo, rotaId: rotas[15].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[76].codigo, rotaId: rotas[16].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[77].codigo, rotaId: rotas[17].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[78].codigo, rotaId: rotas[18].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[79].codigo, rotaId: rotas[19].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[81].codigo, rotaId: rotas[1].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[82].codigo, rotaId: rotas[2].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[83].codigo, rotaId: rotas[3].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[84].codigo, rotaId: rotas[4].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[85].codigo, rotaId: rotas[5].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[86].codigo, rotaId: rotas[6].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[87].codigo, rotaId: rotas[7].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[88].codigo, rotaId: rotas[8].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[89].codigo, rotaId: rotas[9].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[91].codigo, rotaId: rotas[11].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[92].codigo, rotaId: rotas[12].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[93].codigo, rotaId: rotas[13].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[94].codigo, rotaId: rotas[14].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[95].codigo, rotaId: rotas[15].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[96].codigo, rotaId: rotas[16].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[97].codigo, rotaId: rotas[17].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[98].codigo, rotaId: rotas[18].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[99].codigo, rotaId: rotas[19].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[101].codigo, rotaId: rotas[1].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[102].codigo, rotaId: rotas[2].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[103].codigo, rotaId: rotas[3].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[104].codigo, rotaId: rotas[4].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[105].codigo, rotaId: rotas[5].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[106].codigo, rotaId: rotas[6].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[107].codigo, rotaId: rotas[7].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[108].codigo, rotaId: rotas[8].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[109].codigo, rotaId: rotas[9].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[111].codigo, rotaId: rotas[11].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[112].codigo, rotaId: rotas[12].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[113].codigo, rotaId: rotas[13].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[114].codigo, rotaId: rotas[14].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[115].codigo, rotaId: rotas[15].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[116].codigo, rotaId: rotas[16].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[117].codigo, rotaId: rotas[17].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[118].codigo, rotaId: rotas[18].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[119].codigo, rotaId: rotas[19].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[121].codigo, rotaId: rotas[1].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[122].codigo, rotaId: rotas[2].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[123].codigo, rotaId: rotas[3].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[124].codigo, rotaId: rotas[4].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[125].codigo, rotaId: rotas[5].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[126].codigo, rotaId: rotas[6].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[127].codigo, rotaId: rotas[7].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[128].codigo, rotaId: rotas[8].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[129].codigo, rotaId: rotas[9].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[131].codigo, rotaId: rotas[11].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[132].codigo, rotaId: rotas[12].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[133].codigo, rotaId: rotas[13].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[134].codigo, rotaId: rotas[14].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[135].codigo, rotaId: rotas[15].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[136].codigo, rotaId: rotas[16].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[137].codigo, rotaId: rotas[17].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[138].codigo, rotaId: rotas[18].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[139].codigo, rotaId: rotas[19].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[141].codigo, rotaId: rotas[1].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[142].codigo, rotaId: rotas[2].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[143].codigo, rotaId: rotas[3].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[144].codigo, rotaId: rotas[4].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[145].codigo, rotaId: rotas[5].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[146].codigo, rotaId: rotas[6].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[147].codigo, rotaId: rotas[7].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[148].codigo, rotaId: rotas[8].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[149].codigo, rotaId: rotas[9].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[151].codigo, rotaId: rotas[11].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[152].codigo, rotaId: rotas[12].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[153].codigo, rotaId: rotas[13].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[154].codigo, rotaId: rotas[14].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[155].codigo, rotaId: rotas[15].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[156].codigo, rotaId: rotas[16].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[157].codigo, rotaId: rotas[17].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[158].codigo, rotaId: rotas[18].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[159].codigo, rotaId: rotas[19].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[161].codigo, rotaId: rotas[1].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[162].codigo, rotaId: rotas[2].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[163].codigo, rotaId: rotas[3].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[164].codigo, rotaId: rotas[4].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[165].codigo, rotaId: rotas[5].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[166].codigo, rotaId: rotas[6].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[167].codigo, rotaId: rotas[7].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[168].codigo, rotaId: rotas[8].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[169].codigo, rotaId: rotas[9].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[171].codigo, rotaId: rotas[11].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[172].codigo, rotaId: rotas[12].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[173].codigo, rotaId: rotas[13].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[174].codigo, rotaId: rotas[14].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[175].codigo, rotaId: rotas[15].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[176].codigo, rotaId: rotas[16].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[177].codigo, rotaId: rotas[17].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[178].codigo, rotaId: rotas[18].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[179].codigo, rotaId: rotas[19].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[181].codigo, rotaId: rotas[1].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[182].codigo, rotaId: rotas[2].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[183].codigo, rotaId: rotas[3].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[184].codigo, rotaId: rotas[4].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[185].codigo, rotaId: rotas[5].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[186].codigo, rotaId: rotas[6].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[187].codigo, rotaId: rotas[7].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[188].codigo, rotaId: rotas[8].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[189].codigo, rotaId: rotas[9].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[191].codigo, rotaId: rotas[11].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[192].codigo, rotaId: rotas[12].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[193].codigo, rotaId: rotas[13].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[194].codigo, rotaId: rotas[14].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[195].codigo, rotaId: rotas[15].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[196].codigo, rotaId: rotas[16].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[197].codigo, rotaId: rotas[17].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[198].codigo, rotaId: rotas[18].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[199].codigo, rotaId: rotas[19].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[201].codigo, rotaId: rotas[1].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[202].codigo, rotaId: rotas[2].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[203].codigo, rotaId: rotas[3].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[204].codigo, rotaId: rotas[4].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[205].codigo, rotaId: rotas[5].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[206].codigo, rotaId: rotas[6].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[207].codigo, rotaId: rotas[7].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[208].codigo, rotaId: rotas[8].codigo });
+    await MatriculaTransporte.create({ alunoId: alunos[209].codigo, rotaId: rotas[9].codigo });
+
+    let atvIdx = 0;
+    for(let i=0;i<alunos.length && atvIdx<40;i++){
+      if(alunos[i].dataValues.situacaoAcesso !== 'ATIVO') continue;
+      const rot = (i % 20);
+      const vg = viagens.find(v => v.dataValues.rotaId === rotas[rot].codigo);
+      if(!vg) { atvIdx++; continue; }
+      try {
+        await RegistroAcesso.create({ tipo: 'EMBARQUE', dataHora: vg.dataValues.data + 'T' + (vg.dataValues.horarioSaida || '06:00') + ':00', alunoId: alunos[i].codigo, viagemId: vg.codigo });
+        if(atvIdx % 3 !== 0) {
+          await RegistroAcesso.create({ tipo: 'DESEMBARQUE', dataHora: vg.dataValues.data + 'T' + (vg.dataValues.horarioChegada || '07:30') + ':00', alunoId: alunos[i].codigo, viagemId: vg.codigo });
+        }
+      } catch(e) {}
+      atvIdx++;
+    }
+    console.log('Banco populado com sucesso!');
+    console.log('Alunos:', alunos.length);
+    console.log('Motoristas: 15 | Onibus: 12 | Rotas: 20 | Viagens: 30');
   })();
 }
 

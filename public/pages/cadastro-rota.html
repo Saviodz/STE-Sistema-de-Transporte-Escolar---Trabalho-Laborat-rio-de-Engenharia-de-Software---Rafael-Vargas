@@ -59,9 +59,9 @@
             <label for="turno" class="form-label">Turno <span class="text-danger">*</span></label>
             <select id="turno" class="form-select" required>
               <option value="">-- Selecione --</option>
-              <option value="MANHÃ">Manhã</option>
-              <option value="TARDE">Tarde</option>
-              <option value="NOITE">Noite</option>
+              <option value="MATUTINO">Matutino</option>
+              <option value="VESPERTINO">Vespertino</option>
+              <option value="NOTURNO">Noturno</option>
             </select>
             <div class="invalid-feedback">Selecione o turno.</div>
           </div>
@@ -77,10 +77,11 @@
           </div>
         </div>
       </div>
-      <div class="d-flex gap-3 justify-content-end">
-        <a href="index.html" class="btn-ste-secondary"><i class="bi bi-x"></i> Cancelar</a>
+      <div class="d-flex gap-3 justify-content-end mt-4">
+        <button type="button" class="btn-ste-secondary" id="btnCancelar" style="display:none;"><i class="bi bi-x"></i> Cancelar Edição</button>
+        <button type="button" class="btn-ste-secondary" id="btnLimpar" onclick="resetForm()"><i class="bi bi-eraser"></i> Limpar</button>
         <button type="submit" class="btn-ste-primary" id="btnSalvar">
-          <i class="bi bi-check-lg"></i> Salvar Rota
+          <i class="bi bi-check-lg"></i> <span id="btnSalvarText">Salvar Rota</span>
         </button>
       </div>
     </form>
@@ -93,9 +94,9 @@
       </div>
       <div class="table-wrapper">
         <table class="ste-table">
-          <thead><tr><th>#</th><th>Origem → Destino</th><th>Turno</th><th>Descrição</th><th>Observação</th><th>Ações</th></tr></thead>
+          <thead><tr><th>#</th><th>Origem → Destino</th><th>Turno</th><th>Descrição</th><th>Observação</th><th class="text-center">Qtd Alunos</th><th>Ações</th></tr></thead>
           <tbody id="tbodyRotas">
-            <tr><td colspan="6" class="text-center py-3 text-muted"><div class="spinner-border spinner-border-sm"></div></td></tr>
+            <tr><td colspan="7" class="text-center py-3 text-muted"><div class="spinner-border spinner-border-sm"></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -110,11 +111,13 @@
   import { api } from '../assets/js/api.js';
   if (!localStorage.getItem('ste-user')) window.location.href = 'login.html';
 
+  let editId = null;
+
   document.addEventListener('DOMContentLoaded', async () => {
     injectSidebar();
     try {
       const cidades = await api.get('/cidades?include=true');
-      const lblFn = c => `${c.nome} – ${c.estado?.sigla ?? ''}`;
+      const lblFn = c => `${c.nome} – ${c.estado?.siglaUF ?? ''}`;
       populateSelect('origemId',  cidades, 'codigo', lblFn, 'Selecione a origem');
       populateSelect('destinoId', cidades, 'codigo', lblFn, 'Selecione o destino');
     } catch(e) { showToast('Erro ao carregar cidades.', 'error'); }
@@ -126,17 +129,26 @@
       form.classList.add('was-validated');
       if (!form.checkValidity()) return;
       const btn = document.getElementById('btnSalvar');
-      btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Salvando...';
+      const btnText = document.getElementById('btnSalvarText');
+      btn.disabled = true; btnText.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Salvando...';
       try {
-        await api.post('/rotas', {
+        const payload = {
           origemId:   parseInt(document.getElementById('origemId').value),
           destinoId:  parseInt(document.getElementById('destinoId').value),
           turno:      document.getElementById('turno').value,
           descricao:  document.getElementById('descricao').value.trim(),
           observacao: document.getElementById('observacao').value.trim() || null,
-        });
-        showToast('Rota cadastrada com sucesso!', 'success');
-        form.reset(); form.classList.remove('was-validated');
+        };
+
+        if (editId) {
+            await api.put(`/rotas/${editId}`, payload);
+            showToast('Rota atualizada com sucesso!', 'success');
+        } else {
+            await api.post('/rotas', payload);
+            showToast('Rota cadastrada com sucesso!', 'success');
+        }
+
+        resetForm();
         await loadRotas();
       } catch(e) {
         document.getElementById('alert-area').innerHTML =
@@ -144,19 +156,33 @@
             <i class="bi bi-exclamation-triangle-fill"></i><span>${e.message}</span>
             <button class="btn-close" data-bs-dismiss="alert"></button></div>`;
       } finally {
-        btn.disabled = false; btn.innerHTML = '<i class="bi bi-check-lg"></i> Salvar Rota';
+        btn.disabled = false; btnText.innerHTML = editId ? 'Salvar Alterações' : 'Salvar Rota';
       }
     });
+
+    document.getElementById('btnCancelar').addEventListener('click', resetForm);
   });
+
+  window.resetForm = () => {
+      document.getElementById('formRota').reset();
+      document.getElementById('formRota').classList.remove('was-validated');
+      editId = null;
+      document.querySelector('.page-header h1').innerText = 'Nova Rota';
+      document.querySelector('.page-header .page-subtitle').innerText = 'Defina uma rota de transporte entre cidades';
+      document.getElementById('btnSalvarText').innerText = 'Salvar Rota';
+      document.getElementById('btnCancelar').style.display = 'none';
+      document.getElementById('btnLimpar').style.display = 'inline-flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   async function loadRotas() {
     try {
       const list = await api.get('/rotas?include=true');
       const tbody = document.getElementById('tbodyRotas');
-      if (!list.length) { tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">Nenhuma rota cadastrada.</td></tr>`; return; }
+      if (!list.length) { tbody.innerHTML = `<tr><td colspan="7" class="text-center py-3 text-muted">Nenhuma rota cadastrada.</td></tr>`; return; }
       const turnoBadge = t => {
-        const map = { 'MANHÃ': 'bg-warning', 'TARDE': 'bg-info', 'NOITE': 'bg-dark' };
-        return `<span class="badge ${map[t] || 'bg-secondary'} text-white">${t}</span>`;
+        const map = { 'MATUTINO': 'bg-warning text-dark', 'VESPERTINO': 'bg-info', 'NOTURNO': 'bg-dark text-white' };
+        return `<span class="badge ${map[t] || 'bg-secondary text-white'}">${t}</span>`;
       };
       tbody.innerHTML = list.map(r => `
         <tr>
@@ -169,8 +195,10 @@
           <td>${turnoBadge(r.turno)}</td>
           <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap" title="${r.descricao}">${r.descricao}</td>
           <td>${r.observacao ?? '—'}</td>
+          <td class="text-center"><span class="badge bg-primary rounded-pill">${r.matriculas ? r.matriculas.length : 0}</span></td>
           <td>
             <div class="action-btns">
+              <button class="btn-icon edit" onclick="editRota(${r.codigo}, ${r.origemId}, ${r.destinoId}, '${r.turno}', '${r.descricao.replace(/'/g,"\\'")}', '${(r.observacao||'').replace(/'/g,"\\'")}')"><i class="bi bi-pencil-fill"></i></button>
               <button class="btn-icon delete" onclick="deleteRota(${r.codigo},'${(r.origem?.nome ?? r.origemId)+' → '+(r.destino?.nome ?? r.destinoId)}')"><i class="bi bi-trash-fill"></i></button>
             </div>
           </td>
@@ -178,11 +206,28 @@
     } catch(e) { showToast('Erro ao listar rotas.', 'error'); }
   }
 
+  window.editRota = (id, origemId, destinoId, turno, descricao, observacao) => {
+      editId = id;
+      document.getElementById('origemId').value = origemId;
+      document.getElementById('destinoId').value = destinoId;
+      document.getElementById('turno').value = turno;
+      document.getElementById('descricao').value = descricao;
+      document.getElementById('observacao').value = observacao;
+      
+      document.querySelector('.page-header h1').innerText = 'Editar Rota';
+      document.querySelector('.page-header .page-subtitle').innerText = `Editando rota #${id}`;
+      document.getElementById('btnSalvarText').innerText = 'Salvar Alterações';
+      document.getElementById('btnCancelar').style.display = 'inline-flex';
+      document.getElementById('btnLimpar').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   window.deleteRota = (id, label) => {
     confirmDelete(`Excluir a rota "${label}"?`, async () => {
       try {
         await api.delete(`/rotas/${id}`);
         showToast('Rota excluída!', 'success');
+        if (editId === id) resetForm();
         await loadRotas();
       } catch(e) { showToast('Erro: ' + e.message, 'error'); }
     });
