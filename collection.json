@@ -2246,13 +2246,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/relatorios/alunos-por-rota/1",
+              "raw": "{{base_url}}/alunos/relatorios/por-rota/1",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
+                "alunos",
                 "relatorios",
-                "alunos-por-rota",
+                "por-rota",
                 "1"
               ]
             }
@@ -2278,13 +2279,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/relatorios/acessos-por-periodo?dataInicial=2026-04-01&dataFinal=2026-04-30",
+              "raw": "{{base_url}}/registros-acesso/relatorios/por-periodo?dataInicial=2026-04-01&dataFinal=2026-04-30",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
+                "registros-acesso",
                 "relatorios",
-                "acessos-por-periodo"
+                "por-periodo"
               ],
               "query": [
                 {
@@ -2297,6 +2299,154 @@
                 }
               ]
             }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Viagens por Motorista",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/viagens/relatorios/por-motorista?motoristaId=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "viagens",
+                "relatorios",
+                "por-motorista"
+              ],
+              "query": [
+                {
+                  "key": "motoristaId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Utilizacao de Frota",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/onibus/relatorios/utilizacao-frota?dataInicial=2026-04-01&dataFinal=2026-04-30",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "onibus",
+                "relatorios",
+                "utilizacao-frota"
+              ],
+              "query": [
+                {
+                  "key": "dataInicial",
+                  "value": "2026-04-01"
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "2026-04-30"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Quantidades de Acessos por Aluno e Periodo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/registros-acesso/relatorios/quantidades-por-aluno/2026-04-01/2026-04-30",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "registros-acesso",
+                "relatorios",
+                "quantidades-por-aluno",
+                "2026-04-01",
+                "2026-04-30"
+              ]
+            },
+            "description": "Relatorio para retornar a quantidade de acessos, embarques e desembarques por aluno em um determinado periodo."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Quantidades de Alunos por Instituicao e Situacao",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/alunos/relatorios/quantidades-por-instituicao-situacao",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "alunos",
+                "relatorios",
+                "quantidades-por-instituicao-situacao"
+              ]
+            },
+            "description": "Relatorio para retornar a quantidade de alunos por instituicao de ensino e situacao de acesso."
           },
           "response": [],
           "event": [
