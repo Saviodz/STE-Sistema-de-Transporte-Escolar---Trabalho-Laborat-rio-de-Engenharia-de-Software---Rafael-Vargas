@@ -13,6 +13,12 @@ class RegistroAcessoController {
       .catch(next);
   }
 
+  static async findQuantidadesAcessosOfAlunosByPeriodo(req, res, next) {
+    RegistroAcessoService.findQuantidadesAcessosOfAlunosByPeriodo(req)
+      .then(objs => res.json(objs))
+      .catch(next);
+  }
+
   static async create(req, res, next) {
     RegistroAcessoService.create(req)
       .then(obj => res.json(obj))

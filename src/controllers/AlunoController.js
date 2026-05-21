@@ -13,6 +13,12 @@ class AlunoController {
       .catch(next);
   }
 
+  static async findQuantidadesAlunosOfInstituicoesBySituacao(req, res, next) {
+    AlunoService.findQuantidadesAlunosOfInstituicoesBySituacao()
+      .then(objs => res.json(objs))
+      .catch(next);
+  }
+
   static async create(req, res, next) {
     AlunoService.create(req)
       .then(obj => res.json(obj))

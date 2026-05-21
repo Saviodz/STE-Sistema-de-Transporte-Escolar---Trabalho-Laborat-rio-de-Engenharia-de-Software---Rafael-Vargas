@@ -48,6 +48,7 @@ routes.delete('/instituicoes-ensino/:id', InstituicaoEnsinoController.delete);
 routes.put('/instituicoes-ensino/:id', InstituicaoEnsinoController.update);
 
 routes.get('/alunos', AlunoController.findAll);
+routes.get('/alunos/relatorios/quantidades-por-instituicao-situacao', AlunoController.findQuantidadesAlunosOfInstituicoesBySituacao);
 routes.get('/alunos/:id', AlunoController.findByPk);
 routes.post('/alunos', AlunoController.create);
 routes.delete('/alunos/:id', AlunoController.delete);
@@ -84,6 +85,7 @@ routes.delete('/matriculas-transporte/:id', MatriculaTransporteController.delete
 routes.put('/matriculas-transporte/:id', MatriculaTransporteController.update);
 
 routes.get('/registros-acesso', RegistroAcessoController.findAll);
+routes.get('/registros-acesso/relatorios/quantidades-por-aluno/:inicio/:termino', RegistroAcessoController.findQuantidadesAcessosOfAlunosByPeriodo);
 routes.get('/registros-acesso/:id', RegistroAcessoController.findByPk);
 routes.post('/registros-acesso', RegistroAcessoController.create);
 routes.delete('/registros-acesso/:id', RegistroAcessoController.delete);

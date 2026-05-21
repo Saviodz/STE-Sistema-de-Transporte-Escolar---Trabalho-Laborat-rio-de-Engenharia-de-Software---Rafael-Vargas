@@ -1,4 +1,6 @@
 import { Aluno } from '../models/Aluno.js';
+import sequelize from '../config/database-connection.js';
+import { QueryTypes } from 'sequelize';
 
 class AlunoService {
   static async findAll() {
@@ -10,6 +12,21 @@ class AlunoService {
     const { id } = req.params;
     const obj = await Aluno.findByPk(id, { include: { all: true, nested: true } });
     return obj;
+  }
+
+  static async findQuantidadesAlunosOfInstituicoesBySituacao() {
+    const objs = await sequelize.query(
+      `SELECT instituicoes_ensino.nome AS instituicao,
+              alunos.situacao_acesso AS situacao,
+              COUNT(alunos.codigo) AS quantidade
+       FROM alunos
+       INNER JOIN instituicoes_ensino ON alunos.instituicao_ensino_id = instituicoes_ensino.codigo
+       GROUP BY instituicoes_ensino.nome, alunos.situacao_acesso
+       ORDER BY instituicoes_ensino.nome ASC, alunos.situacao_acesso ASC`,
+      { type: QueryTypes.SELECT }
+    );
+
+    return objs;
   }
 
   // ==========================================

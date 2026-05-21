@@ -1,5 +1,5 @@
 import { RegistroAcesso } from '../models/RegistroAcesso.js';
-import { Op } from 'sequelize';
+import { Op, QueryTypes } from 'sequelize';
 import sequelize from '../config/database-connection.js';
 
 class RegistroAcessoService {
@@ -55,6 +55,51 @@ class RegistroAcessoService {
     const { id } = req.params; 
     const obj = await RegistroAcesso.findByPk(id, { include: { all: true, nested: true } });
     return obj;
+  }
+
+  static validarPeriodo(inicio, termino) {
+    if (!inicio || !termino) {
+      throw "Parametros 'inicio' e 'termino' sao obrigatorios!";
+    }
+
+    const dataInicio = new Date(`${inicio}T00:00:00`);
+    const dataTermino = new Date(`${termino}T00:00:00`);
+
+    if (Number.isNaN(dataInicio.getTime()) || Number.isNaN(dataTermino.getTime())) {
+      throw "Parametros 'inicio' e 'termino' devem estar no formato yyyy-MM-dd!";
+    }
+
+    if (dataInicio > dataTermino) {
+      throw 'RN: A data inicial nao pode ser posterior a data final.';
+    }
+  }
+
+  static async findQuantidadesAcessosOfAlunosByPeriodo(req) {
+    const { inicio, termino } = req.params;
+    this.validarPeriodo(inicio, termino);
+
+    const objs = await sequelize.query(
+      `SELECT alunos.codigo AS alunoCodigo,
+              alunos.nome AS aluno,
+              COUNT(registros_acesso.codigo) AS quantidade,
+              SUM(CASE WHEN UPPER(registros_acesso.tipo) = 'EMBARQUE' THEN 1 ELSE 0 END) AS embarques,
+              SUM(CASE WHEN UPPER(registros_acesso.tipo) = 'DESEMBARQUE' THEN 1 ELSE 0 END) AS desembarques
+       FROM registros_acesso
+       INNER JOIN alunos ON registros_acesso.aluno_id = alunos.codigo
+       WHERE registros_acesso.data_hora >= :inicio
+         AND registros_acesso.data_hora <= :termino
+       GROUP BY alunos.codigo, alunos.nome
+       ORDER BY quantidade DESC, alunos.nome ASC`,
+      {
+        replacements: {
+          inicio: `${inicio} 00:00:00`,
+          termino: `${termino} 23:59:59`
+        },
+        type: QueryTypes.SELECT
+      }
+    );
+
+    return objs;
   }
 
   static async create(req) {

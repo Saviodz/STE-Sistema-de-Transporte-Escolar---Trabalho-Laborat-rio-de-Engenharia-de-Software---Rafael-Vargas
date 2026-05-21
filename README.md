@@ -49,6 +49,8 @@ Principais recursos da API:
 - `viagens`
 - `matriculas-transporte`
 - `registros-acesso`
+- `registros-acesso/relatorios/quantidades-por-aluno/:inicio/:termino`
+- `alunos/relatorios/quantidades-por-instituicao-situacao`
 - `relatorios/alunos-por-rota/:rotaId`
 - `relatorios/acessos-por-periodo`
 
