@@ -108,6 +108,31 @@ class ViagemService {
       throw 'Nao e possivel remover uma viagem com vinculos existentes.';
     }
   }
+
+  static async viagensPorMotorista(req) {
+    const { motoristaId, dataInicial, dataFinal } = req.query;
+
+    const where = {};
+    if (motoristaId && motoristaId !== 'Todos') {
+      where.motoristaId = motoristaId;
+    }
+
+    if (dataInicial && dataFinal) {
+      if (new Date(dataInicial) > new Date(dataFinal)) {
+        throw "RN: A data inicial não pode ser posterior à data final.";
+      }
+      where.data = {
+        [Op.between]: [dataInicial, dataFinal]
+      };
+    }
+
+    const viagens = await Viagem.findAll({
+      where: where,
+      include: { all: true, nested: true },
+      order: [['data', 'ASC'], ['horarioSaida', 'ASC']]
+    });
+    return viagens;
+  }
 }
 
 export { ViagemService };

@@ -1,4 +1,8 @@
 import { Aluno } from '../models/Aluno.js';
+<<<<<<< HEAD
+=======
+import { MatriculaTransporte } from '../models/MatriculaTransporte.js';
+>>>>>>> dc03911 (feat(reports): padronizacao dos relatorios para o modelo centrado em dominio (padrao Jose/professor))
 import sequelize from '../config/database-connection.js';
 import { QueryTypes } from 'sequelize';
 
@@ -27,6 +31,41 @@ class AlunoService {
     );
 
     return objs;
+  }
+
+  static async alunosPorRota(req) {
+    const { rotaId } = req.params;
+    const { prefeituraId } = req.query;
+
+    const whereMatricula = {};
+    if (rotaId && rotaId !== 'Todos') {
+      whereMatricula.rotaId = rotaId;
+    }
+
+    const whereAluno = {};
+    if (prefeituraId && prefeituraId !== 'Todos') {
+      whereAluno.prefeituraId = prefeituraId;
+    }
+
+    const matriculas = await MatriculaTransporte.findAll({
+      where: whereMatricula,
+      include: [
+        {
+          association: 'aluno',
+          where: whereAluno,
+          required: true,
+          include: { all: true, nested: true }
+        }
+      ]
+    });
+
+    // Retorna os dados mapeados para compatibilidade com o frontend
+    return matriculas.map(m => {
+      const a = m.aluno.toJSON ? m.aluno.toJSON() : m.aluno;
+      // Anexa os dados da matrícula e rota para exibição rica no frontend
+      a.matriculaCodigo = m.codigo;
+      return a;
+    });
   }
 
   // ==========================================

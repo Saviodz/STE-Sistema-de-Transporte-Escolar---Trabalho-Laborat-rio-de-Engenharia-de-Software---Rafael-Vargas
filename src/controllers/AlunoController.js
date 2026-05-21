@@ -19,6 +19,12 @@ class AlunoController {
       .catch(next);
   }
 
+  static async alunosPorRota(req, res, next) {
+    AlunoService.alunosPorRota(req)
+      .then(objs => res.json(objs))
+      .catch(next);
+  }
+
   static async create(req, res, next) {
     AlunoService.create(req)
       .then(obj => res.json(obj))

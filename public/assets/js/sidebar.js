@@ -41,10 +41,19 @@ function getSidebarHTML() {
   <div class="sidebar-section">
     <div class="sidebar-section-label">Relatórios</div>
     <ul class="sidebar-nav">
+      <li style="padding: 4px 16px; font-size: 10px; opacity: 0.6; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">Sávio</li>
       <li><a href="relatorio-alunos-por-rota.html" data-page="relatorio-alunos-por-rota.html"><i class="bi bi-file-earmark-person nav-icon"></i>Alunos por Rota</a></li>
       <li><a href="relatorio-acessos-por-aluno.html" data-page="relatorio-acessos-por-aluno.html"><i class="bi bi-file-earmark-spreadsheet nav-icon"></i>Acessos por Aluno</a></li>
       <li><a href="relatorio-alunos-por-instituicao-situacao.html" data-page="relatorio-alunos-por-instituicao-situacao.html"><i class="bi bi-file-earmark-medical nav-icon"></i>Alunos por Instituicao</a></li>
       <li><a href="relatorio-acessos-por-periodo.html" data-page="relatorio-acessos-por-periodo.html"><i class="bi bi-file-earmark-bar-graph nav-icon"></i>Acessos por Período</a></li>
+      
+      <li style="padding: 4px 16px; font-size: 10px; opacity: 0.6; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; margin-top: 6px;">Marco</li>
+      <li><a href="relatorio-viagens-motorista.html" data-page="relatorio-viagens-motorista.html"><i class="bi bi-person-video nav-icon"></i>Viagens por Motorista</a></li>
+      <li><a href="relatorio-utilizacao-frota.html" data-page="relatorio-utilizacao-frota.html"><i class="bi bi-truck nav-icon"></i>Utilização de Frota</a></li>
+
+      <li style="padding: 4px 16px; font-size: 10px; opacity: 0.6; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; margin-top: 6px;">José</li>
+      <li><a href="relatorio-acessos-aluno.html" data-page="relatorio-acessos-aluno.html"><i class="bi bi-person-badge-fill nav-icon"></i>Acessos por Aluno</a></li>
+      <li><a href="relatorio-alunos-instituicao.html" data-page="relatorio-alunos-instituicao.html"><i class="bi bi-mortarboard-fill nav-icon"></i>Alunos por Instituição</a></li>
     </ul>
   </div>
   <div class="sidebar-footer">

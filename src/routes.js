@@ -11,7 +11,6 @@ import { RotaController } from './controllers/RotaController.js';
 import { ViagemController } from './controllers/ViagemController.js';
 import { MatriculaTransporteController } from './controllers/MatriculaTransporteController.js';
 import { RegistroAcessoController } from './controllers/RegistroAcessoController.js';
-import { RelatorioController } from './controllers/RelatorioController.js';
 
 const routes = express.Router();
 
@@ -49,6 +48,7 @@ routes.put('/instituicoes-ensino/:id', InstituicaoEnsinoController.update);
 
 routes.get('/alunos', AlunoController.findAll);
 routes.get('/alunos/relatorios/quantidades-por-instituicao-situacao', AlunoController.findQuantidadesAlunosOfInstituicoesBySituacao);
+routes.get('/alunos/relatorios/por-rota/:rotaId', AlunoController.alunosPorRota);
 routes.get('/alunos/:id', AlunoController.findByPk);
 routes.post('/alunos', AlunoController.create);
 routes.delete('/alunos/:id', AlunoController.delete);
@@ -61,6 +61,7 @@ routes.delete('/motoristas/:id', MotoristaController.delete);
 routes.put('/motoristas/:id', MotoristaController.update);
 
 routes.get('/onibus', OnibusController.findAll);
+routes.get('/onibus/relatorios/utilizacao-frota', OnibusController.utilizacaoFrota);
 routes.get('/onibus/:id', OnibusController.findByPk);
 routes.post('/onibus', OnibusController.create);
 routes.delete('/onibus/:id', OnibusController.delete);
@@ -73,6 +74,7 @@ routes.delete('/rotas/:id', RotaController.delete);
 routes.put('/rotas/:id', RotaController.update);
 
 routes.get('/viagens', ViagemController.findAll);
+routes.get('/viagens/relatorios/por-motorista', ViagemController.viagensPorMotorista);
 routes.get('/viagens/:id', ViagemController.findByPk);
 routes.post('/viagens', ViagemController.create);
 routes.delete('/viagens/:id', ViagemController.delete);
@@ -86,12 +88,12 @@ routes.put('/matriculas-transporte/:id', MatriculaTransporteController.update);
 
 routes.get('/registros-acesso', RegistroAcessoController.findAll);
 routes.get('/registros-acesso/relatorios/quantidades-por-aluno/:inicio/:termino', RegistroAcessoController.findQuantidadesAcessosOfAlunosByPeriodo);
+routes.get('/registros-acesso/relatorios/por-periodo', RegistroAcessoController.acessosPorPeriodo);
 routes.get('/registros-acesso/:id', RegistroAcessoController.findByPk);
 routes.post('/registros-acesso', RegistroAcessoController.create);
 routes.delete('/registros-acesso/:id', RegistroAcessoController.delete);
 routes.put('/registros-acesso/:id', RegistroAcessoController.update);
 
-routes.get('/relatorios/alunos-por-rota/:rotaId', RelatorioController.alunosPorRota);
-routes.get('/relatorios/acessos-por-periodo', RelatorioController.acessosPorPeriodo);
+
 
 export default routes;

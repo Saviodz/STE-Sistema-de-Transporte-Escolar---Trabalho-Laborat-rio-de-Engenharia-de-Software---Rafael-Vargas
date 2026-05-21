@@ -30,6 +30,12 @@ class OnibusController {
       .then(obj => res.json(obj))
       .catch(next);
   }
+
+  static async utilizacaoFrota(req, res, next) {
+    OnibusService.utilizacaoFrota(req)
+      .then(objs => res.json(objs))
+      .catch(next);
+  }
 }
 
 export { OnibusController };

@@ -95,7 +95,7 @@
       btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
       
       try {
-        const alunos = await api.get(`/relatorios/alunos-por-rota/${rotaId}`);
+        const alunos = await api.get(`/alunos/relatorios/por-rota/${rotaId}`);
         const tbody = document.getElementById('tbodyResultados');
         if (!alunos.length) { 
             tbody.innerHTML = `<tr><td colspan="5" class="text-center py-3 text-muted">Nenhum aluno vinculado a esta rota.</td></tr>`; 

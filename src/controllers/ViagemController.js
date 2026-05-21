@@ -30,6 +30,12 @@ class ViagemController {
       .then(obj => res.json(obj))
       .catch(next);
   }
+
+  static async viagensPorMotorista(req, res, next) {
+    ViagemService.viagensPorMotorista(req)
+      .then(objs => res.json(objs))
+      .catch(next);
+  }
 }
 
 export { ViagemController };

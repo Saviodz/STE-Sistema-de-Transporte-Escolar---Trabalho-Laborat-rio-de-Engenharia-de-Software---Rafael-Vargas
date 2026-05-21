@@ -102,6 +102,33 @@ class RegistroAcessoService {
     return objs;
   }
 
+  static async acessosPorPeriodo(req) {
+    const { dataInicial, dataFinal, tipo } = req.query;
+    if (!dataInicial || !dataFinal) {
+      throw "Parâmetros 'dataInicial' e 'dataFinal' são obrigatórios na query string!";
+    }
+    if (new Date(dataInicial) > new Date(dataFinal)) {
+      throw "RN: A data inicial não pode ser posterior à data final.";
+    }
+
+    const where = {
+      dataHora: {
+        [Op.between]: [`${dataInicial}T00:00:00`, `${dataFinal}T23:59:59`]
+      }
+    };
+
+    if (tipo && tipo !== 'Todos') {
+      where.tipo = tipo;
+    }
+
+    const registros = await RegistroAcesso.findAll({
+      where: where,
+      include: { all: true, nested: true },
+      order: [['dataHora', 'ASC']]
+    });
+    return registros;
+  }
+
   static async create(req) {
     // Recebe os dados do acesso enviados pela requisicao.
     const { tipo, dataHora, alunoId, viagemId } = req.body;
