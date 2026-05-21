@@ -1,8 +1,5 @@
 import { Aluno } from '../models/Aluno.js';
-<<<<<<< HEAD
-=======
 import { MatriculaTransporte } from '../models/MatriculaTransporte.js';
->>>>>>> dc03911 (feat(reports): padronizacao dos relatorios para o modelo centrado em dominio (padrao Jose/professor))
 import sequelize from '../config/database-connection.js';
 import { QueryTypes } from 'sequelize';
 

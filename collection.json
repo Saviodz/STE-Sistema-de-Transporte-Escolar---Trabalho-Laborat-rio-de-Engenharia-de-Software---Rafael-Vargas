@@ -2241,7 +2241,7 @@
       "name": "Relatorios",
       "item": [
         {
-          "name": "GET - Alunos por Rota",
+          "name": "GET - Alunos por Rota (por ID)",
           "request": {
             "method": "GET",
             "header": [],
@@ -2255,6 +2255,39 @@
                 "relatorios",
                 "por-rota",
                 "1"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Alunos por Rota (Todos)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/alunos/relatorios/por-rota/Todos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "alunos",
+                "relatorios",
+                "por-rota",
+                "Todos"
               ]
             }
           },
@@ -2316,7 +2349,53 @@
           ]
         },
         {
-          "name": "GET - Viagens por Motorista",
+          "name": "GET - Acessos por Periodo (Apenas Embarques)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/registros-acesso/relatorios/por-periodo?dataInicial=2026-04-01&dataFinal=2026-04-30&tipo=EMBARQUE",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "registros-acesso",
+                "relatorios",
+                "por-periodo"
+              ],
+              "query": [
+                {
+                  "key": "dataInicial",
+                  "value": "2026-04-01"
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "2026-04-30"
+                },
+                {
+                  "key": "tipo",
+                  "value": "EMBARQUE"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Viagens por Motorista (por ID)",
           "request": {
             "method": "GET",
             "header": [],
@@ -2334,6 +2413,44 @@
                 {
                   "key": "motoristaId",
                   "value": "1"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Viagens por Motorista (Todos)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/viagens/relatorios/por-motorista?motoristaId=Todos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "viagens",
+                "relatorios",
+                "por-motorista"
+              ],
+              "query": [
+                {
+                  "key": "motoristaId",
+                  "value": "Todos"
                 }
               ]
             }
@@ -2389,6 +2506,48 @@
                 "exec": [
                   "pm.test(\"Status code is 200\", function () {",
                   "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Utilizacao de Frota - Datas Invertidas (Erro)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/onibus/relatorios/utilizacao-frota?dataInicial=2026-04-30&dataFinal=2026-04-01",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "onibus",
+                "relatorios",
+                "utilizacao-frota"
+              ],
+              "query": [
+                {
+                  "key": "dataInicial",
+                  "value": "2026-04-30"
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "2026-04-01"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "  pm.response.to.have.status(400);",
                   "});"
                 ]
               }
