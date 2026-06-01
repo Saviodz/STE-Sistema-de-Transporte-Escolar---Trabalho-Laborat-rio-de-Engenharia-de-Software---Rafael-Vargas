@@ -29,8 +29,7 @@ RegistroAcesso.associate(sequelize.models);
 await sequelize.sync();
 // databaseInserts();
 
-function databaseInserts() {
-  (async () => {
+async function databaseInserts() {
     await sequelize.sync({ force: true });
 
     const es = await Estado.create({ siglaUF: 'ES', nome: 'Espirito Santo' });
@@ -593,7 +592,7 @@ function databaseInserts() {
     console.log('Banco populado com sucesso!');
     console.log('Alunos:', alunos.length);
     console.log('Motoristas: 15 | Onibus: 12 | Rotas: 20 | Viagens: 30');
-  })();
 }
 
+export { databaseInserts };
 export default sequelize;
