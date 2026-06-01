@@ -26,7 +26,8 @@ Onibus.associate(sequelize.models); Rota.associate(sequelize.models);
 Viagem.associate(sequelize.models); MatriculaTransporte.associate(sequelize.models);
 RegistroAcesso.associate(sequelize.models);
 
-databaseInserts();
+await sequelize.sync();
+// databaseInserts();
 
 function databaseInserts() {
   (async () => {
