@@ -232,7 +232,7 @@
         const viagemSelecionada = viagensData.find(v => Number(v.codigo) === payload.viagemId);
         const alunoSelecionado = alunosData.find(a => Number(a.codigo) === payload.alunoId);
         if (!viagemSelecionada || !alunoTemMatriculaNaRota(alunoSelecionado, viagemSelecionada.rotaId)) {
-          throw new Error('O aluno selecionado nao possui matricula na rota desta viagem.');
+          throw new Error('O aluno selecionado não possui matrícula na rota desta viagem.');
         }
 
         if (editId) {

@@ -31,7 +31,7 @@ export function ToastProvider({ children }) {
           <div className={`ste-toast ${toast.type}`} key={toast.id}>
             <i className={`bi ${toast.type === 'error' ? 'bi-x-circle-fill' : toast.type === 'info' ? 'bi-info-circle-fill' : 'bi-check-circle-fill'} toast-icon`} />
             <div className="toast-body">
-              <div className="toast-title">{toast.type === 'error' ? 'Erro' : toast.type === 'info' ? 'Informacao' : 'Sucesso'}</div>
+              <div className="toast-title">{toast.type === 'error' ? 'Erro' : toast.type === 'info' ? 'Informação' : 'Sucesso'}</div>
               <div className="toast-msg">{toast.message}</div>
             </div>
             <button className="toast-close" onClick={() => setToasts((items) => items.filter((item) => item.id !== toast.id))}>
@@ -64,7 +64,7 @@ export function ConfirmProvider({ children }) {
           <div className="react-confirm">
             <div className="d-flex align-items-center gap-2 text-danger fw-bold mb-2">
               <i className="bi bi-exclamation-triangle-fill" />
-              Confirmar exclusao
+              Confirmar exclusão
             </div>
             <p className="mb-4">{state.message}</p>
             <div className="d-flex justify-content-end gap-2">
@@ -89,12 +89,12 @@ const navSections = [
     title: 'Cadastros',
     links: [
       { to: '/alunos', label: 'Alunos', icon: 'bi-people-fill' },
-      { to: '/matriculas-transporte', label: 'Matricula de Transporte', icon: 'bi-card-checklist' },
+      { to: '/matriculas-transporte', label: 'Matrícula de Transporte', icon: 'bi-card-checklist' },
       { to: '/prefeituras', label: 'Prefeituras', icon: 'bi-building-fill' },
       { to: '/estados', label: 'Estados', icon: 'bi-map-fill' },
       { to: '/cidades', label: 'Cidades', icon: 'bi-geo-alt-fill' },
-      { to: '/instituicoes-ensino', label: 'Instituicoes de Ensino', icon: 'bi-mortarboard-fill' },
-      { to: '/onibus', label: 'Onibus', icon: 'bi-bus-front' },
+      { to: '/instituicoes-ensino', label: 'Instituições de Ensino', icon: 'bi-mortarboard-fill' },
+      { to: '/onibus', label: 'Ônibus', icon: 'bi-bus-front' },
       { to: '/motoristas', label: 'Motoristas', icon: 'bi-person-badge-fill' },
       { to: '/rotas', label: 'Rotas', icon: 'bi-signpost-2-fill' }
     ]
@@ -108,14 +108,14 @@ const navSections = [
     ]
   },
   {
-    title: 'Relatorios',
+    title: 'Relatórios',
     links: [
       { to: '/relatorios/alunos-por-rota', label: 'Alunos por Rota', icon: 'bi-file-earmark-person' },
       { to: '/relatorios/acessos-por-aluno', label: 'Acessos por Aluno', icon: 'bi-file-earmark-spreadsheet' },
-      { to: '/relatorios/alunos-por-instituicao-situacao', label: 'Alunos por Instituicao', icon: 'bi-file-earmark-medical' },
-      { to: '/relatorios/acessos-por-periodo', label: 'Acessos por Periodo', icon: 'bi-file-earmark-bar-graph' },
+      { to: '/relatorios/alunos-por-instituicao-situacao', label: 'Alunos por Instituição', icon: 'bi-file-earmark-medical' },
+      { to: '/relatorios/acessos-por-periodo', label: 'Acessos por Período', icon: 'bi-file-earmark-bar-graph' },
       { to: '/relatorios/viagens-por-motorista', label: 'Viagens por Motorista', icon: 'bi-person-video' },
-      { to: '/relatorios/utilizacao-frota', label: 'Utilizacao de Frota', icon: 'bi-truck' }
+      { to: '/relatorios/utilizacao-frota', label: 'Utilização de Frota', icon: 'bi-truck' }
     ]
   }
 ];
@@ -124,7 +124,7 @@ export function AppLayout() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const user = localStorage.getItem('ste-user') || 'Usuario';
+  const user = localStorage.getItem('ste-user') || 'Usuário';
 
   const title = useMemo(() => {
     const flat = navSections.flatMap((section) => section.links);
@@ -248,7 +248,8 @@ export function Badge({ value }) {
     INATIVO: ['inactive', 'bi-x-circle', 'Inativo'],
     BLOQUEADO: ['inactive', 'bi-lock-fill', 'Bloqueado'],
     SUSPENSO: ['maintenance', 'bi-pause-circle', 'Suspenso'],
-    MANUTENCAO: ['maintenance', 'bi-tools', 'Manutencao'],
+    MANUTENCAO: ['maintenance', 'bi-tools', 'Manutenção'],
+    'MANUTENÇÃO': ['maintenance', 'bi-tools', 'Manutenção'],
     EMBARQUE: ['embarque', 'bi-arrow-up-circle', 'Embarque'],
     DESEMBARQUE: ['desembarque', 'bi-arrow-down-circle', 'Desembarque']
   };

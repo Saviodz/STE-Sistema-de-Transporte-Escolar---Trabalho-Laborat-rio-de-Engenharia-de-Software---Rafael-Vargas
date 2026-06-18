@@ -24,8 +24,22 @@ import {
   useToast
 } from './ui.jsx';
 
-const activeOptions = ['ATIVO', 'INATIVO', 'BLOQUEADO', 'SUSPENSO'];
-const busOptions = ['ATIVO', 'MANUTENCAO', 'INATIVO'];
+const studentStatusOptions = [
+  { value: 'ATIVO', label: 'Ativo' },
+  { value: 'BLOQUEADO', label: 'Bloqueado' },
+  { value: 'SUSPENSO', label: 'Suspenso' },
+  { value: 'INATIVO', label: 'Inativo' }
+];
+const driverStatusOptions = [
+  { value: 'ATIVO', label: 'Ativo' },
+  { value: 'AFASTADO', label: 'Afastado' },
+  { value: 'INATIVO', label: 'Inativo' }
+];
+const busOptions = [
+  { value: 'ATIVO', label: 'Ativo' },
+  { value: 'MANUTENÇÃO', label: 'Em Manutenção' },
+  { value: 'INATIVO', label: 'Inativo' }
+];
 const driverCategories = ['A', 'B', 'C', 'D', 'E'];
 const turns = ['MATUTINO', 'VESPERTINO', 'NOTURNO'];
 
@@ -45,7 +59,7 @@ function LoginPage() {
 
   const submit = (event) => {
     event.preventDefault();
-    const user = nome.trim() || 'Usuario';
+    const user = nome.trim() || 'Usuário';
     localStorage.setItem('ste-user', user);
     showToast('Login realizado com sucesso.');
     navigate('/', { replace: true });
@@ -56,7 +70,7 @@ function LoginPage() {
       <Card className="login-card" icon="bi-bus-front-fill" title="Sistema de Transporte Escolar">
         <form onSubmit={submit}>
           <div className="mb-3">
-            <label className="form-label" htmlFor="loginNome">Usuario</label>
+            <label className="form-label" htmlFor="loginNome">Usuário</label>
             <input
               id="loginNome"
               className="form-control"
@@ -122,7 +136,7 @@ function DashboardPage() {
   const cards = [
     ['alunos', 'Alunos', 'bi-people-fill', 'blue', '/alunos'],
     ['motoristas', 'Motoristas', 'bi-person-badge-fill', 'green', '/motoristas'],
-    ['onibus', 'Onibus', 'bi-bus-front', 'orange', '/onibus'],
+    ['onibus', 'Ônibus', 'bi-bus-front', 'orange', '/onibus'],
     ['rotas', 'Rotas', 'bi-signpost-2-fill', 'blue', '/rotas'],
     ['viagens', 'Viagens', 'bi-calendar2-check-fill', 'green', '/viagens'],
     ['registros', 'Acessos', 'bi-qr-code-scan', 'red', '/registros-acesso']
@@ -130,7 +144,7 @@ function DashboardPage() {
 
   return (
     <>
-      <PageHeader title="Dashboard" subtitle="Visao geral do Sistema de Transporte Escolar" />
+      <PageHeader title="Dashboard" subtitle="Visão geral do Sistema de Transporte Escolar" />
       <div className="row g-3 mb-4">
         {cards.map(([key, label, icon, color, link]) => (
           <div className="col-md-4" key={key}>
@@ -146,7 +160,7 @@ function DashboardPage() {
           </div>
         ))}
       </div>
-      <Card icon="bi-lightning-charge-fill" title="Acoes rapidas">
+      <Card icon="bi-lightning-charge-fill" title="Ações rápidas">
         <div className="quick-actions">
           <Link to="/alunos/novo" className="btn-ste-secondary justify-content-center text-decoration-none">
             <i className="bi bi-person-plus-fill" />
@@ -309,7 +323,7 @@ function EntityPage({ config }) {
     if (!(await confirm(`Excluir ${config.singular.toLowerCase()} #${item.codigo}?`))) return;
     try {
       await api.delete(`${config.endpoint}/${item.codigo}`);
-      showToast(`${config.singular} excluido com sucesso.`);
+      showToast(`${config.singular} excluído com sucesso.`);
       setItems((current) => current.filter((entry) => entry.codigo !== item.codigo));
     } catch (error) {
       showToast(error.message, 'error');
@@ -339,7 +353,7 @@ function EntityPage({ config }) {
             </button>
             <button className="btn-ste-primary" disabled={saving} type="submit">
               {saving ? <span className="spinner-border spinner-border-sm" /> : <i className="bi bi-check-lg" />}
-              {editingId ? 'Salvar alteracoes' : 'Salvar'}
+              {editingId ? 'Salvar alterações' : 'Salvar'}
             </button>
           </div>
         </form>
@@ -357,7 +371,7 @@ function EntityPage({ config }) {
               <tr>
                 <th>#</th>
                 {config.columns.map((column) => <th key={column.header}>{column.header}</th>)}
-                <th>Acoes</th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -430,31 +444,31 @@ const entityConfigs = {
     endpoint: '/prefeituras',
     icon: 'bi-building-fill',
     fields: [
-      { name: 'razaoSocial', label: 'Razao Social', span: 6 },
+      { name: 'razaoSocial', label: 'Razão Social', span: 6 },
       { name: 'cnpj', label: 'CNPJ', span: 3 },
-      { name: 'email', label: 'Email', type: 'email', span: 3 },
-      { name: 'endereco', label: 'Endereco', span: 6 },
+      { name: 'email', label: 'E-mail', type: 'email', span: 3 },
+      { name: 'endereco', label: 'Endereço', span: 6 },
       { name: 'telefones', label: 'Telefones', span: 3 },
       { name: 'cidadeId', label: 'Cidade', type: 'select', span: 3, lookup: cidadeLookup }
     ],
     columns: [
-      { header: 'Razao Social', render: (item) => item.razaoSocial },
+      { header: 'Razão Social', render: (item) => item.razaoSocial },
       { header: 'CNPJ', render: (item) => item.cnpj },
       { header: 'Cidade', render: (item) => item.cidade?.nome || item.cidadeId },
-      { header: 'Email', render: (item) => item.email }
+      { header: 'E-mail', render: (item) => item.email }
     ]
   },
   instituicoes: {
-    title: 'Instituicoes de Ensino',
-    singular: 'Instituicao',
-    subtitle: 'Gerencie instituicoes vinculadas aos alunos',
+    title: 'Instituições de Ensino',
+    singular: 'Instituição',
+    subtitle: 'Gerencie instituições vinculadas aos alunos',
     endpoint: '/instituicoes-ensino',
     icon: 'bi-mortarboard-fill',
     fields: [
       { name: 'nome', label: 'Nome', span: 6 },
       { name: 'tipoInstituicao', label: 'Tipo', span: 3 },
       { name: 'cidadeId', label: 'Cidade', type: 'select', span: 3, lookup: cidadeLookup },
-      { name: 'endereco', label: 'Endereco', span: 8 },
+      { name: 'endereco', label: 'Endereço', span: 8 },
       { name: 'telefones', label: 'Telefones', span: 4 }
     ],
     columns: [
@@ -476,18 +490,18 @@ const entityConfigs = {
       { name: 'cnh', label: 'CNH', span: 3 },
       { name: 'validadeCNH', label: 'Validade CNH', type: 'date', span: 3 },
       { name: 'categoriaCNH', label: 'Categoria', type: 'select', span: 3, staticOptions: driverCategories },
-      { name: 'situacao', label: 'Situacao', type: 'select', span: 3, staticOptions: activeOptions }
+      { name: 'situacao', label: 'Situação', type: 'select', span: 3, staticOptions: driverStatusOptions }
     ],
     columns: [
       { header: 'Nome', render: (item) => item.nome },
       { header: 'CPF', render: (item) => item.cpf },
       { header: 'CNH', render: (item) => item.cnh },
-      { header: 'Situacao', render: (item) => <Badge value={item.situacao} /> }
+      { header: 'Situação', render: (item) => <Badge value={item.situacao} /> }
     ]
   },
   onibus: {
-    title: 'Onibus',
-    singular: 'Onibus',
+    title: 'Ônibus',
+    singular: 'Ônibus',
     subtitle: 'Gerencie a frota escolar',
     endpoint: '/onibus',
     icon: 'bi-bus-front',
@@ -496,13 +510,13 @@ const entityConfigs = {
       { name: 'modelo', label: 'Modelo', span: 5 },
       { name: 'capacidade', label: 'Capacidade', type: 'number', number: true, span: 2 },
       { name: 'ano', label: 'Ano', type: 'number', number: true, span: 2 },
-      { name: 'situacao', label: 'Situacao', type: 'select', span: 3, staticOptions: busOptions }
+      { name: 'situacao', label: 'Situação', type: 'select', span: 3, staticOptions: busOptions }
     ],
     columns: [
       { header: 'Placa', render: (item) => <span className="badge bg-secondary font-monospace">{item.placa}</span> },
       { header: 'Modelo', render: (item) => item.modelo },
       { header: 'Capacidade', render: (item) => item.capacidade },
-      { header: 'Situacao', render: (item) => <Badge value={item.situacao} /> }
+      { header: 'Situação', render: (item) => <Badge value={item.situacao} /> }
     ]
   },
   rotas: {
@@ -512,23 +526,23 @@ const entityConfigs = {
     endpoint: '/rotas',
     icon: 'bi-signpost-2-fill',
     fields: [
-      { name: 'descricao', label: 'Descricao', span: 6 },
+      { name: 'descricao', label: 'Descrição', span: 6 },
       { name: 'turno', label: 'Turno', type: 'select', span: 3, staticOptions: turns },
       { name: 'origemId', label: 'Origem', type: 'select', span: 3, lookup: cidadeLookup },
       { name: 'destinoId', label: 'Destino', type: 'select', span: 3, lookup: cidadeLookup },
-      { name: 'observacao', label: 'Observacao', type: 'textarea', required: false, span: 9 }
+      { name: 'observacao', label: 'Observação', type: 'textarea', required: false, span: 9 }
     ],
     columns: [
-      { header: 'Descricao', render: (item) => item.descricao },
+      { header: 'Descrição', render: (item) => item.descricao },
       { header: 'Turno', render: (item) => item.turno },
       { header: 'Origem', render: (item) => item.origem?.nome || item.origemId },
       { header: 'Destino', render: (item) => item.destino?.nome || item.destinoId }
     ]
   },
   matriculas: {
-    title: 'Matriculas de Transporte',
-    singular: 'Matricula',
-    subtitle: 'Vincule alunos ativos as rotas',
+    title: 'Matrículas de Transporte',
+    singular: 'Matrícula',
+    subtitle: 'Vincule alunos ativos às rotas',
     endpoint: '/matriculas-transporte',
     icon: 'bi-card-checklist',
     fields: [
@@ -549,18 +563,18 @@ const entityConfigs = {
     icon: 'bi-calendar2-check-fill',
     fields: [
       { name: 'data', label: 'Data', type: 'date', span: 3 },
-      { name: 'horarioSaida', label: 'Horario de Saida', type: 'time', span: 3 },
-      { name: 'horarioChegada', label: 'Horario de Chegada', type: 'time', span: 3 },
+      { name: 'horarioSaida', label: 'Horário de Saída', type: 'time', span: 3 },
+      { name: 'horarioChegada', label: 'Horário de Chegada', type: 'time', span: 3 },
       { name: 'rotaId', label: 'Rota', type: 'select', span: 6, lookup: { endpoint: '/rotas', label: (rota) => `${rota.descricao} (${rota.turno})` } },
       { name: 'motoristaId', label: 'Motorista', type: 'select', span: 3, lookup: { endpoint: '/motoristas', label: (motorista) => `${motorista.nome} - ${motorista.cpf}` } },
-      { name: 'onibusId', label: 'Onibus', type: 'select', span: 3, lookup: { endpoint: '/onibus', label: (onibus) => `${onibus.placa} - ${onibus.modelo}` } }
+      { name: 'onibusId', label: 'Ônibus', type: 'select', span: 3, lookup: { endpoint: '/onibus', label: (onibus) => `${onibus.placa} - ${onibus.modelo}` } }
     ],
     columns: [
       { header: 'Data', render: (item) => fmtDate(item.data) },
-      { header: 'Saida', render: (item) => item.horarioSaida },
+      { header: 'Saída', render: (item) => item.horarioSaida },
       { header: 'Rota', render: (item) => item.rota?.descricao || item.rotaId },
       { header: 'Motorista', render: (item) => item.motorista?.nome || item.motoristaId },
-      { header: 'Onibus', render: (item) => item.onibus?.placa || item.onibusId }
+      { header: 'Ônibus', render: (item) => item.onibus?.placa || item.onibusId }
     ]
   }
 };
@@ -596,7 +610,7 @@ function StudentListPage() {
     if (!(await confirm(`Excluir o aluno "${student.nome}"?`))) return;
     try {
       await api.delete(`/alunos/${student.codigo}`);
-      showToast('Aluno excluido com sucesso.');
+      showToast('Aluno excluído com sucesso.');
       setStudents((current) => current.filter((item) => item.codigo !== student.codigo));
     } catch (error) {
       showToast(error.message, 'error');
@@ -624,11 +638,11 @@ function StudentListPage() {
                 <th>#</th>
                 <th>Nome</th>
                 <th>CPF</th>
-                <th>Instituicao</th>
+                <th>Instituição</th>
                 <th>Prefeitura</th>
                 <th>Rota(s)</th>
-                <th>Situacao</th>
-                <th>Acoes</th>
+                <th>Situação</th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -771,10 +785,10 @@ function StudentFormPage({ legacy = false }) {
             <FormField field={{ name: 'nome', label: 'Nome completo', span: 6 }} value={form.nome} onChange={update} />
             <FormField field={{ name: 'cpf', label: 'CPF', span: 3 }} value={form.cpf} onChange={update} />
             <FormField field={{ name: 'dataNascimento', label: 'Data de Nascimento', type: 'date', span: 3 }} value={form.dataNascimento} onChange={update} />
-            <FormField field={{ name: 'endereco', label: 'Endereco', span: 8 }} value={form.endereco} onChange={update} />
+            <FormField field={{ name: 'endereco', label: 'Endereço', span: 8 }} value={form.endereco} onChange={update} />
             <FormField field={{ name: 'telefones', label: 'Telefones', span: 4 }} value={form.telefones} onChange={update} />
-            <FormField field={{ name: 'responsavelLegal', label: 'Responsavel Legal', required: false, span: 6 }} value={form.responsavelLegal} onChange={update} />
-            <FormField field={{ name: 'situacaoAcesso', label: 'Situacao de Acesso', type: 'select', staticOptions: activeOptions, span: 3 }} value={form.situacaoAcesso} onChange={update} />
+            <FormField field={{ name: 'responsavelLegal', label: 'Responsável Legal', required: false, span: 6 }} value={form.responsavelLegal} onChange={update} />
+            <FormField field={{ name: 'situacaoAcesso', label: 'Situação de Acesso', type: 'select', staticOptions: studentStatusOptions, span: 3 }} value={form.situacaoAcesso} onChange={update} />
             <div className="field-span-3">
               <label className="form-label" htmlFor="foto">Foto</label>
               <input id="foto" className="form-control" type="file" accept=".jpg,.jpeg,.png" onChange={onFile} />
@@ -782,7 +796,7 @@ function StudentFormPage({ legacy = false }) {
             </div>
           </div>
         </Card>
-        <Card icon="bi-link-45deg" title="Vinculos Institucionais">
+        <Card icon="bi-link-45deg" title="Vínculos Institucionais">
           <div className="form-grid">
             <FormField
               field={{ name: 'prefeituraId', label: 'Prefeitura Autorizadora', type: 'select', span: 6 }}
@@ -791,7 +805,7 @@ function StudentFormPage({ legacy = false }) {
               options={lookups.prefeituras.map((item) => ({ value: item.codigo, label: item.razaoSocial }))}
             />
             <FormField
-              field={{ name: 'instituicaoEnsinoId', label: 'Instituicao de Ensino', type: 'select', span: 6 }}
+              field={{ name: 'instituicaoEnsinoId', label: 'Instituição de Ensino', type: 'select', span: 6 }}
               value={form.instituicaoEnsinoId}
               onChange={update}
               options={lookups.instituicoes.map((item) => ({ value: item.codigo, label: item.nome }))}
@@ -880,7 +894,7 @@ function AccessPage() {
     const student = students.find((item) => Number(item.codigo) === Number(form.alunoId));
     const trip = trips.find((item) => Number(item.codigo) === Number(form.viagemId));
     if (!trip || !student?.matriculas?.some((matricula) => Number(matricula.rotaId) === Number(trip.rotaId))) {
-      showToast('O aluno selecionado nao possui matricula na rota desta viagem.', 'error');
+      showToast('O aluno selecionado não possui matrícula na rota desta viagem.', 'error');
       return;
     }
     const payload = {
@@ -921,7 +935,7 @@ function AccessPage() {
     if (!(await confirm(`Excluir o registro de acesso #${record.codigo}?`))) return;
     try {
       await api.delete(`/registros-acesso/${record.codigo}`);
-      showToast('Registro excluido.');
+      showToast('Registro excluído.');
       setRecords((current) => current.filter((item) => item.codigo !== record.codigo));
     } catch (error) {
       showToast(error.message, 'error');
@@ -960,7 +974,7 @@ function AccessPage() {
               <label className="form-label" htmlFor="alunoId">Aluno <span className="text-danger">*</span></label>
               <input
                 className="form-control mb-2"
-                placeholder="Pesquisar aluno por nome ou codigo..."
+                placeholder="Pesquisar aluno por nome ou código..."
                 value={studentFilter}
                 onChange={(event) => setStudentFilter(event.target.value)}
               />
@@ -991,23 +1005,23 @@ function AccessPage() {
               <div className="row g-2 fs-13">
                 <div className="col-md-4"><span className="text-muted">Rota:</span><span className="fw-600 ms-1">{selectedTrip.rota?.origem?.nome || '?'} - {selectedTrip.rota?.destino?.nome || '?'}</span></div>
                 <div className="col-md-3"><span className="text-muted">Data:</span><span className="fw-600 ms-1">{fmtDate(selectedTrip.data)}</span></div>
-                <div className="col-md-2"><span className="text-muted">Saida:</span><span className="fw-600 ms-1">{selectedTrip.horarioSaida}</span></div>
+                <div className="col-md-2"><span className="text-muted">Saída:</span><span className="fw-600 ms-1">{selectedTrip.horarioSaida}</span></div>
                 <div className="col-md-3"><span className="text-muted">Motorista:</span><span className="fw-600 ms-1">{selectedTrip.motorista?.nome || '-'}</span></div>
               </div>
             </div>
           )}
         </Card>
         <div className="d-flex gap-3 justify-content-end mt-4">
-          {editingId && <button type="button" className="btn-ste-secondary" onClick={reset}><i className="bi bi-x" /> Cancelar Edicao</button>}
+          {editingId && <button type="button" className="btn-ste-secondary" onClick={reset}><i className="bi bi-x" /> Cancelar Edição</button>}
           {!editingId && <button type="button" className="btn-ste-secondary" onClick={reset}><i className="bi bi-eraser" /> Limpar</button>}
-          <button type="submit" className="btn-ste-primary"><i className="bi bi-check-lg" /> {editingId ? 'Salvar alteracoes' : 'Registrar Acesso'}</button>
+          <button type="submit" className="btn-ste-primary"><i className="bi bi-check-lg" /> {editingId ? 'Salvar alterações' : 'Registrar Acesso'}</button>
         </div>
       </form>
-      <Card icon="bi-clock-history" title="Ultimos Registros" className="mt-4">
+      <Card icon="bi-clock-history" title="Últimos Registros" className="mt-4">
         <div className="table-wrapper">
           <table className="ste-table">
             <thead>
-              <tr><th>#</th><th>Tipo</th><th>Aluno</th><th>Viagem</th><th>Data/Hora</th><th>Acoes</th></tr>
+              <tr><th>#</th><th>Tipo</th><th>Aluno</th><th>Viagem</th><th>Data/Hora</th><th>Ações</th></tr>
             </thead>
             <tbody>
               {recent.length ? recent.map((record) => (
@@ -1059,7 +1073,7 @@ function DateRangeReport({ title, subtitle, icon, endpoint, columns, transformUr
   const submit = async (event) => {
     event.preventDefault();
     if (filters.dataInicial > filters.dataFinal) {
-      showToast('A data inicial nao pode ser posterior a data final.', 'error');
+      showToast('A data inicial não pode ser posterior à data final.', 'error');
       return;
     }
     setLoading(true);
@@ -1076,7 +1090,7 @@ function DateRangeReport({ title, subtitle, icon, endpoint, columns, transformUr
   return (
     <>
       <PageHeader title={title} subtitle={subtitle} />
-      <Card icon="bi-calendar-range-fill" title="Periodo de Analise">
+      <Card icon="bi-calendar-range-fill" title="Período de Análise">
         <form className="row g-3 align-items-end" onSubmit={submit}>
           <div className="col-md-5">
             <label className="form-label" htmlFor={`${title}-inicio`}>Data Inicial</label>
@@ -1106,7 +1120,7 @@ function AccessByStudentReport() {
   return (
     <DateRangeReport
       title="Acessos por Aluno"
-      subtitle="Consulte a quantidade de embarques e desembarques por aluno em um periodo"
+      subtitle="Consulte a quantidade de embarques e desembarques por aluno em um período"
       icon="bi-table"
       transformUrl={({ dataInicial, dataFinal }) => `/registros-acesso/relatorios/quantidades-por-aluno/${dataInicial}/${dataFinal}`}
       columns={[
@@ -1130,7 +1144,7 @@ function AccessByPeriodReport() {
   const submit = async (event) => {
     event.preventDefault();
     if (filters.dataInicial > filters.dataFinal) {
-      showToast('A data inicial nao pode ser posterior a data final.', 'error');
+      showToast('A data inicial não pode ser posterior à data final.', 'error');
       return;
     }
     setLoading(true);
@@ -1146,7 +1160,7 @@ function AccessByPeriodReport() {
 
   return (
     <>
-      <PageHeader title="Acessos por Periodo" subtitle="Consulte o historico de acessos num intervalo de datas" />
+      <PageHeader title="Acessos por Período" subtitle="Consulte o histórico de acessos num intervalo de datas" />
       <Card icon="bi-calendar-range-fill" title="Filtros">
         <form className="row g-3 align-items-end" onSubmit={submit}>
           <div className="col-md-3">
@@ -1202,12 +1216,12 @@ function StudentsByInstitutionReport() {
 
   return (
     <>
-      <PageHeader title="Alunos por Instituicao" subtitle="Distribuicao de alunos por instituicao e situacao de acesso" />
+      <PageHeader title="Alunos por Instituição" subtitle="Distribuição de alunos por instituição e situação de acesso" />
       <Card icon="bi-table" title="Resultados">
         <ReportTable
           columns={[
-            { header: 'Instituicao', render: (row) => row.instituicao },
-            { header: 'Situacao', render: (row) => <Badge value={row.situacao} /> },
+            { header: 'Instituição', render: (row) => row.instituicao },
+            { header: 'Situação', render: (row) => <Badge value={row.situacao} /> },
             { header: 'Quantidade', render: (row) => row.quantidade }
           ]}
           rows={rows}
@@ -1240,7 +1254,7 @@ function StudentsByRouteReport() {
 
   return (
     <>
-      <PageHeader title="Alunos por Rota" subtitle="Consulte os alunos vinculados a uma rota especifica" />
+      <PageHeader title="Alunos por Rota" subtitle="Consulte os alunos vinculados a uma rota específica" />
       <Card icon="bi-funnel-fill" title="Filtro">
         <form className="row g-3 align-items-end" onSubmit={submit}>
           <div className="col-md-9">
@@ -1263,8 +1277,8 @@ function StudentsByRouteReport() {
             { header: '#', render: (row) => row.codigo },
             { header: 'Aluno', render: (row) => row.nome },
             { header: 'CPF', render: (row) => row.cpf },
-            { header: 'Situacao', render: (row) => <Badge value={row.situacaoAcesso} /> },
-            { header: 'Instituicao', render: (row) => row.instituicaoEnsino?.nome || '-' }
+            { header: 'Situação', render: (row) => <Badge value={row.situacaoAcesso} /> },
+            { header: 'Instituição', render: (row) => row.instituicaoEnsino?.nome || '-' }
           ]}
           rows={rows}
         />
@@ -1288,7 +1302,7 @@ function TripsByDriverReport() {
   const submit = async (event) => {
     event.preventDefault();
     if (filters.dataInicial && filters.dataFinal && filters.dataInicial > filters.dataFinal) {
-      showToast('A data inicial nao pode ser posterior a data final.', 'error');
+      showToast('A data inicial não pode ser posterior à data final.', 'error');
       return;
     }
     let url = `/viagens/relatorios/por-motorista?motoristaId=${filters.motoristaId}`;
@@ -1322,10 +1336,10 @@ function TripsByDriverReport() {
           columns={[
             { header: '#', render: (row) => row.codigo },
             { header: 'Data', render: (row) => fmtDate(row.data) },
-            { header: 'Saida', render: (row) => row.horarioSaida },
+            { header: 'Saída', render: (row) => row.horarioSaida },
             { header: 'Motorista', render: (row) => row.motorista?.nome || '-' },
             { header: 'Rota', render: (row) => row.rota?.descricao || '-' },
-            { header: 'Onibus', render: (row) => row.onibus?.placa || '-' }
+            { header: 'Ônibus', render: (row) => row.onibus?.placa || '-' }
           ]}
           rows={rows}
         />
@@ -1337,16 +1351,16 @@ function TripsByDriverReport() {
 function FleetUsageReport() {
   return (
     <DateRangeReport
-      title="Utilizacao de Frota"
-      subtitle="Consulte a quantidade de viagens por veiculo em um periodo"
+      title="Utilização de Frota"
+      subtitle="Consulte a quantidade de viagens por veículo em um período"
       icon="bi-table"
       endpoint="/onibus/relatorios/utilizacao-frota"
       columns={[
-        { header: 'Onibus', render: (row) => row.onibusId },
+        { header: 'Ônibus', render: (row) => row.onibusId },
         { header: 'Placa', render: (row) => <span className="badge bg-secondary font-monospace">{row.placa}</span> },
         { header: 'Modelo', render: (row) => row.modelo },
         { header: 'Capacidade', render: (row) => row.capacidade },
-        { header: 'Situacao', render: (row) => <Badge value={row.situacao} /> },
+        { header: 'Situação', render: (row) => <Badge value={row.situacao} /> },
         { header: 'Viagens', render: (row) => row.quantidadeViagens }
       ]}
       summary={(rows) => (
@@ -1354,7 +1368,7 @@ function FleetUsageReport() {
           <div className="col-md-4">
             <div className="ste-card p-3 d-flex align-items-center gap-3">
               <div className="stat-icon green"><i className="bi bi-truck" /></div>
-              <div><h3 className="m-0 fw-bold fs-4 text-accent">{rows.filter((row) => Number(row.quantidadeViagens) > 0).length}</h3><p className="m-0 text-muted small">Veiculos Utilizados</p></div>
+              <div><h3 className="m-0 fw-bold fs-4 text-accent">{rows.filter((row) => Number(row.quantidadeViagens) > 0).length}</h3><p className="m-0 text-muted small">Veículos Utilizados</p></div>
             </div>
           </div>
           <div className="col-md-4">
