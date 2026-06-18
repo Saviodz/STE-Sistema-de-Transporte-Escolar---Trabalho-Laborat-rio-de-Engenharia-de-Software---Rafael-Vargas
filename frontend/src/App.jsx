@@ -187,13 +187,17 @@ function DashboardPage() {
 function FormField({ field, value, onChange, options = [] }) {
   const id = field.name;
   const span = field.span || 6;
+  const isSelect = field.type === 'select';
   const common = {
     id,
-    className: field.type === 'select' ? 'form-select' : 'form-control',
+    className: isSelect ? 'form-select' : 'form-control',
     value: value ?? '',
     required: field.required !== false,
     onChange: (event) => onChange(field.name, event.target.value)
   };
+  if (!isSelect && field.placeholder) common.placeholder = field.placeholder;
+  if (field.minLength) common.minLength = field.minLength;
+  if (field.maxLength) common.maxLength = field.maxLength;
 
   return (
     <div className={`field-span-${span}`}>
@@ -201,9 +205,9 @@ function FormField({ field, value, onChange, options = [] }) {
         {field.label}
         {field.required !== false && <span className="text-danger"> *</span>}
       </label>
-      {field.type === 'select' ? (
+      {isSelect ? (
         <select {...common}>
-          <option value="">-- Selecione --</option>
+          <option value="">-- {field.selectPlaceholder || field.placeholder || 'Selecione'} --</option>
           {(field.staticOptions || options).map((option) => {
             const valueKey = typeof option === 'string' ? option : option.value;
             const label = typeof option === 'string' ? option : option.label;
@@ -414,8 +418,8 @@ const entityConfigs = {
     endpoint: '/estados',
     icon: 'bi-map-fill',
     fields: [
-      { name: 'nome', label: 'Nome', span: 8 },
-      { name: 'siglaUF', label: 'UF', span: 4 }
+      { name: 'nome', label: 'Nome', span: 8, placeholder: 'Ex: Espirito Santo', minLength: 2, maxLength: 50 },
+      { name: 'siglaUF', label: 'UF', span: 4, placeholder: 'Ex: ES', minLength: 2, maxLength: 2 }
     ],
     columns: [
       { header: 'Nome', render: (item) => item.nome },
@@ -429,8 +433,8 @@ const entityConfigs = {
     endpoint: '/cidades',
     icon: 'bi-geo-alt-fill',
     fields: [
-      { name: 'nome', label: 'Nome', span: 8 },
-      { name: 'estadoId', label: 'Estado', type: 'select', span: 4, lookup: { endpoint: '/estados', label: (estado) => `${estado.nome} (${estado.siglaUF})` } }
+      { name: 'nome', label: 'Nome', span: 8, placeholder: 'Ex: Cachoeiro de Itapemirim', minLength: 2, maxLength: 60 },
+      { name: 'estadoId', label: 'Estado', type: 'select', span: 4, selectPlaceholder: 'Selecione o estado', lookup: { endpoint: '/estados', label: (estado) => `${estado.nome} (${estado.siglaUF})` } }
     ],
     columns: [
       { header: 'Nome', render: (item) => item.nome },
@@ -444,12 +448,12 @@ const entityConfigs = {
     endpoint: '/prefeituras',
     icon: 'bi-building-fill',
     fields: [
-      { name: 'razaoSocial', label: 'Razão Social', span: 6 },
-      { name: 'cnpj', label: 'CNPJ', span: 3 },
-      { name: 'email', label: 'E-mail', type: 'email', span: 3 },
-      { name: 'endereco', label: 'Endereço', span: 6 },
-      { name: 'telefones', label: 'Telefones', span: 3 },
-      { name: 'cidadeId', label: 'Cidade', type: 'select', span: 3, lookup: cidadeLookup }
+      { name: 'razaoSocial', label: 'Razão Social', span: 6, placeholder: 'Nome oficial da prefeitura' },
+      { name: 'cnpj', label: 'CNPJ', span: 3, placeholder: '00.000.000/0000-00', maxLength: 18 },
+      { name: 'email', label: 'E-mail', type: 'email', span: 3, placeholder: 'contato@prefeitura.gov.br' },
+      { name: 'endereco', label: 'Endereço', span: 6, placeholder: 'Rua, numero, bairro' },
+      { name: 'telefones', label: 'Telefones', span: 3, placeholder: '(28) 3322-0000' },
+      { name: 'cidadeId', label: 'Cidade', type: 'select', span: 3, selectPlaceholder: 'Selecione a cidade', lookup: cidadeLookup }
     ],
     columns: [
       { header: 'Razão Social', render: (item) => item.razaoSocial },
@@ -465,11 +469,11 @@ const entityConfigs = {
     endpoint: '/instituicoes-ensino',
     icon: 'bi-mortarboard-fill',
     fields: [
-      { name: 'nome', label: 'Nome', span: 6 },
-      { name: 'tipoInstituicao', label: 'Tipo', span: 3 },
-      { name: 'cidadeId', label: 'Cidade', type: 'select', span: 3, lookup: cidadeLookup },
-      { name: 'endereco', label: 'Endereço', span: 8 },
-      { name: 'telefones', label: 'Telefones', span: 4 }
+      { name: 'nome', label: 'Nome', span: 6, placeholder: 'Ex: IFES Cachoeiro de Itapemirim' },
+      { name: 'tipoInstituicao', label: 'Tipo', span: 3, placeholder: 'Publica ou Privada' },
+      { name: 'cidadeId', label: 'Cidade', type: 'select', span: 3, selectPlaceholder: 'Selecione a cidade', lookup: cidadeLookup },
+      { name: 'endereco', label: 'Endereço', span: 8, placeholder: 'Rua, numero, bairro' },
+      { name: 'telefones', label: 'Telefones', span: 4, placeholder: '(28) 3300-0000' }
     ],
     columns: [
       { header: 'Nome', render: (item) => item.nome },
@@ -484,13 +488,13 @@ const entityConfigs = {
     endpoint: '/motoristas',
     icon: 'bi-person-badge-fill',
     fields: [
-      { name: 'nome', label: 'Nome', span: 6 },
-      { name: 'cpf', label: 'CPF', span: 3 },
-      { name: 'telefones', label: 'Telefones', span: 3 },
-      { name: 'cnh', label: 'CNH', span: 3 },
+      { name: 'nome', label: 'Nome', span: 6, placeholder: 'Nome do motorista' },
+      { name: 'cpf', label: 'CPF', span: 3, placeholder: '000.000.000-00', maxLength: 14 },
+      { name: 'telefones', label: 'Telefones', span: 3, placeholder: '(28) 99999-0000' },
+      { name: 'cnh', label: 'CNH', span: 3, placeholder: '00000000000', maxLength: 11 },
       { name: 'validadeCNH', label: 'Validade CNH', type: 'date', span: 3 },
-      { name: 'categoriaCNH', label: 'Categoria', type: 'select', span: 3, staticOptions: driverCategories },
-      { name: 'situacao', label: 'Situação', type: 'select', span: 3, staticOptions: driverStatusOptions }
+      { name: 'categoriaCNH', label: 'Categoria', type: 'select', span: 3, selectPlaceholder: 'Categoria', staticOptions: driverCategories },
+      { name: 'situacao', label: 'Situação', type: 'select', span: 3, selectPlaceholder: 'Selecione a situacao', staticOptions: driverStatusOptions }
     ],
     columns: [
       { header: 'Nome', render: (item) => item.nome },
@@ -506,11 +510,11 @@ const entityConfigs = {
     endpoint: '/onibus',
     icon: 'bi-bus-front',
     fields: [
-      { name: 'placa', label: 'Placa', span: 3 },
-      { name: 'modelo', label: 'Modelo', span: 5 },
-      { name: 'capacidade', label: 'Capacidade', type: 'number', number: true, span: 2 },
-      { name: 'ano', label: 'Ano', type: 'number', number: true, span: 2 },
-      { name: 'situacao', label: 'Situação', type: 'select', span: 3, staticOptions: busOptions }
+      { name: 'placa', label: 'Placa', span: 3, placeholder: 'AAA-0000', maxLength: 8 },
+      { name: 'modelo', label: 'Modelo', span: 5, placeholder: 'Ex: Marcopolo Volare W9' },
+      { name: 'capacidade', label: 'Capacidade', type: 'number', number: true, span: 2, placeholder: 'Ex: 40', min: 1, max: 100 },
+      { name: 'ano', label: 'Ano', type: 'number', number: true, span: 2, placeholder: '2024', min: 1990, max: 2030 },
+      { name: 'situacao', label: 'Situação', type: 'select', span: 3, selectPlaceholder: 'Selecione a situacao', staticOptions: busOptions }
     ],
     columns: [
       { header: 'Placa', render: (item) => <span className="badge bg-secondary font-monospace">{item.placa}</span> },
@@ -526,11 +530,11 @@ const entityConfigs = {
     endpoint: '/rotas',
     icon: 'bi-signpost-2-fill',
     fields: [
-      { name: 'descricao', label: 'Descrição', span: 6 },
-      { name: 'turno', label: 'Turno', type: 'select', span: 3, staticOptions: turns },
-      { name: 'origemId', label: 'Origem', type: 'select', span: 3, lookup: cidadeLookup },
-      { name: 'destinoId', label: 'Destino', type: 'select', span: 3, lookup: cidadeLookup },
-      { name: 'observacao', label: 'Observação', type: 'textarea', required: false, span: 9 }
+      { name: 'descricao', label: 'Descrição', span: 6, placeholder: 'Descreva o percurso, pontos de parada, etc.' },
+      { name: 'turno', label: 'Turno', type: 'select', span: 3, selectPlaceholder: 'Selecione o turno', staticOptions: turns },
+      { name: 'origemId', label: 'Origem', type: 'select', span: 3, selectPlaceholder: 'Selecione a origem', lookup: cidadeLookup },
+      { name: 'destinoId', label: 'Destino', type: 'select', span: 3, selectPlaceholder: 'Selecione o destino', lookup: cidadeLookup },
+      { name: 'observacao', label: 'Observação', type: 'textarea', required: false, span: 9, placeholder: 'Opcional' }
     ],
     columns: [
       { header: 'Descrição', render: (item) => item.descricao },
@@ -546,8 +550,8 @@ const entityConfigs = {
     endpoint: '/matriculas-transporte',
     icon: 'bi-card-checklist',
     fields: [
-      { name: 'alunoId', label: 'Aluno', type: 'select', span: 6, lookup: { endpoint: '/alunos', label: (aluno) => `${aluno.nome} - ${aluno.cpf}` } },
-      { name: 'rotaId', label: 'Rota', type: 'select', span: 6, lookup: { endpoint: '/rotas', label: (rota) => `${rota.descricao} (${rota.turno})` } }
+      { name: 'alunoId', label: 'Aluno', type: 'select', span: 6, selectPlaceholder: 'Selecione o aluno', help: 'Apenas alunos com situacao ATIVO.', lookup: { endpoint: '/alunos', label: (aluno) => `${aluno.nome} - ${aluno.cpf}` } },
+      { name: 'rotaId', label: 'Rota', type: 'select', span: 6, selectPlaceholder: 'Selecione a rota', lookup: { endpoint: '/rotas', label: (rota) => `${rota.descricao} (${rota.turno})` } }
     ],
     columns: [
       { header: 'Aluno', render: (item) => item.aluno?.nome || item.alunoId },
@@ -565,9 +569,9 @@ const entityConfigs = {
       { name: 'data', label: 'Data', type: 'date', span: 3 },
       { name: 'horarioSaida', label: 'Horário de Saída', type: 'time', span: 3 },
       { name: 'horarioChegada', label: 'Horário de Chegada', type: 'time', span: 3 },
-      { name: 'rotaId', label: 'Rota', type: 'select', span: 6, lookup: { endpoint: '/rotas', label: (rota) => `${rota.descricao} (${rota.turno})` } },
-      { name: 'motoristaId', label: 'Motorista', type: 'select', span: 3, lookup: { endpoint: '/motoristas', label: (motorista) => `${motorista.nome} - ${motorista.cpf}` } },
-      { name: 'onibusId', label: 'Ônibus', type: 'select', span: 3, lookup: { endpoint: '/onibus', label: (onibus) => `${onibus.placa} - ${onibus.modelo}` } }
+      { name: 'rotaId', label: 'Rota', type: 'select', span: 6, selectPlaceholder: 'Selecione a rota', lookup: { endpoint: '/rotas', label: (rota) => `${rota.descricao} (${rota.turno})` } },
+      { name: 'motoristaId', label: 'Motorista', type: 'select', span: 3, selectPlaceholder: 'Selecione o motorista', lookup: { endpoint: '/motoristas', label: (motorista) => `${motorista.nome} - ${motorista.cpf}` } },
+      { name: 'onibusId', label: 'Ônibus', type: 'select', span: 3, selectPlaceholder: 'Selecione o onibus', lookup: { endpoint: '/onibus', label: (onibus) => `${onibus.placa} - ${onibus.modelo}` } }
     ],
     columns: [
       { header: 'Data', render: (item) => fmtDate(item.data) },
@@ -578,6 +582,404 @@ const entityConfigs = {
     ]
   }
 };
+
+function todayInputValue() {
+  const today = new Date();
+  today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+  return today.toISOString().slice(0, 10);
+}
+
+function emptyTripForm() {
+  return {
+    data: todayInputValue(),
+    horarioSaida: '',
+    horarioChegada: '',
+    rotaId: '',
+    motoristaId: '',
+    onibusId: ''
+  };
+}
+
+function routeName(route) {
+  return `${route?.origem?.nome || route?.origemId || '?'} -> ${route?.destino?.nome || route?.destinoId || '?'}`;
+}
+
+function routeOptionLabel(route, showCode = false) {
+  const code = showCode ? `#${route.codigo} | ` : '';
+  return `${code}${routeName(route)} (${route.turno || '-'})`;
+}
+
+function TripFormPage() {
+  const showToast = useToast();
+  const [routes, setRoutes] = useState([]);
+  const [drivers, setDrivers] = useState([]);
+  const [buses, setBuses] = useState([]);
+  const [form, setForm] = useState(emptyTripForm);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    async function load() {
+      try {
+        const [rotas, motoristas, onibus] = await Promise.all([
+          api.get('/rotas?include=true'),
+          api.get('/motoristas'),
+          api.get('/onibus')
+        ]);
+        if (!active) return;
+        setRoutes(rotas);
+        setDrivers(motoristas);
+        setBuses(onibus);
+      } catch (err) {
+        showToast(`Erro ao carregar dados: ${err.message}`, 'error');
+      }
+    }
+    load();
+    return () => {
+      active = false;
+    };
+  }, [showToast]);
+
+  const selectedRoute = routes.find((route) => Number(route.codigo) === Number(form.rotaId));
+  const activeDrivers = drivers.filter((driver) => String(driver.situacao || '').toUpperCase() === 'ATIVO');
+  const activeBuses = buses.filter((bus) => String(bus.situacao || '').toUpperCase() === 'ATIVO');
+
+  const setField = (name, value) => setForm((current) => ({ ...current, [name]: value }));
+
+  const reset = () => {
+    setError('');
+    setForm(emptyTripForm());
+  };
+
+  const submit = async (event) => {
+    event.preventDefault();
+    setError('');
+    setSaving(true);
+    try {
+      await api.post('/viagens', {
+        data: form.data,
+        horarioSaida: form.horarioSaida,
+        horarioChegada: form.horarioChegada,
+        rotaId: Number(form.rotaId),
+        motoristaId: Number(form.motoristaId),
+        onibusId: Number(form.onibusId)
+      });
+      showToast('Viagem registrada com sucesso.');
+      reset();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <>
+      <PageHeader
+        title="Nova Viagem"
+        subtitle="Registre a execução de uma rota de transporte escolar"
+        action={<Link to="/viagens" className="btn-ste-secondary text-decoration-none"><i className="bi bi-arrow-left" /> Ver listagem</Link>}
+      />
+      {error && (
+        <div className="alert alert-danger d-flex gap-2 align-items-center mb-3">
+          <i className="bi bi-exclamation-triangle-fill" />
+          <span>{error}</span>
+        </div>
+      )}
+      <form onSubmit={submit}>
+        <Card icon="bi-calendar2-check-fill" title="Dados da Viagem">
+          <div className="row g-3">
+            <div className="col-md-3">
+              <label className="form-label" htmlFor="data">Data da Viagem <span className="text-danger">*</span></label>
+              <input id="data" className="form-control" type="date" value={form.data} required onChange={(event) => setField('data', event.target.value)} />
+            </div>
+            <div className="col-md-2">
+              <label className="form-label" htmlFor="horarioSaida">Horário de Saída <span className="text-danger">*</span></label>
+              <input id="horarioSaida" className="form-control" type="time" value={form.horarioSaida} required onChange={(event) => setField('horarioSaida', event.target.value)} />
+            </div>
+            <div className="col-md-2">
+              <label className="form-label" htmlFor="horarioChegada">Horário de Chegada</label>
+              <input id="horarioChegada" className="form-control" type="time" value={form.horarioChegada} onChange={(event) => setField('horarioChegada', event.target.value)} />
+            </div>
+          </div>
+        </Card>
+
+        <Card icon="bi-link-45deg" title="Recursos da Viagem">
+          <div className="row g-3">
+            <div className="col-md-5">
+              <label className="form-label" htmlFor="rotaId">Rota <span className="text-danger">*</span></label>
+              <select id="rotaId" className="form-select" value={form.rotaId} required onChange={(event) => setField('rotaId', event.target.value)}>
+                <option value="">-- Selecione a rota --</option>
+                {routes.map((route) => <option value={route.codigo} key={route.codigo}>{routeOptionLabel(route, true)}</option>)}
+              </select>
+            </div>
+            {selectedRoute && (
+              <div className="col-md-7">
+                <div className="trip-route-preview">
+                  <div className="d-flex align-items-center gap-2 fs-13">
+                    <i className="bi bi-signpost-2-fill text-accent" />
+                    <span className="fw-600">{routeName(selectedRoute)}</span>
+                  </div>
+                  <div className="text-muted fs-13 mt-1">Turno: {selectedRoute.turno} | {selectedRoute.descricao}</div>
+                </div>
+              </div>
+            )}
+            <div className="col-md-5">
+              <label className="form-label" htmlFor="motoristaId">Motorista <span className="text-danger">*</span></label>
+              <select id="motoristaId" className="form-select" value={form.motoristaId} required onChange={(event) => setField('motoristaId', event.target.value)}>
+                <option value="">-- Selecione o motorista --</option>
+                {activeDrivers.map((driver) => <option value={driver.codigo} key={driver.codigo}>{driver.nome} - CNH {driver.cnh}</option>)}
+              </select>
+            </div>
+            <div className="col-md-4">
+              <label className="form-label" htmlFor="onibusId">Ônibus <span className="text-danger">*</span></label>
+              <select id="onibusId" className="form-select" value={form.onibusId} required onChange={(event) => setField('onibusId', event.target.value)}>
+                <option value="">-- Selecione o ônibus --</option>
+                {activeBuses.map((bus) => <option value={bus.codigo} key={bus.codigo}>{bus.placa} - {bus.modelo} ({bus.capacidade} lugares)</option>)}
+              </select>
+            </div>
+          </div>
+        </Card>
+
+        <div className="d-flex gap-3 justify-content-end">
+          <Link to="/viagens" className="btn-ste-secondary text-decoration-none"><i className="bi bi-x" /> Cancelar</Link>
+          <button type="submit" className="btn-ste-primary" disabled={saving}>
+            {saving ? <span className="spinner-border spinner-border-sm" /> : <i className="bi bi-check-lg" />}
+            {saving ? 'Registrando...' : 'Registrar Viagem'}
+          </button>
+        </div>
+      </form>
+    </>
+  );
+}
+
+function TripsListPage() {
+  const showToast = useToast();
+  const confirm = useConfirm();
+  const [trips, setTrips] = useState([]);
+  const [routes, setRoutes] = useState([]);
+  const [drivers, setDrivers] = useState([]);
+  const [buses, setBuses] = useState([]);
+  const [query, setQuery] = useState('');
+  const [filterDate, setFilterDate] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [editForm, setEditForm] = useState(null);
+  const [saving, setSaving] = useState(false);
+
+  const loadAll = async () => {
+    setLoading(true);
+    try {
+      const [viagens, rotas, motoristas, onibus] = await Promise.all([
+        api.get('/viagens?include=true'),
+        api.get('/rotas?include=true'),
+        api.get('/motoristas'),
+        api.get('/onibus')
+      ]);
+      setTrips(viagens);
+      setRoutes(rotas);
+      setDrivers(motoristas);
+      setBuses(onibus);
+    } catch (err) {
+      showToast(`Erro ao carregar viagens: ${err.message}`, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadAll();
+  }, []);
+
+  const filteredTrips = trips.filter((trip) => {
+    const text = [
+      trip.rota?.origem?.nome,
+      trip.rota?.destino?.nome,
+      trip.rota?.descricao,
+      trip.motorista?.nome,
+      trip.onibus?.placa
+    ].join(' ').toLowerCase();
+    const matchesQuery = !query || text.includes(query.toLowerCase());
+    const matchesDate = !filterDate || trip.data === filterDate;
+    return matchesQuery && matchesDate;
+  });
+
+  const openEdit = async (trip) => {
+    try {
+      const current = await api.get(`/viagens/${trip.codigo}`);
+      setEditForm({
+        codigo: current.codigo,
+        data: current.data || '',
+        horarioSaida: current.horarioSaida || '',
+        horarioChegada: current.horarioChegada || '',
+        rotaId: current.rotaId || '',
+        motoristaId: current.motoristaId || '',
+        onibusId: current.onibusId || ''
+      });
+    } catch (err) {
+      showToast(`Erro ao abrir edição: ${err.message}`, 'error');
+    }
+  };
+
+  const saveEdit = async (event) => {
+    event.preventDefault();
+    setSaving(true);
+    try {
+      await api.put(`/viagens/${editForm.codigo}`, {
+        data: editForm.data,
+        horarioSaida: editForm.horarioSaida,
+        horarioChegada: editForm.horarioChegada,
+        rotaId: Number(editForm.rotaId),
+        motoristaId: Number(editForm.motoristaId),
+        onibusId: Number(editForm.onibusId)
+      });
+      showToast('Viagem atualizada com sucesso.');
+      setEditForm(null);
+      await loadAll();
+    } catch (err) {
+      showToast(`Erro: ${err.message}`, 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const remove = async (trip) => {
+    if (!(await confirm(`Excluir a viagem #${trip.codigo}?`))) return;
+    try {
+      await api.delete(`/viagens/${trip.codigo}`);
+      showToast('Viagem excluída com sucesso.');
+      setTrips((current) => current.filter((item) => item.codigo !== trip.codigo));
+    } catch (err) {
+      showToast(`Erro: ${err.message}`, 'error');
+    }
+  };
+
+  const setEditField = (name, value) => setEditForm((current) => ({ ...current, [name]: value }));
+
+  return (
+    <>
+      <PageHeader
+        title="Viagens Registradas"
+        subtitle="Histórico completo de viagens do sistema"
+        action={<Link to="/viagens/nova" className="btn-ste-primary text-decoration-none"><i className="bi bi-plus-lg" /> Nova Viagem</Link>}
+      />
+
+      <Card>
+        <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+          <div className="d-flex gap-2 flex-wrap">
+            <div className="search-bar">
+              <i className="bi bi-search search-icon" />
+              <input className="form-control" placeholder="Buscar por rota, motorista..." value={query} onChange={(event) => setQuery(event.target.value)} />
+            </div>
+            <input className="form-control trip-date-filter" type="date" title="Filtrar por data" value={filterDate} onChange={(event) => setFilterDate(event.target.value)} />
+          </div>
+          <span className="fs-13 text-muted">{loading ? 'Carregando...' : `${filteredTrips.length} registro(s)`}</span>
+        </div>
+
+        <div className="table-wrapper">
+          <table className="ste-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Data</th>
+                <th>Rota</th>
+                <th>Motorista</th>
+                <th>Ônibus</th>
+                <th>Saída</th>
+                <th>Chegada</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <LoadingRow colSpan={8} />
+              ) : filteredTrips.length ? (
+                filteredTrips.map((trip) => (
+                  <tr key={trip.codigo}>
+                    <td className="fw-600 text-accent">{trip.codigo}</td>
+                    <td className="fw-600">{fmtDate(trip.data)}</td>
+                    <td>
+                      <span className="fw-600">{trip.rota?.origem?.nome || '?'}</span>
+                      <i className="bi bi-arrow-right mx-1 text-accent" />
+                      <span className="fw-600">{trip.rota?.destino?.nome || '?'}</span>
+                    </td>
+                    <td>{trip.motorista?.nome || '-'}</td>
+                    <td className="font-monospace">{trip.onibus?.placa || '-'}</td>
+                    <td><span className="badge-ste embarque"><i className="bi bi-clock" />{trip.horarioSaida}</span></td>
+                    <td><span className="badge-ste desembarque"><i className="bi bi-clock" />{trip.horarioChegada}</span></td>
+                    <td>
+                      <div className="table-actions">
+                        <button className="btn-icon edit" title="Editar" onClick={() => openEdit(trip)} type="button"><i className="bi bi-pencil-fill" /></button>
+                        <button className="btn-icon delete" title="Excluir" onClick={() => remove(trip)} type="button"><i className="bi bi-trash-fill" /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <EmptyRow colSpan={8} message="Nenhuma viagem encontrada." />
+              )}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      {editForm && (
+        <div className="react-modal-backdrop">
+          <div className="react-trip-modal">
+            <div className="d-flex align-items-center justify-content-between mb-3">
+              <h2 className="trip-modal-title"><i className="bi bi-pencil-square me-2 text-accent" />Editar Viagem</h2>
+              <button className="btn-icon" type="button" onClick={() => setEditForm(null)}><i className="bi bi-x-lg" /></button>
+            </div>
+            <form onSubmit={saveEdit}>
+              <div className="row g-3">
+                <div className="col-md-4">
+                  <label className="form-label">Data <span className="text-danger">*</span></label>
+                  <input className="form-control" type="date" value={editForm.data} required onChange={(event) => setEditField('data', event.target.value)} />
+                </div>
+                <div className="col-md-4">
+                  <label className="form-label">Saída <span className="text-danger">*</span></label>
+                  <input className="form-control" type="time" value={editForm.horarioSaida} required onChange={(event) => setEditField('horarioSaida', event.target.value)} />
+                </div>
+                <div className="col-md-4">
+                  <label className="form-label">Chegada <span className="text-danger">*</span></label>
+                  <input className="form-control" type="time" value={editForm.horarioChegada} required onChange={(event) => setEditField('horarioChegada', event.target.value)} />
+                </div>
+                <div className="col-12">
+                  <label className="form-label">Rota <span className="text-danger">*</span></label>
+                  <select className="form-select" value={editForm.rotaId} required onChange={(event) => setEditField('rotaId', event.target.value)}>
+                    <option value="">-- Selecione --</option>
+                    {routes.map((route) => <option value={route.codigo} key={route.codigo}>{routeOptionLabel(route)}</option>)}
+                  </select>
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label">Motorista <span className="text-danger">*</span></label>
+                  <select className="form-select" value={editForm.motoristaId} required onChange={(event) => setEditField('motoristaId', event.target.value)}>
+                    <option value="">-- Selecione --</option>
+                    {drivers.map((driver) => <option value={driver.codigo} key={driver.codigo}>{driver.nome} - {driver.cnh}</option>)}
+                  </select>
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label">Ônibus <span className="text-danger">*</span></label>
+                  <select className="form-select" value={editForm.onibusId} required onChange={(event) => setEditField('onibusId', event.target.value)}>
+                    <option value="">-- Selecione --</option>
+                    {buses.map((bus) => <option value={bus.codigo} key={bus.codigo}>{bus.placa} - {bus.modelo}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className="d-flex justify-content-end gap-2 mt-4">
+                <button className="btn-ste-secondary" type="button" onClick={() => setEditForm(null)}>Cancelar</button>
+                <button className="btn-ste-primary" type="submit" disabled={saving}>
+                  {saving ? <span className="spinner-border spinner-border-sm" /> : <i className="bi bi-check-lg" />}
+                  Salvar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
 
 function StudentListPage() {
   const [students, setStudents] = useState([]);
@@ -782,13 +1184,13 @@ function StudentFormPage({ legacy = false }) {
       <form onSubmit={submit}>
         <Card icon="bi-person-fill" title="Dados Pessoais">
           <div className="form-grid">
-            <FormField field={{ name: 'nome', label: 'Nome completo', span: 6 }} value={form.nome} onChange={update} />
-            <FormField field={{ name: 'cpf', label: 'CPF', span: 3 }} value={form.cpf} onChange={update} />
+            <FormField field={{ name: 'nome', label: 'Nome completo', span: 6, placeholder: 'Nome do aluno' }} value={form.nome} onChange={update} />
+            <FormField field={{ name: 'cpf', label: 'CPF', span: 3, placeholder: '000.000.000-00', maxLength: 14 }} value={form.cpf} onChange={update} />
             <FormField field={{ name: 'dataNascimento', label: 'Data de Nascimento', type: 'date', span: 3 }} value={form.dataNascimento} onChange={update} />
-            <FormField field={{ name: 'endereco', label: 'Endereço', span: 8 }} value={form.endereco} onChange={update} />
-            <FormField field={{ name: 'telefones', label: 'Telefones', span: 4 }} value={form.telefones} onChange={update} />
-            <FormField field={{ name: 'responsavelLegal', label: 'Responsável Legal', required: false, span: 6 }} value={form.responsavelLegal} onChange={update} />
-            <FormField field={{ name: 'situacaoAcesso', label: 'Situação de Acesso', type: 'select', staticOptions: studentStatusOptions, span: 3 }} value={form.situacaoAcesso} onChange={update} />
+            <FormField field={{ name: 'endereco', label: 'Endereço', span: 8, placeholder: 'Rua, numero, bairro, cidade' }} value={form.endereco} onChange={update} />
+            <FormField field={{ name: 'telefones', label: 'Telefones', span: 4, placeholder: '(28) 99999-0000' }} value={form.telefones} onChange={update} />
+            <FormField field={{ name: 'responsavelLegal', label: 'Responsável Legal', required: false, span: 6, placeholder: 'Nome do responsavel (obrigatorio se menor de 18 anos)' }} value={form.responsavelLegal} onChange={update} />
+            <FormField field={{ name: 'situacaoAcesso', label: 'Situação de Acesso', type: 'select', selectPlaceholder: 'Selecione a situacao', staticOptions: studentStatusOptions, span: 3 }} value={form.situacaoAcesso} onChange={update} />
             <div className="field-span-3">
               <label className="form-label" htmlFor="foto">Foto</label>
               <input id="foto" className="form-control" type="file" accept=".jpg,.jpeg,.png" onChange={onFile} />
@@ -799,13 +1201,13 @@ function StudentFormPage({ legacy = false }) {
         <Card icon="bi-link-45deg" title="Vínculos Institucionais">
           <div className="form-grid">
             <FormField
-              field={{ name: 'prefeituraId', label: 'Prefeitura Autorizadora', type: 'select', span: 6 }}
+              field={{ name: 'prefeituraId', label: 'Prefeitura Autorizadora', type: 'select', span: 6, selectPlaceholder: 'Selecione a prefeitura' }}
               value={form.prefeituraId}
               onChange={update}
               options={lookups.prefeituras.map((item) => ({ value: item.codigo, label: item.razaoSocial }))}
             />
             <FormField
-              field={{ name: 'instituicaoEnsinoId', label: 'Instituição de Ensino', type: 'select', span: 6 }}
+              field={{ name: 'instituicaoEnsinoId', label: 'Instituição de Ensino', type: 'select', span: 6, selectPlaceholder: 'Selecione a instituicao' }}
               value={form.instituicaoEnsinoId}
               onChange={update}
               options={lookups.instituicoes.map((item) => ({ value: item.codigo, label: item.nome }))}
@@ -1410,8 +1812,8 @@ function AppRoutes() {
         <Route path="onibus" element={<EntityPage config={entityConfigs.onibus} />} />
         <Route path="rotas" element={<EntityPage config={entityConfigs.rotas} />} />
         <Route path="matriculas-transporte" element={<EntityPage config={entityConfigs.matriculas} />} />
-        <Route path="viagens" element={<EntityPage config={entityConfigs.viagens} />} />
-        <Route path="viagens/nova" element={<EntityPage config={entityConfigs.viagens} />} />
+        <Route path="viagens" element={<TripsListPage />} />
+        <Route path="viagens/nova" element={<TripFormPage />} />
         <Route path="registros-acesso" element={<AccessPage />} />
         <Route path="pages/cadastro-estado.html" element={<LegacyEntity name="estados" />} />
         <Route path="pages/cadastro-cidade.html" element={<LegacyEntity name="cidades" />} />
@@ -1422,8 +1824,8 @@ function AppRoutes() {
         <Route path="pages/cadastro-onibus.html" element={<LegacyEntity name="onibus" />} />
         <Route path="pages/cadastro-rota.html" element={<LegacyEntity name="rotas" />} />
         <Route path="pages/cadastro-matricula-transporte.html" element={<LegacyEntity name="matriculas" />} />
-        <Route path="pages/listagem-viagens.html" element={<LegacyEntity name="viagens" />} />
-        <Route path="pages/registro-viagem.html" element={<LegacyEntity name="viagens" />} />
+        <Route path="pages/listagem-viagens.html" element={<TripsListPage />} />
+        <Route path="pages/registro-viagem.html" element={<TripFormPage />} />
         <Route path="pages/registro-acesso.html" element={<AccessPage />} />
         <Route path="relatorios/alunos-por-rota" element={<StudentsByRouteReport />} />
         <Route path="relatorios/acessos-por-aluno" element={<AccessByStudentReport />} />

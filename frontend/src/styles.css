@@ -74,10 +74,17 @@
   gap: 16px;
 }
 
+.field-span-1 { grid-column: span 1; }
+.field-span-2 { grid-column: span 2; }
 .field-span-3 { grid-column: span 3; }
 .field-span-4 { grid-column: span 4; }
+.field-span-5 { grid-column: span 5; }
 .field-span-6 { grid-column: span 6; }
+.field-span-7 { grid-column: span 7; }
 .field-span-8 { grid-column: span 8; }
+.field-span-9 { grid-column: span 9; }
+.field-span-10 { grid-column: span 10; }
+.field-span-11 { grid-column: span 11; }
 .field-span-12 { grid-column: span 12; }
 
 .login-screen {
@@ -106,15 +113,51 @@
   border: 1px solid rgba(25, 195, 125, .2);
 }
 
+.trip-route-preview {
+  background: rgba(30, 144, 255, .06);
+  border: 1px solid rgba(30, 144, 255, .18);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.trip-date-filter {
+  width: 160px;
+}
+
+.react-trip-modal {
+  width: min(760px, 100%);
+  max-height: calc(100vh - 36px);
+  overflow: auto;
+  background: #fff;
+  border: 1px solid var(--ste-border);
+  border-radius: 8px;
+  box-shadow: var(--ste-shadow-lg);
+  padding: 22px;
+}
+
+.trip-modal-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ste-text);
+}
+
 @media (max-width: 768px) {
   .form-grid {
     grid-template-columns: 1fr;
   }
 
+  .field-span-1,
+  .field-span-2,
   .field-span-3,
   .field-span-4,
+  .field-span-5,
   .field-span-6,
+  .field-span-7,
   .field-span-8,
+  .field-span-9,
+  .field-span-10,
+  .field-span-11,
   .field-span-12 {
     grid-column: 1;
   }
@@ -123,5 +166,9 @@
     align-items: flex-start;
     flex-direction: column;
     gap: 12px;
+  }
+
+  .trip-date-filter {
+    width: 100%;
   }
 }
