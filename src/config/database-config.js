@@ -12,7 +12,11 @@ export const databaseConfig = {
     underscored: true
   },
   dialectOptions: {
-    ssl: true
+    connectTimeout: 30000,
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    }
   }
 };
 

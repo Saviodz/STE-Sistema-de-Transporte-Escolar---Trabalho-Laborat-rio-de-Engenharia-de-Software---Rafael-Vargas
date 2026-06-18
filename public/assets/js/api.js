@@ -21,7 +21,8 @@ async function fetchAPI(method, endpoint, body = null) {
   try { data = await response.json(); } catch { data = null; }
 
   if (!response.ok) {
-    const msg = data?.mensagem || data?.message || data?.error || `Erro ${response.status}`;
+    const mensagens = Array.isArray(data?.mensagens) ? data.mensagens.join(' ') : null;
+    const msg = mensagens || data?.erro || data?.mensagem || data?.message || data?.error || `Erro ${response.status}`;
     throw new Error(msg);
   }
 

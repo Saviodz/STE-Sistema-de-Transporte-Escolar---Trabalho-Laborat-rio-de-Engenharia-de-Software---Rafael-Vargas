@@ -130,8 +130,44 @@
   import { api } from '../assets/js/api.js';
   if (!localStorage.getItem('ste-user')) window.location.href = 'login.html';
 
+  let alunosData = [];
   let viagensData = [];
   let editId = null;
+
+  function alunoTemMatriculaNaRota(aluno, rotaId) {
+    return (aluno?.matriculas || []).some(m => Number(m.rotaId) === Number(rotaId));
+  }
+
+  function labelAluno(a) {
+    return `${a.nome} - ${a.cpf} ${(a.situacaoAcesso || '').toUpperCase() !== 'ATIVO' ? '(Inativo)' : ''}`;
+  }
+
+  function atualizarAlunosDaViagem(viagemId, alunoSelecionado = '') {
+    const select = document.getElementById('alunoId');
+    if (!select) return;
+
+    const viagem = viagensData.find(v => Number(v.codigo) === Number(viagemId));
+    if (!viagem) {
+      select.innerHTML = '<option value="">-- Selecione a viagem --</option>';
+      return;
+    }
+
+    const alunosDaRota = alunosData.filter(a => alunoTemMatriculaNaRota(a, viagem.rotaId));
+    if (!alunosDaRota.length) {
+      select.innerHTML = '<option value="">-- Nenhum aluno matriculado nesta rota --</option>';
+      return;
+    }
+
+    populateSelect('alunoId', alunosDaRota, 'codigo', labelAluno, 'Selecione o aluno');
+    if (alunoSelecionado) select.value = String(alunoSelecionado);
+  }
+
+  function preencherDataHoraDaViagem(viagem) {
+    if (!viagem?.data) return;
+    const tipo = document.getElementById('tipo').value;
+    const horario = tipo === 'DESEMBARQUE' ? viagem.horarioChegada : viagem.horarioSaida;
+    if (horario) document.getElementById('dataHora').value = `${viagem.data}T${horario.slice(0, 5)}`;
+  }
 
   document.addEventListener('DOMContentLoaded', async () => {
     injectSidebar();
@@ -145,10 +181,9 @@
         api.get('/alunos'),
         api.get('/viagens?include=true'),
       ]);
+      alunosData = alunos;
       viagensData = viagens;
-      populateSelect('alunoId',
-        alunos,
-        'codigo', a => `${a.nome} – ${a.cpf} ${(a.situacaoAcesso || '').toUpperCase() !== 'ATIVO' ? '(Inativo)' : ''}`, 'Selecione o aluno');
+      atualizarAlunosDaViagem('');
       populateSelect('viagemId', viagens, 'codigo',
         v => `#${v.codigo} | ${fmtDate(v.data)} | ${v.rota?.origem?.nome ?? '?'} → ${v.rota?.destino?.nome ?? '?'} (${v.horarioSaida})`,
         'Selecione a viagem');
@@ -164,7 +199,18 @@
         document.getElementById('pvSaida').textContent = v.horarioSaida;
         document.getElementById('pvMotorista').textContent = v.motorista?.nome ?? '—';
         pv.style.display = 'block';
-      } else { pv.style.display = 'none'; }
+        atualizarAlunosDaViagem(id);
+        preencherDataHoraDaViagem(v);
+      } else {
+        pv.style.display = 'none';
+        atualizarAlunosDaViagem('');
+      }
+    });
+
+    document.getElementById('tipo').addEventListener('change', () => {
+      const id = parseInt(document.getElementById('viagemId').value);
+      const v = viagensData.find(x => x.codigo === id);
+      if (v) preencherDataHoraDaViagem(v);
     });
 
     document.getElementById('formAcesso').addEventListener('submit', async e => {
@@ -182,6 +228,12 @@
           alunoId:  parseInt(document.getElementById('alunoId').value),
           viagemId: parseInt(document.getElementById('viagemId').value),
         };
+
+        const viagemSelecionada = viagensData.find(v => Number(v.codigo) === payload.viagemId);
+        const alunoSelecionado = alunosData.find(a => Number(a.codigo) === payload.alunoId);
+        if (!viagemSelecionada || !alunoTemMatriculaNaRota(alunoSelecionado, viagemSelecionada.rotaId)) {
+          throw new Error('O aluno selecionado nao possui matricula na rota desta viagem.');
+        }
 
         if (editId) {
             await api.put(`/registros-acesso/${editId}`, payload);
@@ -212,6 +264,7 @@
       document.getElementById('formAcesso').classList.remove('was-validated');
       editId = null;
       document.getElementById('viagemPreview').style.display = 'none';
+      atualizarAlunosDaViagem('');
       const now2 = new Date(); now2.setMinutes(now2.getMinutes() - now2.getTimezoneOffset());
       document.getElementById('dataHora').value = now2.toISOString().slice(0,16);
 
@@ -231,7 +284,10 @@
         tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">Nenhum registro encontrado.</td></tr>`;
         return;
       }
-      const recent = list.slice(-20).reverse();
+      const recent = list
+        .slice()
+        .sort((a, b) => (b.codigo ?? 0) - (a.codigo ?? 0))
+        .slice(0, 20);
       tbody.innerHTML = recent.map(r => {
         const tipo = r.tipo === 'EMBARQUE'
           ? `<span class="badge-ste embarque"><i class="bi bi-arrow-up-circle"></i>Embarque</span>`
@@ -258,15 +314,14 @@
   window.editAcesso = (id, tipo, dataHora, alunoId, viagemId) => {
       editId = id;
       document.getElementById('tipo').value = tipo;
+      document.getElementById('viagemId').value = viagemId;
+      document.getElementById('viagemId').dispatchEvent(new Event('change'));
+      document.getElementById('alunoId').value = alunoId;
       if (dataHora) {
           const dt = new Date(dataHora);
           dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
           document.getElementById('dataHora').value = dt.toISOString().slice(0,16);
       }
-      document.getElementById('alunoId').value = alunoId;
-      document.getElementById('viagemId').value = viagemId;
-      // Triggers change event for viagem to show preview
-      document.getElementById('viagemId').dispatchEvent(new Event('change'));
       
       document.querySelector('.page-header h1').innerText = 'Editar Registro de Acesso';
       document.querySelector('.page-header .page-subtitle').innerText = `Editando registro #${id}`;

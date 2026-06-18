@@ -47,7 +47,13 @@ class RegistroAcessoService {
   }
 
   static async findAll() {
-    const objs = await RegistroAcesso.findAll({ include: { all: true, nested: true } });
+    const objs = await RegistroAcesso.findAll({
+      include: { all: true, nested: true },
+      order: [
+        ['codigo', 'DESC'],
+        ['dataHora', 'DESC']
+      ]
+    });
     return objs;
   }
 
