@@ -7,6 +7,9 @@
     "build": "npm install",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "frontend:dev": "vite --host 0.0.0.0",
+    "frontend:build": "vite build",
+    "frontend:preview": "vite preview --host 0.0.0.0",
     "seed": "node src/config/database-seed.js"
   },
   "repository": {
@@ -21,13 +24,20 @@
   "homepage": "https://github.com/Saviodz/STE-Sistema-de-Transporte-Escolar---Trabalho-Laborat-rio-de-Engenharia-de-Software---Rafael-Vargas#readme",
   "description": "",
   "dependencies": {
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "pg": "^8.20.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-router-dom": "^7.18.0",
     "sequelize": "^6.37.8",
     "sqlite3": "^6.0.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "@vitejs/plugin-react": "^6.0.2",
+    "nodemon": "^3.1.14",
+    "vite": "^8.0.16"
   }
 }
