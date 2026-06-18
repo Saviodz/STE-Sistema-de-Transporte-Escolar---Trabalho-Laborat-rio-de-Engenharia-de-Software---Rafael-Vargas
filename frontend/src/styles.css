@@ -101,6 +101,11 @@
   color: inherit;
 }
 
+.access-preview {
+  background: rgba(25, 195, 125, .06);
+  border: 1px solid rgba(25, 195, 125, .2);
+}
+
 @media (max-width: 768px) {
   .form-grid {
     grid-template-columns: 1fr;

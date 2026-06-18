@@ -932,14 +932,47 @@ function AccessPage() {
 
   return (
     <>
-      <PageHeader title={editingId ? 'Editar Registro de Acesso' : 'Registrar Acesso'} subtitle="Registre embarques e desembarques dos alunos" />
+      <PageHeader
+        title={editingId ? 'Editar Registro de Acesso' : 'Registrar Acesso'}
+        subtitle={editingId ? `Editando registro #${editingId}` : 'Registre embarques e desembarques dos alunos'}
+      />
       <form onSubmit={submit}>
         <Card icon="bi-qr-code-scan" title="Dados do Registro">
-          <div className="form-grid">
-            <FormField field={{ name: 'tipo', label: 'Tipo', type: 'select', staticOptions: ['EMBARQUE', 'DESEMBARQUE'], span: 3 }} value={form.tipo} onChange={setField} />
-            <FormField field={{ name: 'dataHora', label: 'Data e Hora', type: 'datetime-local', span: 4 }} value={form.dataHora} onChange={setField} />
-            <div className="field-span-5" />
-            <div className="field-span-5">
+          <div className="row g-3">
+            <div className="col-md-3">
+              <label className="form-label" htmlFor="tipo">Tipo <span className="text-danger">*</span></label>
+              <select id="tipo" className="form-select" value={form.tipo} required onChange={(event) => setField('tipo', event.target.value)}>
+                <option value="">-- Selecione --</option>
+                <option value="EMBARQUE">Embarque</option>
+                <option value="DESEMBARQUE">Desembarque</option>
+              </select>
+              <div className="invalid-feedback">Selecione o tipo.</div>
+            </div>
+            <div className="col-md-4">
+              <label className="form-label" htmlFor="dataHora">Data e Hora <span className="text-danger">*</span></label>
+              <input id="dataHora" className="form-control" type="datetime-local" value={form.dataHora} required onChange={(event) => setField('dataHora', event.target.value)} />
+              <div className="invalid-feedback">Informe a data e hora.</div>
+            </div>
+          </div>
+
+          <div className="row g-3 mt-0">
+            <div className="col-md-5">
+              <label className="form-label" htmlFor="alunoId">Aluno <span className="text-danger">*</span></label>
+              <input
+                className="form-control mb-2"
+                placeholder="Pesquisar aluno por nome ou codigo..."
+                value={studentFilter}
+                onChange={(event) => setStudentFilter(event.target.value)}
+              />
+              <select id="alunoId" className="form-select" size={4} value={form.alunoId} required onChange={(event) => setField('alunoId', event.target.value)}>
+                <option value="">{selectedTrip ? '-- Selecione o aluno --' : '-- Selecione a viagem --'}</option>
+                {filteredStudents.map((student) => (
+                  <option value={student.codigo} key={student.codigo}>{student.nome} - {student.cpf}</option>
+                ))}
+              </select>
+              <div className="invalid-feedback">Selecione o aluno.</div>
+            </div>
+            <div className="col-md-5">
               <label className="form-label" htmlFor="viagemId">Viagem <span className="text-danger">*</span></label>
               <select id="viagemId" className="form-select" value={form.viagemId} required onChange={(event) => setField('viagemId', event.target.value)}>
                 <option value="">-- Selecione --</option>
@@ -949,35 +982,28 @@ function AccessPage() {
                   </option>
                 ))}
               </select>
-            </div>
-            <div className="field-span-5">
-              <label className="form-label" htmlFor="alunoId">Aluno <span className="text-danger">*</span></label>
-              <input className="form-control mb-2" placeholder="Pesquisar aluno..." value={studentFilter} onChange={(event) => setStudentFilter(event.target.value)} />
-              <select id="alunoId" className="form-select" size={4} value={form.alunoId} required onChange={(event) => setField('alunoId', event.target.value)}>
-                <option value="">{selectedTrip ? '-- Selecione o aluno --' : '-- Selecione a viagem --'}</option>
-                {filteredStudents.map((student) => (
-                  <option value={student.codigo} key={student.codigo}>{student.nome} - {student.cpf}</option>
-                ))}
-              </select>
+              <div className="invalid-feedback">Selecione a viagem.</div>
             </div>
           </div>
+
           {selectedTrip && (
             <div className="mt-3 p-3 rounded-3 access-preview">
               <div className="row g-2 fs-13">
-                <div className="col-md-4"><span className="text-muted">Rota:</span> <span className="fw-600">{selectedTrip.rota?.descricao || '-'}</span></div>
-                <div className="col-md-3"><span className="text-muted">Data:</span> <span className="fw-600">{fmtDate(selectedTrip.data)}</span></div>
-                <div className="col-md-2"><span className="text-muted">Saida:</span> <span className="fw-600">{selectedTrip.horarioSaida}</span></div>
-                <div className="col-md-3"><span className="text-muted">Motorista:</span> <span className="fw-600">{selectedTrip.motorista?.nome || '-'}</span></div>
+                <div className="col-md-4"><span className="text-muted">Rota:</span><span className="fw-600 ms-1">{selectedTrip.rota?.origem?.nome || '?'} - {selectedTrip.rota?.destino?.nome || '?'}</span></div>
+                <div className="col-md-3"><span className="text-muted">Data:</span><span className="fw-600 ms-1">{fmtDate(selectedTrip.data)}</span></div>
+                <div className="col-md-2"><span className="text-muted">Saida:</span><span className="fw-600 ms-1">{selectedTrip.horarioSaida}</span></div>
+                <div className="col-md-3"><span className="text-muted">Motorista:</span><span className="fw-600 ms-1">{selectedTrip.motorista?.nome || '-'}</span></div>
               </div>
             </div>
           )}
         </Card>
-        <div className="d-flex gap-3 justify-content-end mt-4 mb-4">
-          <button type="button" className="btn-ste-secondary" onClick={reset}><i className="bi bi-eraser" /> Limpar</button>
+        <div className="d-flex gap-3 justify-content-end mt-4">
+          {editingId && <button type="button" className="btn-ste-secondary" onClick={reset}><i className="bi bi-x" /> Cancelar Edicao</button>}
+          {!editingId && <button type="button" className="btn-ste-secondary" onClick={reset}><i className="bi bi-eraser" /> Limpar</button>}
           <button type="submit" className="btn-ste-primary"><i className="bi bi-check-lg" /> {editingId ? 'Salvar alteracoes' : 'Registrar Acesso'}</button>
         </div>
       </form>
-      <Card icon="bi-clock-history" title="Ultimos Registros">
+      <Card icon="bi-clock-history" title="Ultimos Registros" className="mt-4">
         <div className="table-wrapper">
           <table className="ste-table">
             <thead>
