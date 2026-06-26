@@ -142,8 +142,23 @@ A aplicacao React possui interface completa para gerenciamento do sistema, com f
 - **Relatorios**: alunos por rota, acessos por aluno, acessos por periodo, alunos por instituicao, viagens por motorista e utilizacao de frota.
 - **Autenticacao**: login simulado e sair do sistema.
 
+## Colecao Postman
+
+O arquivo final para importacao no Postman e `STE-Postman.json`.
+
+Para usar:
+
+1. Abra o Postman.
+2. Clique em **Import**.
+3. Selecione o arquivo `STE-Postman.json`.
+4. Confirme a variavel `base_url` como `http://localhost:3333`.
+5. Inicie o back-end com `npm start` antes de executar as requisicoes.
+
+A colecao detalha as requisicoes do back-end, incluindo parametros quando necessario, e cobre CRUDs, regras de negocio e relatorios da API.
+
 ## Arquivos de apoio
 
+- `STE-Postman.json`: colecao Postman final exigida para entrega do trabalho.
 - `collection.json`: colecao para testes de requisicoes da API.
 - `mermaid.md`: diagrama conceitual das entidades do sistema.
 - `wireframes.html`: material visual de apoio para a interface.
