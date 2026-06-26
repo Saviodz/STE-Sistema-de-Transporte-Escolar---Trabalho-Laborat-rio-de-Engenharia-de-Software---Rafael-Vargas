@@ -1,0 +1,2709 @@
+{
+  "info": {
+    "_postman_id": "a0453935-454e-4db9-923e-092935867326",
+    "name": "STE-Postman",
+    "description": "Colecao Postman do STE - Sistema de Transporte Escolar. Contem as requisicoes completas das transacoes consideradas no trabalho: CRUDs, regras de negocio e relatorios. Use a variavel {{base_url}} apontando para http://localhost:3333. Para PUT e DELETE, execute antes o POST - Inserir com sucesso da mesma pasta para atualizar a variavel de ID quando disponivel.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Estados",
+      "item": [
+        {
+          "name": "GET - Listar todos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/estados"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Listar por chave",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/estados/{{estado_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com sucesso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/estados",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Estado {{$timestamp}}\",\n  \"siglaUF\": \"SP\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const data = pm.response.json();",
+                  "if (data && data.codigo) pm.collectionVariables.set('estado_id', String(data.codigo));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com erros de validacoes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/estados",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"\",\n  \"siglaUF\": \"S\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - Alterar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/estados/{{estado_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Estado alterado {{$timestamp}}\",\n  \"siglaUF\": \"RJ\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - Remover",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/estados/{{estado_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cidades",
+      "item": [
+        {
+          "name": "GET - Listar todos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/cidades"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Listar por Estado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/cidades/findByEstado/{{estado_id}}",
+            "description": "Lista as cidades vinculadas ao estado informado em {{estado_id}}."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Listar por chave",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/cidades/{{cidade_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com sucesso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/cidades",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Cidade {{$timestamp}}\",\n  \"estadoId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const data = pm.response.json();",
+                  "if (data && data.codigo) pm.collectionVariables.set('cidade_id', String(data.codigo));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com erros de validacoes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/cidades",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"\",\n  \"estadoId\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - Alterar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/cidades/{{cidade_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Cidade alterada {{$timestamp}}\",\n  \"estadoId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - Remover",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/cidades/{{cidade_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Prefeituras",
+      "item": [
+        {
+          "name": "GET - Listar todos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/prefeituras"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Listar por chave",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/prefeituras/{{prefeitura_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com sucesso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/prefeituras",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"razaoSocial\": \"Prefeitura {{$timestamp}}\",\n  \"cnpj\": \"PREF-{{$timestamp}}\",\n  \"endereco\": \"Avenida Principal, {{$randomInt}}\",\n  \"telefones\": \"(28) 99999-0000\",\n  \"email\": \"prefeitura{{$timestamp}}@teste.com\",\n  \"cidadeId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const data = pm.response.json();",
+                  "if (data && data.codigo) pm.collectionVariables.set('prefeitura_id', String(data.codigo));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com erros de validacoes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/prefeituras",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"razaoSocial\": \"\",\n  \"cnpj\": \"\",\n  \"endereco\": null,\n  \"telefones\": null,\n  \"email\": \"email-invalido\",\n  \"cidadeId\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - Alterar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/prefeituras/{{prefeitura_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"razaoSocial\": \"Prefeitura alterada {{$timestamp}}\",\n  \"cnpj\": \"PREF-ALT-{{$timestamp}}\",\n  \"endereco\": \"Avenida Atualizada, {{$randomInt}}\",\n  \"telefones\": \"(28) 99999-0001\",\n  \"email\": \"prefeitura.alterada{{$timestamp}}@teste.com\",\n  \"cidadeId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - Remover",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/prefeituras/{{prefeitura_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Instituicoes Ensino",
+      "item": [
+        {
+          "name": "GET - Listar todos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/instituicoes-ensino"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Listar por chave",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/instituicoes-ensino/{{instituicao_ensino_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com sucesso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/instituicoes-ensino",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Instituicao {{$timestamp}}\",\n  \"endereco\": \"Rua da Escola, {{$randomInt}}\",\n  \"telefones\": \"(28) 3333-4444\",\n  \"tipoInstituicao\": \"Escola Municipal\",\n  \"cidadeId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const data = pm.response.json();",
+                  "if (data && data.codigo) pm.collectionVariables.set('instituicao_ensino_id', String(data.codigo));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com erros de validacoes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/instituicoes-ensino",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": null,\n  \"endereco\": null,\n  \"telefones\": null,\n  \"tipoInstituicao\": null,\n  \"cidadeId\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - Alterar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/instituicoes-ensino/{{instituicao_ensino_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Instituicao alterada {{$timestamp}}\",\n  \"endereco\": \"Rua da Escola Atualizada, {{$randomInt}}\",\n  \"telefones\": \"(28) 3333-5555\",\n  \"tipoInstituicao\": \"Escola Estadual\",\n  \"cidadeId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - Remover",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/instituicoes-ensino/{{instituicao_ensino_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Alunos",
+      "item": [
+        {
+          "name": "GET - Listar todos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/alunos"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Listar por chave",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/alunos/{{aluno_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com sucesso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/alunos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Aluno {{$timestamp}}\",\n  \"foto\": null,\n  \"cpf\": \"ALUNO-{{$timestamp}}\",\n  \"dataNascimento\": \"2008-03-10\",\n  \"endereco\": \"Rua das Flores, {{$randomInt}}\",\n  \"telefones\": \"(28) 99999-1111\",\n  \"responsavelLegal\": \"Responsavel {{$timestamp}}\",\n  \"situacaoAcesso\": \"Ativo\",\n  \"prefeituraId\": 1,\n  \"instituicaoEnsinoId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const data = pm.response.json();",
+                  "if (data && data.codigo) pm.collectionVariables.set('aluno_id', String(data.codigo));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com erros de validacoes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/alunos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": null,\n  \"foto\": null,\n  \"cpf\": null,\n  \"dataNascimento\": \"data-invalida\",\n  \"endereco\": null,\n  \"telefones\": null,\n  \"responsavelLegal\": null,\n  \"situacaoAcesso\": null,\n  \"prefeituraId\": null,\n  \"instituicaoEnsinoId\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - Alterar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/alunos/{{aluno_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Aluno alterado {{$timestamp}}\",\n  \"foto\": null,\n  \"cpf\": \"ALUNO-ALT-{{$timestamp}}\",\n  \"dataNascimento\": \"2008-04-15\",\n  \"endereco\": \"Rua das Flores Atualizada, {{$randomInt}}\",\n  \"telefones\": \"(28) 99999-1112\",\n  \"responsavelLegal\": \"Responsavel alterado {{$timestamp}}\",\n  \"situacaoAcesso\": \"Ativo\",\n  \"prefeituraId\": 1,\n  \"instituicaoEnsinoId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - Remover",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/alunos/{{aluno_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Motoristas",
+      "item": [
+        {
+          "name": "GET - Listar todos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/motoristas"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Listar por chave",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/motoristas/{{motorista_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com sucesso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/motoristas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Motorista {{$timestamp}}\",\n  \"cpf\": \"MOT-CPF-{{$timestamp}}\",\n  \"cnh\": \"MOT-CNH-{{$timestamp}}\",\n  \"validadeCNH\": \"2028-12-31\",\n  \"categoriaCNH\": \"D\",\n  \"telefones\": \"(28) 99999-2222\",\n  \"situacao\": \"Ativo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const data = pm.response.json();",
+                  "if (data && data.codigo) pm.collectionVariables.set('motorista_id', String(data.codigo));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com erros de validacoes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/motoristas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": null,\n  \"cpf\": null,\n  \"cnh\": null,\n  \"validadeCNH\": \"data-invalida\",\n  \"categoriaCNH\": null,\n  \"telefones\": null,\n  \"situacao\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - Alterar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/motoristas/{{motorista_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Motorista alterado {{$timestamp}}\",\n  \"cpf\": \"MOT-CPF-ALT-{{$timestamp}}\",\n  \"cnh\": \"MOT-CNH-ALT-{{$timestamp}}\",\n  \"validadeCNH\": \"2029-12-31\",\n  \"categoriaCNH\": \"E\",\n  \"telefones\": \"(28) 99999-2223\",\n  \"situacao\": \"Ativo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - Remover",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/motoristas/{{motorista_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Onibus",
+      "item": [
+        {
+          "name": "GET - Listar todos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/onibus"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Listar por chave",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/onibus/{{onibus_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com sucesso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/onibus",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"placa\": \"BUS-{{$timestamp}}\",\n  \"modelo\": \"Modelo {{$timestamp}}\",\n  \"capacidade\": 40,\n  \"ano\": 2025,\n  \"situacao\": \"Ativo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const data = pm.response.json();",
+                  "if (data && data.codigo) pm.collectionVariables.set('onibus_id', String(data.codigo));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com erros de validacoes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/onibus",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"placa\": null,\n  \"modelo\": null,\n  \"capacidade\": null,\n  \"ano\": null,\n  \"situacao\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - Alterar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/onibus/{{onibus_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"placa\": \"BUS-ALT-{{$timestamp}}\",\n  \"modelo\": \"Modelo alterado {{$timestamp}}\",\n  \"capacidade\": 42,\n  \"ano\": 2026,\n  \"situacao\": \"Ativo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - Remover",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/onibus/{{onibus_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rotas",
+      "item": [
+        {
+          "name": "GET - Listar todos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/rotas"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Listar por chave",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/rotas/{{rota_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com sucesso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/rotas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"turno\": \"Matutino\",\n  \"descricao\": \"Rota {{$timestamp}}\",\n  \"observacao\": \"Criada pelo Postman\",\n  \"origemId\": 2,\n  \"destinoId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const data = pm.response.json();",
+                  "if (data && data.codigo) pm.collectionVariables.set('rota_id', String(data.codigo));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com erros de validacoes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/rotas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"turno\": null,\n  \"descricao\": null,\n  \"observacao\": null,\n  \"origemId\": null,\n  \"destinoId\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - Alterar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/rotas/{{rota_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"turno\": \"Vespertino\",\n  \"descricao\": \"Rota alterada {{$timestamp}}\",\n  \"observacao\": \"Atualizada pelo Postman\",\n  \"origemId\": 3,\n  \"destinoId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - Remover",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/rotas/{{rota_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Viagens",
+      "item": [
+        {
+          "name": "GET - Listar todos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/viagens"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Listar por chave",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/viagens/{{viagem_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com sucesso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/viagens",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": \"2026-05-01\",\n  \"horarioSaida\": \"06:30\",\n  \"horarioChegada\": \"07:20\",\n  \"rotaId\": 1,\n  \"motoristaId\": 1,\n  \"onibusId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const data = pm.response.json();",
+                  "if (data && data.codigo) pm.collectionVariables.set('viagem_id', String(data.codigo));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com erros de validacoes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/viagens",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": \"data-invalida\",\n  \"horarioSaida\": null,\n  \"horarioChegada\": null,\n  \"rotaId\": null,\n  \"motoristaId\": null,\n  \"onibusId\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - RN01 - Motorista ja designado na mesma data",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/viagens",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": \"2026-04-01\",\n  \"horarioSaida\": \"10:00\",\n  \"horarioChegada\": \"11:30\",\n  \"rotaId\": 2,\n  \"motoristaId\": 1,\n  \"onibusId\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400 - RN01 motorista duplicado na data\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"Mensagem de erro da RN01\", function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.erro).to.include(\"motorista\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - RN02 - Onibus ja alocado na mesma data",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/viagens",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": \"2026-04-01\",\n  \"horarioSaida\": \"10:00\",\n  \"horarioChegada\": \"11:30\",\n  \"rotaId\": 2,\n  \"motoristaId\": 3,\n  \"onibusId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400 - RN02 onibus duplicado na data\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"Mensagem de erro da RN02\", function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.erro).to.include(\"onibus\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - Alterar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/viagens/{{viagem_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data\": \"2026-05-02\",\n  \"horarioSaida\": \"06:40\",\n  \"horarioChegada\": \"07:30\",\n  \"rotaId\": 1,\n  \"motoristaId\": 1,\n  \"onibusId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - Remover",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/viagens/{{viagem_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Matriculas Transporte",
+      "item": [
+        {
+          "name": "GET - Listar todos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/matriculas-transporte"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Listar por chave",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/matriculas-transporte/{{matricula_transporte_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com sucesso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/matriculas-transporte",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"alunoId\": 1,\n  \"rotaId\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const data = pm.response.json();",
+                  "if (data && data.codigo) pm.collectionVariables.set('matricula_transporte_id', String(data.codigo));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com erros de validacoes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/matriculas-transporte",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"alunoId\": null,\n  \"rotaId\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - RN01 - Aluno bloqueado nao pode matricular",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/matriculas-transporte",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"alunoId\": 6,\n  \"rotaId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400 - RN01 aluno bloqueado\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"Mensagem de erro da RN01\", function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.erro).to.include(\"Ativo\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - RN02 - Aluno ja matriculado na mesma rota",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/matriculas-transporte",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"alunoId\": 1,\n  \"rotaId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400 - RN02 matricula duplicada\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"Mensagem de erro da RN02\", function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.erro).to.include(\"matriculado\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - Alterar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/matriculas-transporte/{{matricula_transporte_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"alunoId\": 1,\n  \"rotaId\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - Remover",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/matriculas-transporte/{{matricula_transporte_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Registros Acesso",
+      "item": [
+        {
+          "name": "GET - Listar todos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/registros-acesso"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Listar por chave",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/registros-acesso/{{registro_acesso_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com sucesso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/registros-acesso",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"EMBARQUE\",\n  \"dataHora\": \"2026-05-01T06:35:00\",\n  \"alunoId\": 1,\n  \"viagemId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "const data = pm.response.json();",
+                  "if (data && data.codigo) pm.collectionVariables.set('registro_acesso_id', String(data.codigo));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Inserir com erros de validacoes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/registros-acesso",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": null,\n  \"dataHora\": \"data-invalida\",\n  \"alunoId\": null,\n  \"viagemId\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - RN01 - Aluno com mais de 2 embarques no dia",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/registros-acesso",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"EMBARQUE\",\n  \"dataHora\": \"2026-04-01T20:00:00\",\n  \"alunoId\": 1,\n  \"viagemId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400 - RN01 limite de embarques\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"Mensagem de erro da RN01\", function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.erro).to.include(\"2 embarques\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - RN02 - Desembarque sem embarque disponivel",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/registros-acesso",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"DESEMBARQUE\",\n  \"dataHora\": \"2026-04-01T20:30:00\",\n  \"alunoId\": 1,\n  \"viagemId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400 - RN02 desembarque invalido\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"Mensagem de erro da RN02\", function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.erro).to.include(\"desembarque\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - Alterar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/registros-acesso/{{registro_acesso_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"DESEMBARQUE\",\n  \"dataHora\": \"2026-05-01T07:25:00\",\n  \"alunoId\": 1,\n  \"viagemId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - Remover",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/registros-acesso/{{registro_acesso_id}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Relatorios",
+      "item": [
+        {
+          "name": "GET - Alunos por Rota (por ID)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/alunos/relatorios/por-rota/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "alunos",
+                "relatorios",
+                "por-rota",
+                "1"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Alunos por Rota (Todos)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/alunos/relatorios/por-rota/Todos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "alunos",
+                "relatorios",
+                "por-rota",
+                "Todos"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Acessos por Periodo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/registros-acesso/relatorios/por-periodo?dataInicial=2026-04-01&dataFinal=2026-04-30",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "registros-acesso",
+                "relatorios",
+                "por-periodo"
+              ],
+              "query": [
+                {
+                  "key": "dataInicial",
+                  "value": "2026-04-01"
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "2026-04-30"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Acessos por Periodo (Apenas Embarques)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/registros-acesso/relatorios/por-periodo?dataInicial=2026-04-01&dataFinal=2026-04-30&tipo=EMBARQUE",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "registros-acesso",
+                "relatorios",
+                "por-periodo"
+              ],
+              "query": [
+                {
+                  "key": "dataInicial",
+                  "value": "2026-04-01"
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "2026-04-30"
+                },
+                {
+                  "key": "tipo",
+                  "value": "EMBARQUE"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Viagens por Motorista (por ID)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/viagens/relatorios/por-motorista?motoristaId=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "viagens",
+                "relatorios",
+                "por-motorista"
+              ],
+              "query": [
+                {
+                  "key": "motoristaId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Viagens por Motorista (Todos)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/viagens/relatorios/por-motorista?motoristaId=Todos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "viagens",
+                "relatorios",
+                "por-motorista"
+              ],
+              "query": [
+                {
+                  "key": "motoristaId",
+                  "value": "Todos"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Utilizacao de Frota",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/onibus/relatorios/utilizacao-frota?dataInicial=2026-04-01&dataFinal=2026-04-30",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "onibus",
+                "relatorios",
+                "utilizacao-frota"
+              ],
+              "query": [
+                {
+                  "key": "dataInicial",
+                  "value": "2026-04-01"
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "2026-04-30"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Utilizacao de Frota - Datas Invertidas (Erro)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/onibus/relatorios/utilizacao-frota?dataInicial=2026-04-30&dataFinal=2026-04-01",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "onibus",
+                "relatorios",
+                "utilizacao-frota"
+              ],
+              "query": [
+                {
+                  "key": "dataInicial",
+                  "value": "2026-04-30"
+                },
+                {
+                  "key": "dataFinal",
+                  "value": "2026-04-01"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Quantidades de Acessos por Aluno e Periodo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/registros-acesso/relatorios/quantidades-por-aluno/2026-04-01/2026-04-30",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "registros-acesso",
+                "relatorios",
+                "quantidades-por-aluno",
+                "2026-04-01",
+                "2026-04-30"
+              ]
+            },
+            "description": "Relatorio para retornar a quantidade de acessos, embarques e desembarques por aluno em um determinado periodo."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Quantidades de Alunos por Instituicao e Situacao",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/alunos/relatorios/quantidades-por-instituicao-situacao",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "alunos",
+                "relatorios",
+                "quantidades-por-instituicao-situacao"
+              ]
+            },
+            "description": "Relatorio para retornar a quantidade de alunos por instituicao de ensino e situacao de acesso."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3333"
+    },
+    {
+      "key": "estado_id",
+      "value": "1"
+    },
+    {
+      "key": "cidade_id",
+      "value": "1"
+    },
+    {
+      "key": "prefeitura_id",
+      "value": "1"
+    },
+    {
+      "key": "instituicao_ensino_id",
+      "value": "1"
+    },
+    {
+      "key": "aluno_id",
+      "value": "1"
+    },
+    {
+      "key": "motorista_id",
+      "value": "1"
+    },
+    {
+      "key": "onibus_id",
+      "value": "1"
+    },
+    {
+      "key": "rota_id",
+      "value": "1"
+    },
+    {
+      "key": "viagem_id",
+      "value": "1"
+    },
+    {
+      "key": "matricula_transporte_id",
+      "value": "1"
+    },
+    {
+      "key": "registro_acesso_id",
+      "value": "1"
+    },
+    {
+      "key": "data_inicial",
+      "value": "2026-04-01"
+    },
+    {
+      "key": "data_final",
+      "value": "2026-04-30"
+    }
+  ]
+}
